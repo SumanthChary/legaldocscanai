@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Pricing from "./pages/Pricing";
 import Features from "./pages/Features";
 import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,10 @@ const App = () => {
             <Route
               path="/auth"
               element={!session ? <Auth /> : <Navigate to="/dashboard" />}
+            />
+            <Route
+              path="/profile"
+              element={session ? <Profile /> : <Navigate to="/auth" />}
             />
           </Routes>
         </BrowserRouter>
