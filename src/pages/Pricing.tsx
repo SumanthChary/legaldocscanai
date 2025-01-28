@@ -11,37 +11,74 @@ const Pricing = () => {
     {
       name: "Basic",
       price: "$29",
-      description: "Perfect for individuals and small teams",
+      period: "/month",
+      description: "For Individuals/Small Users",
       features: [
-        "Up to 100 documents per month",
-        "Basic document analysis",
+        "Summarize up to 50 documents/month",
+        "Basic clause and risk analysis",
+        "Limited customization options",
         "Email support",
-        "API access"
+        "Integration with cloud storage"
       ]
     },
     {
-      name: "Pro",
+      name: "Professional",
       price: "$99",
-      description: "For growing businesses and teams",
+      period: "/month",
+      description: "For Small to Mid-Size Firms",
       features: [
-        "Unlimited documents",
-        "Advanced analytics",
-        "Priority support",
-        "Custom integrations",
-        "Team collaboration"
+        "Summarize up to 500 documents/month",
+        "Advanced clause analysis and risk detection",
+        "Jurisdiction-specific insights",
+        "Multi-user access (up to 5 team members)",
+        "Real-time collaboration tools",
+        "Priority email support"
       ]
     },
     {
       name: "Enterprise",
-      price: "Custom",
-      description: "For large organizations with specific needs",
+      price: "$399",
+      period: "/month",
+      description: "For Large Firms and Enterprises",
       features: [
-        "Custom document limits",
-        "Dedicated support manager",
-        "SLA guarantees",
-        "Custom AI training",
-        "Advanced security features"
+        "Unlimited document summarization",
+        "AI fine-tuning for firm-specific needs",
+        "Batch processing and advanced analytics",
+        "Integration with legal software",
+        "Dedicated account manager and 24/7 support",
+        "On-premises or private cloud option"
       ]
+    },
+    {
+      name: "Pay-Per-Document",
+      price: "$10",
+      period: "/document",
+      description: "Flexible for Low-Volume Users",
+      features: [
+        "Full access to summarization tools",
+        "Complete analysis features",
+        "Pay as you go pricing",
+        "No monthly commitment",
+        "Discounted bundles available"
+      ]
+    }
+  ];
+
+  const addOns = [
+    {
+      name: "Additional Users",
+      price: "$20/user/month",
+      description: "Beyond plan limit"
+    },
+    {
+      name: "API Access",
+      price: "$199/month",
+      description: "Plus usage-based pricing"
+    },
+    {
+      name: "Custom Model Training",
+      price: "From $1,000",
+      description: "One-time setup fee"
     }
   ];
 
@@ -58,20 +95,25 @@ const Pricing = () => {
               Choose the plan that's right for you
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          
+          {/* Main Plans */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto mb-16">
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className="bg-white rounded-lg shadow-lg p-8 border border-gray-200"
+                className="bg-white rounded-lg shadow-lg p-8 border border-gray-200 hover:border-blue-500 transition-all"
               >
                 <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-                <div className="text-3xl font-bold mb-4">{plan.price}</div>
+                <div className="flex items-baseline mb-4">
+                  <span className="text-4xl font-bold">{plan.price}</span>
+                  <span className="text-gray-600 ml-1">{plan.period}</span>
+                </div>
                 <p className="text-gray-600 mb-6">{plan.description}</p>
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center text-gray-600">
-                      <Check className="h-5 w-5 text-green-500 mr-2" />
-                      {feature}
+                    <li key={feature} className="flex items-start text-gray-600">
+                      <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -83,6 +125,23 @@ const Pricing = () => {
                 </Button>
               </div>
             ))}
+          </div>
+
+          {/* Add-ons Section */}
+          <div className="mt-16">
+            <h2 className="text-3xl font-bold text-center mb-8">Optional Add-ons</h2>
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              {addOns.map((addon) => (
+                <div
+                  key={addon.name}
+                  className="bg-white rounded-lg shadow-sm p-6 border border-gray-200"
+                >
+                  <h3 className="text-lg font-semibold mb-2">{addon.name}</h3>
+                  <div className="text-2xl font-bold mb-2">{addon.price}</div>
+                  <p className="text-gray-600">{addon.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </main>
