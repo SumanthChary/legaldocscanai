@@ -19,7 +19,8 @@ const Pricing = () => {
         "Limited customization options",
         "Email support",
         "Integration with cloud storage"
-      ]
+      ],
+      highlight: true
     },
     {
       name: "Professional",
@@ -33,7 +34,8 @@ const Pricing = () => {
         "Multi-user access (up to 5 team members)",
         "Real-time collaboration tools",
         "Priority email support"
-      ]
+      ],
+      highlight: true
     },
     {
       name: "Enterprise",
@@ -60,7 +62,8 @@ const Pricing = () => {
         "Pay as you go pricing",
         "No monthly commitment",
         "Discounted bundles available"
-      ]
+      ],
+      highlight: true
     }
   ];
 
@@ -101,7 +104,10 @@ const Pricing = () => {
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className="bg-white rounded-lg shadow-lg p-8 border border-gray-200 hover:border-blue-500 transition-all"
+                className={`bg-white rounded-lg shadow-lg p-8 border-2 transition-all transform hover:scale-105 
+                  ${plan.highlight 
+                    ? 'border-blue-500 shadow-blue-100' 
+                    : 'border-gray-200'}`}
               >
                 <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
                 <div className="flex items-baseline mb-4">
