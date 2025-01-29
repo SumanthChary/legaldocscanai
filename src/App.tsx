@@ -5,12 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Pricing from "./pages/Pricing";
 import Features from "./pages/Features";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Payment from "./pages/Payment";
 
 const queryClient = new QueryClient();
 
@@ -38,31 +40,41 @@ const App = () => {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route
-              path="/dashboard"
-              element={session ? <Index /> : <Navigate to="/auth" />}
-            />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/features" element={<Features />} />
-            <Route
-              path="/auth"
-              element={!session ? <Auth /> : <Navigate to="/dashboard" />}
-            />
-            <Route
-              path="/profile"
-              element={session ? <Profile /> : <Navigate to="/auth" />}
-            />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <PayPalScriptProvider options={{ 
+      clientId: process.env.PAYPAL_CLIENT_ID || "",
+      currency: "USD",
+      intent: "subscription"
+    }}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route
+                path="/dashboard"
+                element={session ? <Index /> : <Navigate to="/auth" />}
+              />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/features" element={<Features />} />
+              <Route
+                path="/auth"
+                element={!session ? <Auth /> : <Navigate to="/dashboard" />}
+              />
+              <Route
+                path="/profile"
+                element={session ? <Profile /> : <Navigate to="/auth" />}
+              />
+              <Route
+                path="/payment"
+                element={session ? <Payment /> : <Navigate to="/auth" />}
+              />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </PayPalScriptProvider>
   );
 };
 

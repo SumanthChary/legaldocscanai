@@ -10,7 +10,7 @@ const Pricing = () => {
   const plans = [
     {
       name: "Basic",
-      price: "$29",
+      price: "29",
       period: "/month",
       description: "For Individuals/Small Users",
       features: [
@@ -24,7 +24,7 @@ const Pricing = () => {
     },
     {
       name: "Professional",
-      price: "$99",
+      price: "99",
       period: "/month",
       description: "For Small to Mid-Size Firms",
       features: [
@@ -40,7 +40,7 @@ const Pricing = () => {
     },
     {
       name: "Enterprise",
-      price: "$399",
+      price: "399",
       period: "/month",
       description: "For Large Firms and Enterprises",
       features: [
@@ -55,7 +55,7 @@ const Pricing = () => {
     },
     {
       name: "Pay-Per-Document",
-      price: "$10",
+      price: "10",
       period: "/document",
       description: "Flexible for Low-Volume Users",
       features: [
@@ -86,6 +86,18 @@ const Pricing = () => {
       description: "One-time setup fee"
     }
   ];
+
+  const handleGetStarted = (plan: any) => {
+    navigate("/payment", { 
+      state: { 
+        plan: {
+          name: plan.name,
+          price: `$${plan.price}`,
+          period: plan.period
+        }
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -119,7 +131,7 @@ const Pricing = () => {
                 )}
                 <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
                 <div className="flex items-baseline mb-4">
-                  <span className="text-4xl font-bold">{plan.price}</span>
+                  <span className="text-4xl font-bold">${plan.price}</span>
                   <span className="text-gray-600 ml-1">{plan.period}</span>
                 </div>
                 <p className="text-gray-600 mb-6">{plan.description}</p>
@@ -133,7 +145,7 @@ const Pricing = () => {
                 </ul>
                 <Button
                   className="w-full"
-                  onClick={() => navigate("/dashboard")}
+                  onClick={() => handleGetStarted(plan)}
                 >
                   Get Started
                 </Button>
