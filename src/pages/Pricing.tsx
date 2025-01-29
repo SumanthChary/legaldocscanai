@@ -20,7 +20,7 @@ const Pricing = () => {
         "Email support",
         "Integration with cloud storage"
       ],
-      highlight: true
+      highlight: false
     },
     {
       name: "Professional",
@@ -35,7 +35,8 @@ const Pricing = () => {
         "Real-time collaboration tools",
         "Priority email support"
       ],
-      highlight: true
+      highlight: true,
+      popular: true
     },
     {
       name: "Enterprise",
@@ -49,7 +50,8 @@ const Pricing = () => {
         "Integration with legal software",
         "Dedicated account manager and 24/7 support",
         "On-premises or private cloud option"
-      ]
+      ],
+      highlight: false
     },
     {
       name: "Pay-Per-Document",
@@ -63,7 +65,7 @@ const Pricing = () => {
         "No monthly commitment",
         "Discounted bundles available"
       ],
-      highlight: true
+      highlight: false
     }
   ];
 
@@ -99,16 +101,22 @@ const Pricing = () => {
             </p>
           </div>
           
-          {/* Main Plans */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto mb-16">
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`bg-white rounded-lg shadow-lg p-8 border-2 transition-all transform hover:scale-105 
+                className={`relative bg-white rounded-lg shadow-lg p-8 border-2 transition-all transform hover:scale-105 
                   ${plan.highlight 
                     ? 'border-blue-500 shadow-blue-100' 
                     : 'border-gray-200'}`}
               >
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
                 <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
                 <div className="flex items-baseline mb-4">
                   <span className="text-4xl font-bold">{plan.price}</span>
@@ -133,7 +141,6 @@ const Pricing = () => {
             ))}
           </div>
 
-          {/* Add-ons Section */}
           <div className="mt-16">
             <h2 className="text-3xl font-bold text-center mb-8">Optional Add-ons</h2>
             <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
