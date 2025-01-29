@@ -1,8 +1,50 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Facebook, Instagram, Linkedin, Send, Twitter } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 export const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        "https://nhmhqhhxlcmhufxxifbn.supabase.co/functions/v1/subscribe-email",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to subscribe");
+      }
+
+      toast({
+        title: "Subscribed!",
+        description: "Thank you for subscribing to our newsletter.",
+      });
+      setEmail("");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to subscribe. Please try again later.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-12">
@@ -12,19 +54,24 @@ export const Footer = () => {
             <p className="mb-4 text-sm text-muted-foreground">
               Get updates on new features and releases
             </p>
-            <div className="relative">
+            <form onSubmit={handleSubscribe} className="relative">
               <Input
                 type="email"
                 placeholder="Enter your email"
                 className="pr-12"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <Button
                 size="icon"
                 className="absolute right-1 top-1 h-8 w-8"
+                disabled={isLoading}
+                type="submit"
               >
                 <Send className="h-4 w-4" />
               </Button>
-            </div>
+            </form>
           </div>
           <div>
             <h3 className="mb-4 text-lg font-semibold">Quick Links</h3>
@@ -43,24 +90,27 @@ export const Footer = () => {
           <div>
             <h3 className="mb-4 text-lg font-semibold">Contact</h3>
             <div className="space-y-2 text-sm text-muted-foreground">
-              <p>support@legalai.com</p>
-              <p>1-800-LEGAL-AI</p>
+              <p>sumanthchary.business@gmail.com</p>
+              <p>+91 8125228079</p>
             </div>
           </div>
           <div>
             <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
             <div className="flex space-x-4">
-              <Button variant="ghost" size="icon">
-                <Twitter className="h-4 w-4" />
+              <Button variant="ghost" size="icon" asChild>
+                <a href="https://x.com/SumanthChary07" target="_blank" rel="noopener noreferrer">
+                  <Twitter className="h-4 w-4" />
+                </a>
               </Button>
-              <Button variant="ghost" size="icon">
-                <Facebook className="h-4 w-4" />
+              <Button variant="ghost" size="icon" asChild>
+                <a href="https://www.instagram.com/sumanth_chary07" target="_blank" rel="noopener noreferrer">
+                  <Instagram className="h-4 w-4" />
+                </a>
               </Button>
-              <Button variant="ghost" size="icon">
-                <Instagram className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Linkedin className="h-4 w-4" />
+              <Button variant="ghost" size="icon" asChild>
+                <a href="https://www.linkedin.com/in/sumanthchary" target="_blank" rel="noopener noreferrer">
+                  <Linkedin className="h-4 w-4" />
+                </a>
               </Button>
             </div>
           </div>

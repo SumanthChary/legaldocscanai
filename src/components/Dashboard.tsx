@@ -9,28 +9,32 @@ export const Dashboard = () => {
       value: "128",
       icon: FileText,
       color: "text-accent",
-      trend: "+12% from last month"
+      trend: "+12% from last month",
+      trendUp: true
     },
     {
       title: "Risks Identified",
       value: "24",
       icon: AlertTriangle,
       color: "text-warning",
-      trend: "-8% from last month"
+      trend: "-8% from last month",
+      trendUp: false
     },
     {
       title: "Searches Performed",
       value: "356",
       icon: Search,
       color: "text-success",
-      trend: "+24% from last month"
+      trend: "+24% from last month",
+      trendUp: true
     },
     {
       title: "Time Saved",
       value: "180h",
       icon: Clock,
       color: "text-primary",
-      trend: "+15% from last month"
+      trend: "+15% from last month",
+      trendUp: true
     },
   ];
 
@@ -90,14 +94,14 @@ export const Dashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-primary">Welcome to LegalAI</h1>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <h1 className="text-3xl font-bold text-primary mb-4 md:mb-0">Welcome to LegalAI</h1>
         <div className="text-sm text-gray-600">
           Last updated: {new Date().toLocaleDateString()}
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
           <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-4">
@@ -105,13 +109,16 @@ export const Dashboard = () => {
               <span className="text-2xl font-bold">{stat.value}</span>
             </div>
             <h3 className="text-sm font-medium text-gray-600 mb-2">{stat.title}</h3>
-            <p className="text-xs text-gray-500">{stat.trend}</p>
+            <div className="flex items-center text-xs">
+              <TrendingUp className={`h-4 w-4 mr-1 ${stat.trendUp ? 'text-success' : 'text-warning'}`} />
+              <span className={stat.trendUp ? 'text-success' : 'text-warning'}>{stat.trend}</span>
+            </div>
           </Card>
         ))}
       </div>
 
       <Tabs defaultValue="activity" className="mb-8">
-        <TabsList className="mb-4">
+        <TabsList className="mb-4 w-full justify-start overflow-x-auto">
           <TabsTrigger value="activity">Recent Activity</TabsTrigger>
           <TabsTrigger value="insights">Key Insights</TabsTrigger>
         </TabsList>
@@ -161,7 +168,7 @@ export const Dashboard = () => {
         </TabsContent>
 
         <TabsContent value="insights">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {insights.map((insight, index) => (
               <Card key={index} className="p-6">
                 <div className="flex items-center justify-between mb-4">
