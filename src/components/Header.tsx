@@ -76,7 +76,7 @@ export const Header = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <FileText className="h-6 w-6 text-accent" />
-            <span className="text-xl font-semibold text-primary">LegalAI</span>
+            <span className="text-xl font-semibold text-primary">LegalBriefAI</span>
           </div>
           
           {/* Mobile Menu */}
