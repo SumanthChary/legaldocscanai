@@ -42,7 +42,7 @@ const App = () => {
   return (
     <PayPalScriptProvider 
       options={{ 
-        clientId: "AQwaPBqZDrKBqYWw_SSNLZYKzZxdyVLBjZAo-nRoMGQVQhFZAhgzPh7KVi0FBLzjXBKz5YxVDZWfvQVX",
+        clientId: "ASwEnGxUl0eURMQkZ7lolWGxgRznZ9lx-h55cblFMiJj0qYOzluIe5BFBdeGYhwyabLRHZZvBPAJJBv6",
         currency: "USD",
         intent: "capture",
         components: "buttons"

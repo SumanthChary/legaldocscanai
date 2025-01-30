@@ -131,6 +131,9 @@ const Payment = () => {
                               currency_code: "USD",
                               value: amount,
                             },
+                            payee: {
+                              email_address: "enjoywithpandu@gmail.com"
+                            }
                           },
                         ],
                       });
