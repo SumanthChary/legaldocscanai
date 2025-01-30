@@ -40,11 +40,14 @@ const App = () => {
   }
 
   return (
-    <PayPalScriptProvider options={{ 
-      clientId: "AQwaPBqZDrKBqYWw_SSNLZYKzZxdyVLBjZAo-nRoMGQVQhFZAhgzPh7KVi0FBLzjXBKz5YxVDZWfvQVX",
-      currency: "USD",
-      intent: "capture"
-    }}>
+    <PayPalScriptProvider 
+      options={{ 
+        clientId: "AQwaPBqZDrKBqYWw_SSNLZYKzZxdyVLBjZAo-nRoMGQVQhFZAhgzPh7KVi0FBLzjXBKz5YxVDZWfvQVX",
+        currency: "USD",
+        intent: "capture",
+        components: "buttons"
+      }}
+    >
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />

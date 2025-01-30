@@ -39,8 +39,12 @@ const Payment = () => {
   const amount = plan.price.replace("$", "");
 
   const handlePayPalApprove = async (data: any, actions: any) => {
-    setLoading(true);
     try {
+      // Capture the funds from the transaction
+      const details = await actions.order.capture();
+      console.log("Transaction completed by", details.payer.name.given_name);
+      
+      setLoading(true);
       const user = (await supabase.auth.getUser()).data.user;
       if (!user) throw new Error("No user found");
 
@@ -74,6 +78,15 @@ const Payment = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePayPalError = (err: any) => {
+    console.error("PayPal error:", err);
+    toast({
+      title: "Payment Error",
+      description: "There was an error processing your payment. Please try again.",
+      variant: "destructive",
+    });
   };
 
   return (
@@ -123,6 +136,7 @@ const Payment = () => {
                       });
                     }}
                     onApprove={handlePayPalApprove}
+                    onError={handlePayPalError}
                     style={{ layout: "horizontal" }}
                     disabled={loading}
                   />
