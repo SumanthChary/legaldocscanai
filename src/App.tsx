@@ -13,6 +13,7 @@ import Features from "./pages/Features";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
+import DocumentAnalysis from "./pages/DocumentAnalysis";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Landing />} />
+              <Route path="/document-analysis" element={<DocumentAnalysis />} />
               <Route
                 path="/dashboard"
                 element={session ? <Index /> : <Navigate to="/auth" />}
