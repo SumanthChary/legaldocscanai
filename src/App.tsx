@@ -16,9 +16,6 @@ import Payment from "./pages/Payment";
 
 const queryClient = new QueryClient();
 
-// Replace with your PayPal client ID or use environment variable
-const PAYPAL_CLIENT_ID = "YOUR_PAYPAL_CLIENT_ID";
-
 const App = () => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +41,7 @@ const App = () => {
 
   return (
     <PayPalScriptProvider options={{ 
-      clientId: PAYPAL_CLIENT_ID,
+      clientId: "AQwaPBqZDrKBqYWw_SSNLZYKzZxdyVLBjZAo-nRoMGQVQhFZAhgzPh7KVi0FBLzjXBKz5YxVDZWfvQVX",
       currency: "USD",
       intent: "capture"
     }}>

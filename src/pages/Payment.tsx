@@ -6,7 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { CreditCard, CreditCardIcon } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
 
 type SubscriptionTier = Database["public"]["Enums"]["subscription_tier"];
@@ -45,7 +45,7 @@ const Payment = () => {
       if (!user) throw new Error("No user found");
 
       // Convert plan name to subscription_tier enum value
-      const planType = plan.name.toLowerCase() as SubscriptionTier;
+      const planType = plan.name.toLowerCase().replace(/\s+/g, '_') as SubscriptionTier;
 
       // Create subscription record
       const { error } = await supabase.from("subscriptions").insert({
@@ -105,7 +105,7 @@ const Payment = () => {
               <div className="space-y-4">
                 <div className="border rounded-lg p-4">
                   <h3 className="font-semibold flex items-center gap-2 mb-4">
-                    <CreditCardIcon className="h-5 w-5" />
+                    <CreditCard className="h-5 w-5" />
                     PayPal
                   </h3>
                   <PayPalButtons
