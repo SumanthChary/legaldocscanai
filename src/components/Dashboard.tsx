@@ -1,33 +1,40 @@
 import { Card } from "@/components/ui/card";
-import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart } from "lucide-react";
+import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Upload } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocumentAnalysis } from "@/components/DocumentAnalysis";
 import { Progress } from "@/components/ui/progress";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Dashboard = () => {
   const [analysisStats, setAnalysisStats] = useState({
     totalDocuments: 0,
     averageScore: 0,
-    improvementRate: 0
+    improvementRate: 0,
+    latestDocument: null
   });
 
   useEffect(() => {
     const fetchAnalysisStats = async () => {
       const { data: analyses, error } = await supabase
         .from('document_analyses')
-        .select('*');
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1);
       
       if (error) {
         console.error('Error fetching analyses:', error);
         return;
       }
 
+      const latestDoc = analyses?.[0];
+
       setAnalysisStats({
         totalDocuments: analyses?.length || 0,
-        averageScore: 85, // Example score - would come from actual analysis
-        improvementRate: 24 // Example improvement rate
+        averageScore: 85,
+        improvementRate: 24,
+        latestDocument: latestDoc
       });
     };
 
@@ -78,6 +85,35 @@ export const Dashboard = () => {
         </div>
       </div>
       
+      {analysisStats.latestDocument && (
+        <Card className="p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4">Latest Document</h2>
+          <div className="flex items-center gap-4">
+            <Avatar className="h-20 w-20">
+              <AvatarImage src={`${supabase.storage.from('documents').getPublicUrl(analysisStats.latestDocument.document_path).data.publicUrl}`} />
+              <AvatarFallback>
+                <FileText className="h-10 w-10 text-gray-400" />
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h3 className="text-lg font-medium">{analysisStats.latestDocument.original_name}</h3>
+              <p className="text-sm text-gray-500">
+                Uploaded on {new Date(analysisStats.latestDocument.created_at).toLocaleDateString()}
+              </p>
+              <div className="mt-2">
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  analysisStats.latestDocument.analysis_status === 'completed' 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {analysisStats.latestDocument.analysis_status}
+                </span>
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {stats.map((stat, index) => (
           <Card key={index} className="p-4 hover:shadow-lg transition-shadow">
