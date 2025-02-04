@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DocumentAnalysis } from "@/components/DocumentAnalysis";
 
 export const Dashboard = () => {
   const stats = [
@@ -117,12 +118,17 @@ export const Dashboard = () => {
         ))}
       </div>
 
-      <Tabs defaultValue="activity" className="mb-8">
+      <Tabs defaultValue="analysis" className="mb-8">
         <TabsList className="mb-4 w-full justify-start overflow-x-auto">
+          <TabsTrigger value="analysis">Document Analysis</TabsTrigger>
           <TabsTrigger value="activity">Recent Activity</TabsTrigger>
           <TabsTrigger value="insights">Key Insights</TabsTrigger>
         </TabsList>
         
+        <TabsContent value="analysis">
+          <DocumentAnalysis />
+        </TabsContent>
+
         <TabsContent value="activity">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="p-6">
