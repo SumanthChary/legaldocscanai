@@ -44,21 +44,30 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
+          document_count: number | null
+          document_limit: number | null
           email: string
           id: string
           updated_at: string
           username: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
+          document_count?: number | null
+          document_limit?: number | null
           email: string
           id: string
           updated_at?: string
           username: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
+          document_count?: number | null
+          document_limit?: number | null
           email?: string
           id?: string
           updated_at?: string
