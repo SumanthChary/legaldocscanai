@@ -69,8 +69,23 @@ export const DocumentAnalysis = () => {
     formData.append('file', file);
 
     try {
+      // Get the session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to upload documents",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const response = await supabase.functions.invoke('analyze-document', {
         body: formData,
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
 
       if (response.error) throw response.error;

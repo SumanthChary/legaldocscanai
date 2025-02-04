@@ -12,6 +12,30 @@ serve(async (req) => {
   }
 
   try {
+    // Create Supabase client
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    // Get the user ID from the authorization header
+    const authHeader = req.headers.get('authorization')?.split('Bearer ')[1]
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'No authorization header' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+
+    // Verify the JWT and get the user
+    const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader)
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid token', details: authError }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+
     const formData = await req.formData()
     const file = formData.get('file')
 
@@ -22,15 +46,12 @@ serve(async (req) => {
       )
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
-    const sanitizedFileName = file.name.replace(/[^\x00-\x7F]/g, '');
+    // Sanitize the filename
+    const sanitizedFileName = file.name.replace(/[^\x00-\x7F]/g, '')
     const fileExt = sanitizedFileName.split('.').pop()
     const filePath = `${crypto.randomUUID()}.${fileExt}`
 
+    // Upload file to storage
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('documents')
       .upload(filePath, file, {
@@ -46,12 +67,14 @@ serve(async (req) => {
       )
     }
 
+    // Insert document analysis record with user_id
     const { error: dbError } = await supabase
       .from('document_analyses')
       .insert({
         document_path: filePath,
         original_name: sanitizedFileName,
-        analysis_status: 'pending'
+        analysis_status: 'pending',
+        user_id: user.id // Add the user_id here
       })
 
     if (dbError) {
