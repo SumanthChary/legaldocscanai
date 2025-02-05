@@ -9,16 +9,15 @@ const Pricing = () => {
 
   const plans = [
     {
-      name: "Basic",
-      price: "29",
-      period: "/month",
-      description: "For Individuals/Small Users",
+      name: "Free",
+      price: "0",
+      period: "",
+      description: "Try it out first",
       features: [
-        "Summarize up to 50 documents/month",
-        "Basic clause and risk analysis",
-        "Limited customization options",
+        "3 free document analyses",
+        "Basic document summarization",
         "Email support",
-        "Integration with cloud storage"
+        "Standard processing time"
       ],
       highlight: false
     },
@@ -92,7 +91,7 @@ const Pricing = () => {
       state: { 
         plan: {
           name: plan.name,
-          price: `$${plan.price}`,
+          price: plan.name === "Free" ? "0" : `$${plan.price}`,
           period: plan.period
         }
       }
@@ -106,10 +105,10 @@ const Pricing = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Simple, Transparent Pricing
+              Start with 3 Free Documents
             </h1>
             <p className="text-xl text-gray-600">
-              Choose the plan that's right for you
+              Try our document analyzer for free, then choose the plan that's right for you
             </p>
           </div>
           
@@ -131,7 +130,8 @@ const Pricing = () => {
                 )}
                 <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
                 <div className="flex items-baseline mb-4">
-                  <span className="text-4xl font-bold">${plan.price}</span>
+                  {plan.price !== "0" && <span>$</span>}
+                  <span className="text-4xl font-bold">{plan.price}</span>
                   <span className="text-gray-600 ml-1">{plan.period}</span>
                 </div>
                 <p className="text-gray-600 mb-6">{plan.description}</p>
@@ -145,9 +145,10 @@ const Pricing = () => {
                 </ul>
                 <Button
                   className="w-full"
+                  variant={plan.name === "Free" ? "outline" : "default"}
                   onClick={() => handleGetStarted(plan)}
                 >
-                  Get Started
+                  {plan.name === "Free" ? "Start Free Trial" : "Get Started"}
                 </Button>
               </div>
             ))}
