@@ -22,6 +22,20 @@ const Pricing = () => {
       highlight: false
     },
     {
+      name: "Basic",
+      price: "20",
+      period: "/month",
+      description: "For Individual Users",
+      features: [
+        "Summarize up to 25 documents/month",
+        "Basic clause analysis",
+        "Email support",
+        "Standard processing time",
+        "Basic document templates"
+      ],
+      highlight: false
+    },
+    {
       name: "Professional",
       price: "99",
       period: "/month",
@@ -112,7 +126,7 @@ const Pricing = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 max-w-7xl mx-auto mb-16">
             {plans.map((plan) => (
               <div
                 key={plan.name}
