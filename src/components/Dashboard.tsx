@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart, ArrowRight } from "lucide-react";
+import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocumentAnalysis } from "@/components/DocumentAnalysis";
 import { Progress } from "@/components/ui/progress";
@@ -85,19 +85,18 @@ export const Dashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Donation Bar */}
-      <div className="bg-accent/10 p-4 rounded-lg mb-8 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+      <div className="bg-accent/10 p-4 rounded-lg mb-8">
+        <div className="flex items-center gap-2">
           <Heart className="h-5 w-5 text-accent animate-pulse" />
-          <p className="text-sm md:text-base text-primary flex items-center">
+          <p className="text-sm md:text-base text-primary">
             We need <a 
               href="https://www.figma.com/proto/eWAJORd1BV6OLT8V8a7CeE/LegalBriefAI?node-id=1-2&p=f&t=lxhZSOMTKwa7ZmrQ-1&scaling=scale-down-width&content-scaling=fixed&page-id=0%3A1" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="font-bold text-accent hover:underline mx-1"
+              className="font-bold text-accent hover:underline"
             >
               DONATIONS
             </a> for Multiple IMPROVEMENTS. IF ANY ONE EVEN DONATE $5/$10 WE WILL GIVE HIM LIFE TIME ACCESS TO OUR FEATURES
-            <ArrowRight className="h-4 w-4 ml-2 text-accent" />
           </p>
         </div>
       </div>
