@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart } from "lucide-react";
+import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocumentAnalysis } from "@/components/DocumentAnalysis";
 import { Progress } from "@/components/ui/progress";
@@ -84,6 +84,23 @@ export const Dashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Donation Bar */}
+      <div className="bg-accent/10 p-4 rounded-lg mb-8 flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Heart className="h-5 w-5 text-accent animate-pulse" />
+          <p className="text-sm md:text-base text-primary">
+            We need <a 
+              href="https://buymeacoffee.com/sumanthcharyy" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="font-bold text-accent hover:underline"
+            >
+              DONATIONS
+            </a> for Multiple IMPROVEMENTS. IF ANY ONE EVEN DONATE $5/$10 WE WILL GIVE HIM LIFE TIME ACCESS TO OUR FEATURES
+          </p>
+        </div>
+      </div>
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <h1 className="text-3xl font-bold text-primary mb-4 md:mb-0">Document Analysis Dashboard</h1>
         <div className="text-sm text-gray-600">
