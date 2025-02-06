@@ -1,9 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { FileText, Shield, Globe, Scale, Rocket, Search, Users, ChartBar, ArrowRight, Check } from "lucide-react";
+import { FileText, Shield, Globe, Scale, Rocket, Search, Users, ChartBar, ArrowRight, Check, HelpCircle } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { motion } from "framer-motion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -46,6 +52,29 @@ const Landing = () => {
     "Improve accuracy in legal analysis",
     "Ensure compliance across jurisdictions",
     "Streamline team collaboration"
+  ];
+
+  const faqs = [
+    {
+      question: "What is LegalBriefAI?",
+      answer: "LegalBriefAI is an advanced AI-powered platform designed to help legal professionals analyze, summarize, and extract key information from legal documents efficiently. Our tool uses cutting-edge technology to save time and improve accuracy in legal document processing."
+    },
+    {
+      question: "How secure is my data on LegalBriefAI?",
+      answer: "We prioritize your data security with end-to-end encryption and compliance with major privacy regulations. All documents are stored securely, and we maintain strict access controls to ensure your sensitive legal information remains confidential."
+    },
+    {
+      question: "What types of documents can LegalBriefAI process?",
+      answer: "LegalBriefAI can process a wide range of legal documents including contracts, agreements, legal briefs, court documents, and regulatory filings. Our system is trained to understand complex legal terminology across various practice areas."
+    },
+    {
+      question: "Do you offer a free trial?",
+      answer: "Yes, we offer a free tier that allows you to analyze up to 3 documents to experience our platform's capabilities. You can upgrade to our professional or enterprise plans for additional features and higher document limits."
+    },
+    {
+      question: "How accurate is the AI analysis?",
+      answer: "Our AI system maintains a high accuracy rate in document analysis and summary generation. However, we recommend using it as a supportive tool alongside professional legal judgment, not as a replacement for legal expertise."
+    }
   ];
 
   return (
@@ -137,6 +166,47 @@ const Landing = () => {
                   <p className="text-gray-600">{feature.description}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* About Us Section */}
+        <div className="py-16 bg-primary/5">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">About Us</h2>
+              <p className="text-lg text-gray-600 mb-8">
+                LegalBriefAI was founded with a vision to revolutionize legal document analysis through artificial intelligence. Our team of legal professionals and AI experts work together to create innovative solutions that make legal work more efficient and accurate.
+              </p>
+              <p className="text-lg text-gray-600">
+                We understand the challenges legal professionals face when dealing with vast amounts of documentation. That's why we've developed a platform that combines cutting-edge AI technology with user-friendly interfaces to streamline your workflow and enhance productivity.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-8 text-center">
+                Frequently Asked Questions
+              </h2>
+              <Accordion type="single" collapsible className="space-y-4">
+                {faqs.map((faq, index) => (
+                  <AccordionItem key={index} value={`item-${index}`} className="bg-white border rounded-lg">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <div className="flex items-center gap-2 text-left">
+                        <HelpCircle className="h-5 w-5 text-accent flex-shrink-0" />
+                        <span className="text-lg font-semibold">{faq.question}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4 text-gray-600">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
           </div>
         </div>

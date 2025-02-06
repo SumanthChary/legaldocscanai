@@ -1,13 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Facebook, Instagram, Linkedin, Send, Twitter } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Send, Twitter, HelpCircle } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export const Footer = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +44,15 @@ export const Footer = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const scrollToFAQs = () => {
+    const faqSection = document.querySelector('#faqs');
+    if (faqSection) {
+      faqSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/#faqs');
     }
   };
 
@@ -85,6 +96,14 @@ export const Footer = () => {
               <a href="/pricing" className="block text-muted-foreground hover:text-primary">
                 Pricing
               </a>
+              <Button
+                variant="ghost"
+                className="w-full justify-start p-0 h-auto font-normal text-sm text-muted-foreground hover:text-primary"
+                onClick={scrollToFAQs}
+              >
+                <HelpCircle className="h-4 w-4 mr-2" />
+                FAQs
+              </Button>
             </nav>
           </div>
           <div>
