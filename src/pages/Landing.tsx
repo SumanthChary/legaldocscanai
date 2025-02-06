@@ -10,6 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { TestimonialsSection } from "@/components/blocks/testimonials-with-marquee";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -74,6 +75,35 @@ const Landing = () => {
     {
       question: "How accurate is the AI analysis?",
       answer: "Our AI system maintains a high accuracy rate in document analysis and summary generation. However, we recommend using it as a supportive tool alongside professional legal judgment, not as a replacement for legal expertise."
+    }
+  ];
+
+  const testimonials = [
+    {
+      author: {
+        name: "Sarah Johnson",
+        handle: "@sarahlegal",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face"
+      },
+      text: "LegalBriefAI has revolutionized how we handle legal documents. The AI-powered analysis saves us countless hours of manual review.",
+      href: "https://twitter.com/sarahlegal"
+    },
+    {
+      author: {
+        name: "Michael Chen",
+        handle: "@mchenlaw",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+      },
+      text: "The accuracy and speed of document analysis are remarkable. It's become an indispensable tool for our law firm.",
+      href: "https://twitter.com/mchenlaw"
+    },
+    {
+      author: {
+        name: "Emily Rodriguez",
+        handle: "@emilylaw",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face"
+      },
+      text: "Finally, a legal tech solution that actually understands context! The accuracy in legal document processing is impressive."
     }
   ];
 
@@ -169,6 +199,13 @@ const Landing = () => {
             </div>
           </div>
         </div>
+
+        {/* Testimonials Section */}
+        <TestimonialsSection
+          title="Trusted by Legal Professionals Worldwide"
+          description="Join thousands of legal professionals who are already transforming their document workflow with LegalBriefAI"
+          testimonials={testimonials}
+        />
 
         {/* About Us Section */}
         <div className="py-16 bg-primary/5">
