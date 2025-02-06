@@ -6,9 +6,13 @@ import { Progress } from "@/components/ui/progress";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { DocumentGallery } from "@/components/DocumentGallery";
+import { UpgradeBanner } from "@/components/ui/upgrade-banner";
+import { useNavigate } from "react-router-dom";
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const [session, setSession] = useState<any>(null);
+  const [showUpgradeBanner, setShowUpgradeBanner] = useState(true);
   const [analysisStats, setAnalysisStats] = useState({
     totalDocuments: 0,
     averageScore: 0,
@@ -100,6 +104,17 @@ export const Dashboard = () => {
           </p>
         </div>
       </div>
+
+      {showUpgradeBanner && (
+        <div className="mb-8">
+          <UpgradeBanner
+            buttonText="Upgrade Now"
+            description="for unlimited document analysis"
+            onClose={() => setShowUpgradeBanner(false)}
+            onClick={() => navigate("/pricing")}
+          />
+        </div>
+      )}
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <h1 className="text-3xl font-bold text-primary mb-4 md:mb-0">Document Analysis Dashboard</h1>
