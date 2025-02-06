@@ -4,7 +4,6 @@ import { Facebook, Instagram, Linkedin, Send, Twitter, HelpCircle } from "lucide
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { FloatingPanelRoot, FloatingPanelTrigger, FloatingPanelContent, FloatingPanelBody } from "@/components/ui/floating-panel";
 
 export const Footer = () => {
   const [email, setEmail] = useState("");
@@ -114,49 +113,24 @@ export const Footer = () => {
               <p>+91 8125228079</p>
             </div>
           </div>
-          
           <div>
             <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
-            <div className="flex flex-col space-y-4">
-              <div className="flex space-x-4">
-                <Button variant="ghost" size="icon" asChild>
-                  <a href="https://x.com/SumanthChary07" target="_blank" rel="noopener noreferrer">
-                    <Twitter className="h-4 w-4" />
-                  </a>
-                </Button>
-                <Button variant="ghost" size="icon" asChild>
-                  <a href="https://www.instagram.com/sumanth_chary07" target="_blank" rel="noopener noreferrer">
-                    <Instagram className="h-4 w-4" />
-                  </a>
-                </Button>
-                <Button variant="ghost" size="icon" asChild>
-                  <a href="https://www.linkedin.com/in/sumanthchary" target="_blank" rel="noopener noreferrer">
-                    <Linkedin className="h-4 w-4" />
-                  </a>
-                </Button>
-              </div>
-              <FloatingPanelRoot>
-                <FloatingPanelTrigger title="FAQs" className="w-full justify-start">
-                  <div className="flex items-center gap-2">
-                    <HelpCircle className="h-4 w-4" />
-                    <span>FAQs</span>
-                  </div>
-                </FloatingPanelTrigger>
-                <FloatingPanelContent className="w-[90vw] max-w-lg">
-                  <FloatingPanelBody>
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">Frequently Asked Questions</h3>
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-start text-left" 
-                        onClick={scrollToFAQs}
-                      >
-                        View All FAQs
-                      </Button>
-                    </div>
-                  </FloatingPanelBody>
-                </FloatingPanelContent>
-              </FloatingPanelRoot>
+            <div className="flex space-x-4">
+              <Button variant="ghost" size="icon" asChild>
+                <a href="https://x.com/SumanthChary07" target="_blank" rel="noopener noreferrer">
+                  <Twitter className="h-4 w-4" />
+                </a>
+              </Button>
+              <Button variant="ghost" size="icon" asChild>
+                <a href="https://www.instagram.com/sumanth_chary07" target="_blank" rel="noopener noreferrer">
+                  <Instagram className="h-4 w-4" />
+                </a>
+              </Button>
+              <Button variant="ghost" size="icon" asChild>
+                <a href="https://www.linkedin.com/in/sumanthchary" target="_blank" rel="noopener noreferrer">
+                  <Linkedin className="h-4 w-4" />
+                </a>
+              </Button>
             </div>
           </div>
         </div>
