@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +15,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
 import DocumentAnalysis from "./pages/DocumentAnalysis";
+import Blog from "./pages/Blog";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +58,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Landing />} />
+              <Route path="/blog" element={<Blog />} />
               <Route path="/document-analysis" element={<DocumentAnalysis />} />
               <Route
                 path="/dashboard"

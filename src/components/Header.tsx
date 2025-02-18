@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { FileText, User, LogOut, Menu } from "lucide-react";
+import { FileText, User, LogOut, Menu, Book } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import {
@@ -110,6 +111,17 @@ export const Header = () => {
                   >
                     Pricing
                   </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      navigate("/blog");
+                      setIsOpen(false);
+                    }}
+                    className="justify-start"
+                  >
+                    <Book className="mr-2 h-4 w-4" />
+                    Blog
+                  </Button>
                   {session ? (
                     <>
                       <Button
@@ -175,6 +187,14 @@ export const Header = () => {
               className="text-gray-600 hover:text-primary"
             >
               Pricing
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/blog")}
+              className="text-gray-600 hover:text-primary"
+            >
+              <Book className="mr-2 h-4 w-4" />
+              Blog
             </Button>
             {session ? (
               <>
