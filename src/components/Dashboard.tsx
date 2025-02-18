@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart } from "lucide-react";
+import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart, HelpCircle, Book, Activity, Bell } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocumentAnalysis } from "@/components/DocumentAnalysis";
 import { Progress } from "@/components/ui/progress";
@@ -9,6 +9,7 @@ import { DocumentGallery } from "@/components/DocumentGallery";
 import { UpgradeBanner } from "@/components/ui/upgrade-banner";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export const Dashboard = () => {
   const [showUpgradeBanner, setShowUpgradeBanner] = useState(true);
   const [showDonationDialog, setShowDonationDialog] = useState(false);
   const [hasShownDonation, setHasShownDonation] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [analysisStats, setAnalysisStats] = useState({
     totalDocuments: 0,
     averageScore: 0,
@@ -25,7 +27,22 @@ export const Dashboard = () => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session?.user?.id) {
+        fetchUserProfile(session.user.id);
+      }
     });
+
+    const fetchUserProfile = async (userId: string) => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (!error && data) {
+        setUserProfile(data);
+      }
+    };
 
     const fetchAnalysisStats = async () => {
       if (!session?.user?.id) return;
@@ -58,39 +75,40 @@ export const Dashboard = () => {
     }
   }, [session?.user?.id, hasShownDonation]);
 
-  const stats = [
+  const quickActions = [
     {
-      title: "Documents Analyzed",
-      value: analysisStats.totalDocuments.toString(),
+      title: "New Analysis",
       icon: FileText,
-      color: "text-accent",
-      trend: "+12% from last month",
-      trendUp: true
+      action: () => navigate("/document-analysis"),
+      color: "text-blue-500"
     },
     {
-      title: "Analysis Score",
-      value: `${analysisStats.averageScore}%`,
-      icon: BarChart,
-      color: "text-success",
-      trend: "+5% improvement",
-      trendUp: true
+      title: "View Documents",
+      icon: Book,
+      action: () => document.querySelector('[data-tab="documents"]')?.click(),
+      color: "text-green-500"
     },
     {
-      title: "Processing Time",
-      value: "2.5s",
-      icon: Clock,
-      color: "text-warning",
-      trend: "-30% faster",
-      trendUp: true
+      title: "Documentation",
+      icon: HelpCircle,
+      action: () => window.open("https://docs.legalbriefai.com", "_blank"),
+      color: "text-purple-500"
+    }
+  ];
+
+  const recentActivities = [
+    {
+      title: "Document Analysis Completed",
+      time: "2 hours ago",
+      icon: Activity,
+      color: "text-green-500"
     },
     {
-      title: "Accuracy Rate",
-      value: "99%",
-      icon: Target,
-      color: "text-primary",
-      trend: "Consistent",
-      trendUp: true
-    },
+      title: "New Feature Available",
+      time: "1 day ago",
+      icon: Bell,
+      color: "text-blue-500"
+    }
   ];
 
   if (!session) return null;
@@ -130,26 +148,116 @@ export const Dashboard = () => {
       </Dialog>
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-        <h1 className="text-3xl font-bold text-primary mb-4 md:mb-0">Document Analysis Dashboard</h1>
-        <div className="text-sm text-gray-600">
-          Last updated: {new Date().toLocaleDateString()}
+        <div>
+          <h1 className="text-3xl font-bold text-primary mb-2">
+            Welcome back, {userProfile?.full_name || session.user.email}
+          </h1>
+          <p className="text-muted-foreground">
+            Here's what's happening with your documents today.
+          </p>
+        </div>
+        <div className="flex gap-2 mt-4 md:mt-0">
+          {quickActions.map((action, index) => (
+            <Button
+              key={index}
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={action.action}
+            >
+              <action.icon className={`h-4 w-4 ${action.color}`} />
+              {action.title}
+            </Button>
+          ))}
         </div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card className="col-span-2 p-6">
+          <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
+          <div className="space-y-4">
+            {recentActivities.map((activity, index) => (
+              <div key={index} className="flex items-center gap-4">
+                <div className={`p-2 rounded-full bg-gray-100 ${activity.color}`}>
+                  <activity.icon className="h-4 w-4" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium">{activity.title}</p>
+                  <p className="text-sm text-muted-foreground">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold mb-4">Performance</h2>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between text-sm mb-2">
+                <span>Analysis Speed</span>
+                <span className="text-green-500">+12%</span>
+              </div>
+              <Progress value={78} className="h-2" />
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-2">
+                <span>Accuracy Rate</span>
+                <span className="text-blue-500">99%</span>
+              </div>
+              <Progress value={99} className="h-2" />
+            </div>
+          </div>
+        </Card>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat, index) => (
-          <Card key={index} className="p-4 hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <stat.icon className={`h-8 w-8 ${stat.color}`} />
-              <span className="text-2xl font-bold">{stat.value}</span>
-            </div>
-            <h3 className="text-sm font-medium text-gray-600 mb-2">{stat.title}</h3>
-            <div className="flex items-center text-xs">
-              <TrendingUp className={`h-4 w-4 mr-1 ${stat.trendUp ? 'text-success' : 'text-warning'}`} />
-              <span className={stat.trendUp ? 'text-success' : 'text-warning'}>{stat.trend}</span>
-            </div>
-          </Card>
-        ))}
+        <Card key={0} className="p-4 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between mb-4">
+            <FileText className="h-8 w-8 text-accent" />
+            <span className="text-2xl font-bold">{analysisStats.totalDocuments.toString()}</span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">Documents Analyzed</h3>
+          <div className="flex items-center text-xs">
+            <TrendingUp className="h-4 w-4 mr-1 text-success" />
+            <span className="text-success">+12% from last month</span>
+          </div>
+        </Card>
+
+        <Card key={1} className="p-4 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between mb-4">
+            <BarChart className="h-8 w-8 text-success" />
+            <span className="text-2xl font-bold">${analysisStats.averageScore}%</span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">Analysis Score</h3>
+          <div className="flex items-center text-xs">
+            <TrendingUp className="h-4 w-4 mr-1 text-success" />
+            <span className="text-success">+5% improvement</span>
+          </div>
+        </Card>
+
+        <Card key={2} className="p-4 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between mb-4">
+            <Clock className="h-8 w-8 text-warning" />
+            <span className="text-2xl font-bold">2.5s</span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">Processing Time</h3>
+          <div className="flex items-center text-xs">
+            <TrendingUp className="h-4 w-4 mr-1 text-warning" />
+            <span className="text-warning">-30% faster</span>
+          </div>
+        </Card>
+
+        <Card key={3} className="p-4 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between mb-4">
+            <Target className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold">99%</span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">Accuracy Rate</h3>
+          <div className="flex items-center text-xs">
+            <TrendingUp className="h-4 w-4 mr-1 text-success" />
+            <span className="text-success">Consistent</span>
+          </div>
+        </Card>
       </div>
 
       <Tabs defaultValue="documents" className="space-y-4">
