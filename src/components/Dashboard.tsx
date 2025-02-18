@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,7 +15,7 @@ export const Dashboard = () => {
   const [session, setSession] = useState<any>(null);
   const [showUpgradeBanner, setShowUpgradeBanner] = useState(true);
   const [showDonationDialog, setShowDonationDialog] = useState(false);
-  const [hasAnalyzed, setHasAnalyzed] = useState(false);
+  const [hasShownDonation, setHasShownDonation] = useState(false);
   const [analysisStats, setAnalysisStats] = useState({
     totalDocuments: 0,
     averageScore: 0,
@@ -41,9 +40,10 @@ export const Dashboard = () => {
         return;
       }
 
-      if (analyses && analyses.length > 0 && !hasAnalyzed) {
-        setHasAnalyzed(true);
+      const hasAnalysesWithSummary = analyses?.some(analysis => analysis.summary);
+      if (hasAnalysesWithSummary && !hasShownDonation) {
         setShowDonationDialog(true);
+        setHasShownDonation(true);
       }
 
       setAnalysisStats({
@@ -56,7 +56,7 @@ export const Dashboard = () => {
     if (session?.user?.id) {
       fetchAnalysisStats();
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, hasShownDonation]);
 
   const stats = [
     {
