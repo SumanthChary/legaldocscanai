@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,11 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { DocumentGallery } from "@/components/DocumentGallery";
 import { UpgradeBanner } from "@/components/ui/upgrade-banner";
 import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<any>(null);
   const [showUpgradeBanner, setShowUpgradeBanner] = useState(true);
+  const [showDonationDialog, setShowDonationDialog] = useState(false);
+  const [hasAnalyzed, setHasAnalyzed] = useState(false);
   const [analysisStats, setAnalysisStats] = useState({
     totalDocuments: 0,
     averageScore: 0,
@@ -35,6 +39,11 @@ export const Dashboard = () => {
       if (error) {
         console.error('Error fetching analyses:', error);
         return;
+      }
+
+      if (analyses && analyses.length > 0 && !hasAnalyzed) {
+        setHasAnalyzed(true);
+        setShowDonationDialog(true);
       }
 
       setAnalysisStats({
@@ -88,23 +97,6 @@ export const Dashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Donation Bar */}
-      <div className="bg-accent/10 p-4 rounded-lg mb-8">
-        <div className="flex items-center gap-2">
-          <Heart className="h-5 w-5 text-accent animate-pulse" />
-          <p className="text-sm md:text-base text-primary">
-            We need <a 
-              href="https://www.figma.com/proto/eWAJORd1BV6OLT8V8a7CeE/LegalBriefAI?node-id=1-2&p=f&t=lxhZSOMTKwa7ZmrQ-1&scaling=scale-down-width&content-scaling=fixed&page-id=0%3A1" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="font-bold text-accent hover:underline"
-            >
-              DONATIONS
-            </a> for Multiple IMPROVEMENTS. IF ANY ONE EVEN DONATE $5/$10 WE WILL GIVE HIM LIFE TIME ACCESS TO OUR FEATURES
-          </p>
-        </div>
-      </div>
-
       {showUpgradeBanner && (
         <div className="mb-8">
           <UpgradeBanner
@@ -115,6 +107,27 @@ export const Dashboard = () => {
           />
         </div>
       )}
+
+      <Dialog open={showDonationDialog} onOpenChange={setShowDonationDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Heart className="h-5 w-5 text-accent animate-pulse" />
+              Support LegalBriefAI
+            </DialogTitle>
+            <DialogDescription>
+              We need <a 
+                href="https://www.figma.com/proto/eWAJORd1BV6OLT8V8a7CeE/LegalBriefAI?node-id=1-2&p=f&t=lxhZSOMTKwa7ZmrQ-1&scaling=scale-down-width&content-scaling=fixed&page-id=0%3A1" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="font-bold text-accent hover:underline"
+              >
+                DONATIONS
+              </a> for Multiple IMPROVEMENTS. IF ANY ONE EVEN DONATE $5/$10 WE WILL GIVE HIM LIFE TIME ACCESS TO OUR FEATURES
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <h1 className="text-3xl font-bold text-primary mb-4 md:mb-0">Document Analysis Dashboard</h1>
