@@ -3,7 +3,7 @@ import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap,
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocumentAnalysis } from "@/components/DocumentAnalysis";
 import { Progress } from "@/components/ui/progress";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { DocumentGallery } from "@/components/DocumentGallery";
 import { UpgradeBanner } from "@/components/ui/upgrade-banner";
@@ -18,6 +18,7 @@ export const Dashboard = () => {
   const [showDonationDialog, setShowDonationDialog] = useState(false);
   const [hasShownDonation, setHasShownDonation] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("documents");
   const [analysisStats, setAnalysisStats] = useState({
     totalDocuments: 0,
     averageScore: 0,
@@ -85,7 +86,7 @@ export const Dashboard = () => {
     {
       title: "View Documents",
       icon: Book,
-      action: () => document.querySelector('[data-tab="documents"]')?.click(),
+      action: () => setActiveTab("documents"),
       color: "text-green-500"
     },
     {
@@ -260,7 +261,7 @@ export const Dashboard = () => {
         </Card>
       </div>
 
-      <Tabs defaultValue="documents" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="w-full justify-start overflow-x-auto">
           <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="upload">Upload</TabsTrigger>
