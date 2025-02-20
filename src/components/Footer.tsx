@@ -1,9 +1,11 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Facebook, Instagram, Linkedin, Send, Twitter, HelpCircle } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Footer = () => {
   const [email, setEmail] = useState("");
@@ -16,32 +18,44 @@ export const Footer = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "https://nhmhqhhxlcmhufxxifbn.supabase.co/functions/v1/subscribe-email",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
+      // First, check if email already exists in newsletter_subscribers
+      const { data: existingSubscriber } = await supabase
+        .from('newsletter_subscribers')
+        .select('email')
+        .eq('email', email)
+        .single();
 
-      if (!response.ok) {
-        throw new Error("Failed to subscribe");
+      if (existingSubscriber) {
+        toast({
+          title: "Already subscribed",
+          description: "This email is already subscribed to our newsletter.",
+          variant: "default",
+        });
+        setEmail("");
+        return;
       }
+
+      // Insert new subscriber
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .insert([
+          { email, subscribed_at: new Date().toISOString() }
+        ]);
+
+      if (error) throw error;
 
       toast({
         title: "Subscribed!",
         description: "Thank you for subscribing to our newsletter.",
       });
       setEmail("");
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
         description: "Failed to subscribe. Please try again later.",
       });
+      console.error("Subscription error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -73,6 +87,7 @@ export const Footer = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
               />
               <Button
                 size="icon"
@@ -80,7 +95,7 @@ export const Footer = () => {
                 disabled={isLoading}
                 type="submit"
               >
-                <Send className="h-4 w-4" />
+                <Send className={`h-4 w-4 ${isLoading ? 'animate-pulse' : ''}`} />
               </Button>
             </form>
           </div>
@@ -96,8 +111,8 @@ export const Footer = () => {
               <a href="/pricing" className="block text-muted-foreground hover:text-primary">
                 Pricing
               </a>
-              <Button
-                variant="ghost"
+              <Button 
+                variant="ghost" 
                 className="w-full justify-start p-0 h-auto font-normal text-sm text-muted-foreground hover:text-primary"
                 onClick={scrollToFAQs}
               >
