@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart, HelpCircle, Book, Activity, Bell, Gift } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -176,21 +177,21 @@ export const Dashboard = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold text-primary mb-2">
-            Welcome back, {userProfile?.full_name || session.user.email}
+          <h1 className="text-2xl md:text-3xl font-bold text-primary mb-2">
+            Welcome back, {userProfile?.full_name || session?.user?.email?.split('@')[0] || 'User'}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground">
             Here's what's happening with your documents today.
           </p>
         </div>
-        <div className="flex gap-2 mt-4 md:mt-0">
+        <div className="flex flex-wrap gap-2 md:gap-3 justify-start md:justify-end">
           {quickActions.map((action, index) => (
             <Button
               key={index}
               variant="outline"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-xs md:text-sm w-full sm:w-auto"
               onClick={action.action}
             >
               <action.icon className={`h-4 w-4 ${action.color}`} />
