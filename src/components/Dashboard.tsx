@@ -1,22 +1,22 @@
 import { Card } from "@/components/ui/card";
-import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart, HelpCircle, Book, Activity, Bell } from "lucide-react";
+import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart, HelpCircle, Book, Activity, Bell, Gift } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocumentAnalysis } from "@/components/DocumentAnalysis";
 import { Progress } from "@/components/ui/progress";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { DocumentGallery } from "@/components/DocumentGallery";
 import { UpgradeBanner } from "@/components/ui/upgrade-banner";
 import { useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<any>(null);
   const [showUpgradeBanner, setShowUpgradeBanner] = useState(true);
   const [showDonationDialog, setShowDonationDialog] = useState(false);
-  const [hasShownDonation, setHasShownDonation] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("documents");
   const [analysisStats, setAnalysisStats] = useState({
@@ -59,9 +59,14 @@ export const Dashboard = () => {
       }
 
       const hasAnalysesWithSummary = analyses?.some(analysis => analysis.summary);
-      if (hasAnalysesWithSummary && !hasShownDonation) {
+      const lastDonationPrompt = localStorage.getItem('lastDonationPrompt');
+      const now = new Date().getTime();
+      const showAfterDays = 7; // Show dialog every 7 days if feature is used
+
+      if (hasAnalysesWithSummary && 
+          (!lastDonationPrompt || (now - parseInt(lastDonationPrompt)) > (showAfterDays * 24 * 60 * 60 * 1000))) {
         setShowDonationDialog(true);
-        setHasShownDonation(true);
+        localStorage.setItem('lastDonationPrompt', now.toString());
       }
 
       setAnalysisStats({
@@ -74,7 +79,7 @@ export const Dashboard = () => {
     if (session?.user?.id) {
       fetchAnalysisStats();
     }
-  }, [session?.user?.id, hasShownDonation]);
+  }, [session?.user?.id]);
 
   const quickActions = [
     {
@@ -130,21 +135,44 @@ export const Dashboard = () => {
       <Dialog open={showDonationDialog} onOpenChange={setShowDonationDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Heart className="h-5 w-5 text-accent animate-pulse" />
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Heart className="h-6 w-6 text-red-500 animate-pulse" />
               Support LegalBriefAI
             </DialogTitle>
-            <DialogDescription>
-              We need <a 
-                href="https://www.figma.com/proto/eWAJORd1BV6OLT8V8a7CeE/LegalBriefAI?node-id=1-2&p=f&t=lxhZSOMTKwa7ZmrQ-1&scaling=scale-down-width&content-scaling=fixed&page-id=0%3A1" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="font-bold text-accent hover:underline"
-              >
-                DONATIONS
-              </a> for Multiple IMPROVEMENTS. IF ANY ONE EVEN DONATE $5/$10 WE WILL GIVE HIM LIFE TIME ACCESS TO OUR FEATURES
+            <Separator className="my-4" />
+            <DialogDescription className="text-base space-y-4">
+              <div className="flex items-start gap-3">
+                <Gift className="h-5 w-5 text-primary mt-1" />
+                <p>
+                  We need Donations for Multiple Improvements and if anyone does we will provide him Pro Plan Features for 1-2 months.
+                </p>
+              </div>
+              <div className="bg-accent/10 p-4 rounded-lg mt-4">
+                <p className="font-medium text-sm text-accent">
+                  Your support helps us continue improving our AI capabilities and adding new features!
+                </p>
+              </div>
             </DialogDescription>
           </DialogHeader>
+          <DialogFooter className="flex gap-3 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setShowDonationDialog(false)}
+            >
+              Maybe Later
+            </Button>
+            <Button
+              variant="default"
+              onClick={() => {
+                window.open("https://www.figma.com/proto/eWAJORd1BV6OLT8V8a7CeE/LegalBriefAI?node-id=1-2&p=f&t=lxhZSOMTKwa7ZmrQ-1&scaling=scale-down-width&content-scaling=fixed&page-id=0%3A1", "_blank");
+                setShowDonationDialog(false);
+              }}
+              className="gap-2"
+            >
+              <Heart className="h-4 w-4" />
+              Support Us
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
