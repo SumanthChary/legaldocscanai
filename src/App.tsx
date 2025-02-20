@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
 import DocumentAnalysis from "./pages/DocumentAnalysis";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:id" element={<BlogPost />} />
               <Route path="/document-analysis" element={<DocumentAnalysis />} />
               <Route
                 path="/dashboard"
