@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/accordion";
 import { TestimonialsSection } from "@/components/blocks/testimonials-with-marquee";
 import { InView } from "@/components/ui/in-view";
+import { DemoVideo } from "@/components/blocks/demo-video";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -154,19 +155,8 @@ const Landing = () => {
               </div>
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-3xl transform rotate-3"></div>
-                <div className="relative bg-white p-8 rounded-3xl shadow-xl">
-                  <div className="space-y-6">
-                    <div className="h-12 bg-gray-100 rounded-lg animate-pulse"></div>
-                    <div className="space-y-3">
-                      <div className="h-4 bg-gray-100 rounded w-3/4 animate-pulse"></div>
-                      <div className="h-4 bg-gray-100 rounded animate-pulse"></div>
-                      <div className="h-4 bg-gray-100 rounded w-5/6 animate-pulse"></div>
-                    </div>
-                    <div className="flex gap-4">
-                      <div className="h-10 bg-accent/20 rounded-lg w-1/3 animate-pulse"></div>
-                      <div className="h-10 bg-gray-100 rounded-lg w-1/3 animate-pulse"></div>
-                    </div>
-                  </div>
+                <div className="relative transform -rotate-3 transition-transform hover:rotate-0 duration-500">
+                  <DemoVideo />
                 </div>
               </div>
             </div>
