@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +13,7 @@ export const HeroSection = ({ benefits }: HeroProps) => {
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-accent/5">
       <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary">
               Transform Legal Documents with AI
@@ -51,7 +50,7 @@ export const HeroSection = ({ benefits }: HeroProps) => {
               </ul>
             </div>
           </div>
-          <div className="relative">
+          <div className="relative lg:scale-110">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-3xl transform rotate-3"></div>
             <div className="relative transform -rotate-3 transition-transform hover:rotate-0 duration-500">
               <DemoVideo />
