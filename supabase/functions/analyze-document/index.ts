@@ -135,7 +135,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         message: 'Document uploaded and analysis started', 
-        id: analysisRecord.id 
+        id: analysisRecord.id,
+        filePath
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
@@ -180,49 +181,65 @@ async function processDocumentWithAI(supabase, fileUrl, filePath, analysisId, ap
     const truncatedContent = textContent.substring(0, 30000);
     
     console.log(`Extracted ${truncatedContent.length} characters from document`);
-    console.log(`Calling Gemini API with API key ${apiKey ? 'is available' : 'is missing'}`);
     
-    // Call Gemini API
-    const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
-    const geminiResponse = await fetch(geminiEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: `Analyze and summarize this document content in 3-5 short paragraphs. Focus on the main points, key arguments, and any important conclusions. Keep your summary concise but comprehensive.
-                
-                Document content:
-                ${truncatedContent}`
-              }
-            ]
+    // Using a placeholder summary while Gemini API integration is fixed
+    // This ensures the flow works end-to-end
+    let summary = "";
+    
+    try {
+      // Call Gemini API
+      console.log(`Calling Gemini API with key: ${apiKey ? apiKey.substring(0, 5) + '...' : 'not available'}`);
+      
+      // Use the correct Gemini API endpoint
+      const geminiEndpoint = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`;
+      
+      const geminiResponse = await fetch(geminiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Analyze and summarize this document content in 3-5 short paragraphs. Focus on the main points, key arguments, and any important conclusions. Keep your summary concise but comprehensive.
+                  
+                  Document content:
+                  ${truncatedContent}`
+                }
+              ]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 800,
           }
-        ],
-        generationConfig: {
-          temperature: 0.2,
-          maxOutputTokens: 800,
-        }
-      })
-    });
-    
-    if (!geminiResponse.ok) {
-      const errorData = await geminiResponse.text();
-      console.error(`Gemini API error (${geminiResponse.status}): ${errorData}`);
-      throw new Error(`Gemini API error: ${geminiResponse.status} - ${errorData}`);
-    }
-    
-    const geminiData = await geminiResponse.json();
-    console.log('Gemini API response:', JSON.stringify(geminiData).substring(0, 200) + '...');
-    
-    let summary = "Could not generate summary.";
-    
-    if (geminiData.candidates && geminiData.candidates.length > 0 && 
-        geminiData.candidates[0].content && geminiData.candidates[0].content.parts) {
-      summary = geminiData.candidates[0].content.parts[0].text;
+        })
+      });
+      
+      if (!geminiResponse.ok) {
+        const errorText = await geminiResponse.text();
+        console.error(`Gemini API error (${geminiResponse.status}): ${errorText}`);
+        throw new Error(`Gemini API error: ${geminiResponse.status} - ${errorText}`);
+      }
+      
+      const geminiData = await geminiResponse.json();
+      console.log('Gemini API response:', JSON.stringify(geminiData).substring(0, 200) + '...');
+      
+      if (geminiData.candidates && geminiData.candidates.length > 0 && 
+          geminiData.candidates[0].content && geminiData.candidates[0].content.parts) {
+        summary = geminiData.candidates[0].content.parts[0].text;
+      } else {
+        throw new Error("Unable to extract summary from Gemini API response");
+      }
+    } catch (apiError) {
+      console.error(`AI API error: ${apiError.message}`);
+      
+      // If Gemini API fails, use a fallback summary approach
+      summary = "Document contains approximately " + truncatedContent.length + 
+               " characters. The document appears to be a " + contentType + 
+               " file. A detailed AI analysis could not be generated at this time.";
     }
     
     console.log(`Generated summary: ${summary.substring(0, 100)}...`);
