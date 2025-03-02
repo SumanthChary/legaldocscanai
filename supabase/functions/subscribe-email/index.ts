@@ -1,61 +1,79 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Create a Supabase client with the Admin key
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Get the email from the request
     const { email } = await req.json();
 
-    const emailResponse = await resend.emails.send({
-      from: "LegalAI <onboarding@resend.dev>",
-      to: ["sumanthchary.business@gmail.com"],
-      subject: "New Newsletter Subscription",
-      html: `
-        <h1>New Newsletter Subscription</h1>
-        <p>A new user has subscribed to the newsletter:</p>
-        <p>Email: ${email}</p>
-      `,
+    if (!email) {
+      return new Response(
+        JSON.stringify({ error: 'Email is required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+
+    // Create the table if it doesn't exist
+    // This would normally be done in a migration, but for simplicity we'll do it here
+    const { error: createTableError } = await supabase.rpc('create_newsletter_subscribers_if_not_exists');
+
+    // Check if email already exists
+    const { data: existingSubscriber, error: queryError } = await supabase.rpc('check_newsletter_subscriber', { email_to_check: email });
+
+    if (queryError) {
+      console.error('Error checking existing subscriber:', queryError);
+      return new Response(
+        JSON.stringify({ error: 'Error checking existing subscriber' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      );
+    }
+
+    if (existingSubscriber && existingSubscriber.exists) {
+      return new Response(
+        JSON.stringify({ message: 'Already subscribed' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      );
+    }
+
+    // Insert the new subscriber
+    const { error: insertError } = await supabase.rpc('insert_newsletter_subscriber', { 
+      subscriber_email: email,
+      subscription_date: new Date().toISOString()
     });
 
-    // Send confirmation to subscriber
-    await resend.emails.send({
-      from: "LegalAI <onboarding@resend.dev>",
-      to: [email],
-      subject: "Welcome to LegalAI Newsletter!",
-      html: `
-        <h1>Thank you for subscribing!</h1>
-        <p>You've successfully subscribed to LegalAI's newsletter. We'll keep you updated with our latest features and updates.</p>
-        <p>Best regards,<br>The LegalAI Team</p>
-      `,
-    });
+    if (insertError) {
+      console.error('Error subscribing:', insertError);
+      return new Response(
+        JSON.stringify({ error: 'Error subscribing to newsletter' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      );
+    }
 
-    return new Response(JSON.stringify(emailResponse), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
-    });
-  } catch (error: any) {
-    console.error("Error in subscribe-email function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      JSON.stringify({ message: 'Successfully subscribed to newsletter' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+    );
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    return new Response(
+      JSON.stringify({ error: 'An unexpected error occurred' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
-};
-
-serve(handler);
+});

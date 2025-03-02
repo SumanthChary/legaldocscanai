@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Facebook, Instagram, Linkedin, Send, Twitter, HelpCircle } from "lucide-react";
@@ -18,29 +17,10 @@ export const Footer = () => {
     setIsLoading(true);
 
     try {
-      // First, check if email already exists in newsletter_subscribers
-      const { data: existingSubscriber } = await supabase
-        .from('newsletter_subscribers')
-        .select('email')
-        .eq('email', email)
-        .single();
-
-      if (existingSubscriber) {
-        toast({
-          title: "Already subscribed",
-          description: "This email is already subscribed to our newsletter.",
-          variant: "default",
-        });
-        setEmail("");
-        return;
-      }
-
-      // Insert new subscriber
-      const { error } = await supabase
-        .from('newsletter_subscribers')
-        .insert([
-          { email, subscribed_at: new Date().toISOString() }
-        ]);
+      // Call the subscribe-email edge function instead of directly querying the database
+      const { error } = await supabase.functions.invoke('subscribe-email', {
+        body: { email }
+      });
 
       if (error) throw error;
 

@@ -15,23 +15,39 @@ export const DocumentAnalysis = () => {
 
   useEffect(() => {
     fetchAnalyses();
-    subscribeToAnalyses();
+    const channel = subscribeToAnalyses();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchAnalyses = async () => {
-    const { data, error } = await supabase
-      .from('document_analyses')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        // User not logged in, don't attempt to fetch analyses
+        return;
+      }
 
-    if (error) {
-      toast({
-        title: "Error fetching analyses",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
-      setAnalyses(data || []);
+      const { data, error } = await supabase
+        .from('document_analyses')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        toast({
+          title: "Error fetching analyses",
+          description: error.message,
+          variant: "destructive",
+        });
+        console.error("Error fetching analyses:", error);
+      } else {
+        setAnalyses(data || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch analyses:", err);
     }
   };
 
@@ -46,19 +62,22 @@ export const DocumentAnalysis = () => {
           table: 'document_analyses'
         },
         (payload) => {
+          console.log("Received real-time update:", payload);
           fetchAnalyses();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return channel;
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      console.log("Selected file:", selectedFile.name, selectedFile.type, selectedFile.size);
+      setFile(selectedFile);
     }
   };
 
@@ -82,6 +101,7 @@ export const DocumentAnalysis = () => {
         return;
       }
 
+      console.log("Uploading file:", file.name);
       const response = await supabase.functions.invoke('analyze-document', {
         body: formData,
         headers: {
@@ -89,17 +109,27 @@ export const DocumentAnalysis = () => {
         },
       });
 
-      if (response.error) throw response.error;
+      console.log("Upload response:", response);
+
+      if (response.error) {
+        console.error("Upload error:", response.error);
+        throw new Error(response.error.message || "Upload failed");
+      }
 
       toast({
         title: "Document uploaded successfully",
         description: "AI analysis has started...",
       });
       setFile(null);
+      
+      // Reset the file input
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
     } catch (error: any) {
+      console.error("Upload error:", error);
       toast({
         title: "Upload failed",
-        description: error.message,
+        description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
     } finally {
@@ -124,7 +154,7 @@ export const DocumentAnalysis = () => {
     <div className="space-y-6">
       <Card className="p-6">
         <h2 className="text-2xl font-semibold mb-4">Upload Document</h2>
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <Input
             type="file"
             onChange={handleFileChange}
@@ -149,6 +179,11 @@ export const DocumentAnalysis = () => {
             )}
           </Button>
         </div>
+        {file && (
+          <p className="mt-2 text-sm text-gray-500">
+            Selected file: {file.name} ({(file.size / 1024).toFixed(1)} KB)
+          </p>
+        )}
       </Card>
 
       <Card className="p-6">
