@@ -17,23 +17,15 @@ port = 54324
 
 [auth]
 enabled = true
-port = 54325
 
 [storage]
 enabled = true
-port = 54326
 
 [realtime]
 enabled = true
-port = 54327
 
 [analytics]
 enabled = false
-port = 54328
-
-[vector]
-enabled = false
-port = 54329
 
 [functions]
 [functions.analyze-document]
