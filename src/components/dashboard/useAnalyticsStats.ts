@@ -14,38 +14,50 @@ export const useAnalyticsStats = (userId: string | undefined) => {
     averageScore: 0,
     improvementRate: 0,
   });
+  const [isLoading, setIsLoading] = useState(true);
   const [showDonationDialog, setShowDonationDialog] = useState(false);
 
   useEffect(() => {
     const fetchAnalysisStats = async () => {
-      if (!userId) return;
-
-      const { data: analyses, error } = await supabase
-        .from('document_analyses')
-        .select('*')
-        .eq('user_id', userId);
-      
-      if (error) {
-        console.error('Error fetching analyses:', error);
+      if (!userId) {
+        setIsLoading(false);
         return;
       }
 
-      const hasAnalysesWithSummary = analyses?.some(analysis => analysis.summary);
-      const lastDonationPrompt = localStorage.getItem('lastDonationPrompt');
-      const now = new Date().getTime();
-      const showAfterDays = 7; // Show dialog every 7 days if feature is used
+      setIsLoading(true);
+      
+      try {
+        const { data: analyses, error } = await supabase
+          .from('document_analyses')
+          .select('*')
+          .eq('user_id', userId);
+        
+        if (error) {
+          console.error('Error fetching analyses:', error);
+          return;
+        }
 
-      if (hasAnalysesWithSummary && 
-          (!lastDonationPrompt || (now - parseInt(lastDonationPrompt)) > (showAfterDays * 24 * 60 * 60 * 1000))) {
-        setShowDonationDialog(true);
-        localStorage.setItem('lastDonationPrompt', now.toString());
+        const hasAnalysesWithSummary = analyses?.some(analysis => analysis.summary);
+        const lastDonationPrompt = localStorage.getItem('lastDonationPrompt');
+        const now = new Date().getTime();
+        const showAfterDays = 7; // Show dialog every 7 days if feature is used
+
+        if (hasAnalysesWithSummary && 
+            (!lastDonationPrompt || (now - parseInt(lastDonationPrompt)) > (showAfterDays * 24 * 60 * 60 * 1000))) {
+          setShowDonationDialog(true);
+          localStorage.setItem('lastDonationPrompt', now.toString());
+        }
+
+        setAnalysisStats({
+          totalDocuments: analyses?.length || 0,
+          averageScore: 85,
+          improvementRate: 24,
+        });
+      } catch (error) {
+        console.error('Unexpected error fetching stats:', error);
+      } finally {
+        setIsLoading(false);
       }
-
-      setAnalysisStats({
-        totalDocuments: analyses?.length || 0,
-        averageScore: 85,
-        improvementRate: 24,
-      });
     };
 
     if (userId) {
@@ -53,5 +65,5 @@ export const useAnalyticsStats = (userId: string | undefined) => {
     }
   }, [userId]);
 
-  return { analysisStats, showDonationDialog, setShowDonationDialog };
+  return { analysisStats, isLoading, showDonationDialog, setShowDonationDialog };
 };
