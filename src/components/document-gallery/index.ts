@@ -1,0 +1,2 @@
+
+export { DocumentGallery } from './DocumentGallery';
