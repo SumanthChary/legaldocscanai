@@ -33,3 +33,4 @@ verify_jwt = true
 
 [functions.subscribe-email]
 verify_jwt = false
+

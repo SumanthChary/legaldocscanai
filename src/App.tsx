@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
 import DocumentAnalysis from "./pages/DocumentAnalysis";
+import DocumentSummary from "./pages/DocumentSummary";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 
@@ -62,6 +63,9 @@ const App = () => {
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogPost />} />
               <Route path="/document-analysis" element={<DocumentAnalysis />} />
+              <Route path="/document/:id/summary" element={
+                session ? <DocumentSummary /> : <Navigate to="/auth" />
+              } />
               <Route
                 path="/dashboard"
                 element={session ? <Index /> : <Navigate to="/auth" />}

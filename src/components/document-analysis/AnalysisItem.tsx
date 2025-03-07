@@ -1,7 +1,9 @@
 
 import { Card } from "@/components/ui/card";
-import { FileText, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FileText, Loader2, ExternalLink } from "lucide-react";
 import { StatusIcon } from "./StatusIcon";
+import { useNavigate } from "react-router-dom";
 
 type AnalysisItemProps = {
   analysis: {
@@ -14,6 +16,12 @@ type AnalysisItemProps = {
 };
 
 export const AnalysisItem = ({ analysis }: AnalysisItemProps) => {
+  const navigate = useNavigate();
+  
+  const viewSummary = () => {
+    navigate(`/document/${analysis.id}/summary`);
+  };
+
   return (
     <Card className="p-4">
       <div className="flex items-start justify-between">
@@ -35,9 +43,26 @@ export const AnalysisItem = ({ analysis }: AnalysisItemProps) => {
                   Analysis failed. Please try uploading again.
                 </div>
               ) : (
-                <div className="text-sm text-gray-700 bg-gray-50 p-3 rounded-md">
-                  <p className="font-medium text-primary mb-1">AI Summary:</p>
-                  {analysis.summary}
+                <div>
+                  <div className="text-sm text-gray-700 bg-gray-50 p-3 rounded-md mb-2">
+                    <p className="font-medium text-primary mb-1">AI Summary:</p>
+                    {analysis.summary ? (
+                      <p className="line-clamp-3">{analysis.summary}</p>
+                    ) : (
+                      <p className="text-gray-500">No summary available</p>
+                    )}
+                  </div>
+                  {analysis.summary && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-xs" 
+                      onClick={viewSummary}
+                    >
+                      <ExternalLink className="h-3 w-3 mr-1" />
+                      View Full Summary
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
