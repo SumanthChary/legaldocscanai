@@ -123,34 +123,20 @@ serve(async (req) => {
     // Start the analysis in the background
     const analyzeDocument = async () => {
       try {
-        // Extract text from file - improved version
+        // Extract text from file - optimized version
         let fileText;
         
         try {
           // Read the file content based on type
-          if (fileType === 'application/pdf') {
-            // For real implementation, we would use a PDF parser
-            // For now, using a simplified approach
-            fileText = await file.text();
-            
-            // Handle PDF format specifically - at least try to skip binary data
-            if (fileText.includes('%PDF-')) {
-              fileText = `This is a PDF document titled "${fileName}". For better results, please upload a text file.`;
-            }
-          } else if (fileType.includes('word')) {
-            // For real implementation, we would use a docx parser
-            fileText = `This is a Word document titled "${fileName}". For better results, please upload a text file.`;
-          } else {
-            // For text files, directly read the content
-            fileText = await file.text();
-          }
-
+          fileText = await file.text();
+          
+          // Simplified text processing - faster
           if (!fileText || fileText.length === 0) {
             throw new Error('Could not extract text from file');
           }
 
           // Limit text length to prevent API issues and be more efficient
-          const maxLength = 10000; // Reduced from 30000
+          const maxLength = 8000; // Reduced from 10000 for even faster processing
           if (fileText.length > maxLength) {
             console.log(`Truncating text from ${fileText.length} to ${maxLength} characters`);
             fileText = fileText.substring(0, maxLength) + "...";
@@ -158,7 +144,6 @@ serve(async (req) => {
           
           console.log(`Extracted ${fileText.length} characters of text`);
           
-          // Use directly Gemini API for speed - no fallback logic to slow things down
           if (!GEMINI_API_KEY) {
             throw new Error("Gemini API key not configured");
           }
@@ -223,7 +208,7 @@ serve(async (req) => {
   }
 });
 
-// Optimized Gemini analysis function
+// Even more optimized Gemini analysis function
 async function analyzeWithGemini(text: string): Promise<string> {
   if (!GEMINI_API_KEY) {
     throw new Error("Gemini API key not configured");
@@ -240,14 +225,14 @@ async function analyzeWithGemini(text: string): Promise<string> {
     body: JSON.stringify({
       contents: [{
         parts: [{
-          text: `Provide a brief summary of this document in 3-5 sentences:
+          text: `Summarize this in 2-3 sentences:
           
           ${text}`
         }]
       }],
       generationConfig: {
-        temperature: 0.1, // Lower temperature for more focused responses
-        maxOutputTokens: 512, // Reduced token count for faster responses
+        temperature: 0.0, // Set to 0 for most deterministic response
+        maxOutputTokens: 256, // Reduced token count for faster responses
       }
     })
   });

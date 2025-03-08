@@ -26,9 +26,10 @@ type AnalysisItemProps = {
     analysis_status: string;
     summary?: string;
   };
+  onDeleted?: () => void;
 };
 
-export const AnalysisItem = ({ analysis }: AnalysisItemProps) => {
+export const AnalysisItem = ({ analysis, onDeleted }: AnalysisItemProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -55,6 +56,11 @@ export const AnalysisItem = ({ analysis }: AnalysisItemProps) => {
         title: "Document deleted",
         description: "The document has been successfully removed",
       });
+      
+      // Call the onDeleted callback to refresh the list
+      if (onDeleted) {
+        onDeleted();
+      }
     } catch (error) {
       console.error("Error deleting document:", error);
       toast({
