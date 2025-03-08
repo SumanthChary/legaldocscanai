@@ -1,9 +1,22 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Loader2, ExternalLink } from "lucide-react";
+import { FileText, Loader2, ExternalLink, Trash2 } from "lucide-react";
 import { StatusIcon } from "./StatusIcon";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type AnalysisItemProps = {
   analysis: {
@@ -17,9 +30,42 @@ type AnalysisItemProps = {
 
 export const AnalysisItem = ({ analysis }: AnalysisItemProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const viewSummary = () => {
     navigate(`/document/${analysis.id}/summary`);
+  };
+
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true);
+      
+      const { error } = await supabase
+        .from('document_analyses')
+        .delete()
+        .eq('id', analysis.id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast({
+        title: "Document deleted",
+        description: "The document has been successfully removed",
+      });
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      toast({
+        title: "Error deleting document",
+        description: error.message || "Failed to delete document",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
   return (
@@ -68,10 +114,49 @@ export const AnalysisItem = ({ analysis }: AnalysisItemProps) => {
             </div>
           </div>
         </div>
-        <div className="flex items-center ml-4">
+        <div className="flex flex-col items-end space-y-2">
           <StatusIcon status={analysis.analysis_status} />
+          
+          {analysis.analysis_status !== 'pending' && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-gray-500 hover:text-red-500 hover:bg-red-50"
+              onClick={() => setShowDeleteConfirm(true)}
+              disabled={isDeleting}
+            >
+              <Trash2 className="h-4 w-4" />
+              <span className="sr-only">Delete document</span>
+            </Button>
+          )}
         </div>
       </div>
+
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Document</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this document? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };
