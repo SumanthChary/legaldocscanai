@@ -8,7 +8,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+const GEMINI_API_KEY = "AIzaSyBinsVgP06EqfLE-jd0hn2FLMCcUa7Wt1g";
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -144,10 +144,6 @@ serve(async (req) => {
           
           console.log(`Extracted ${fileText.length} characters of text`);
           
-          if (!GEMINI_API_KEY) {
-            throw new Error("Gemini API key not configured");
-          }
-          
           // Optimize the prompt for faster, more concise responses
           const summary = await analyzeWithGemini(fileText);
           
@@ -210,10 +206,6 @@ serve(async (req) => {
 
 // Even more optimized Gemini analysis function
 async function analyzeWithGemini(text: string): Promise<string> {
-  if (!GEMINI_API_KEY) {
-    throw new Error("Gemini API key not configured");
-  }
-
   console.log("Analyzing with Gemini...");
   
   const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent", {
