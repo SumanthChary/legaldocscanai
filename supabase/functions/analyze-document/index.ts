@@ -8,7 +8,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -104,7 +103,7 @@ serve(async (req) => {
       .from('document_analyses')
       .insert({
         user_id: user.id,
-        document_path: fileName, // Temporary path, would be updated with actual storage path
+        document_path: fileName, 
         original_name: fileName,
         analysis_status: 'pending'
       })
@@ -124,17 +123,23 @@ serve(async (req) => {
     // Start the analysis in the background
     const analyzeDocument = async () => {
       try {
+        // Extract text from file - improved version
         let fileText;
         
         try {
           // Read the file content based on type
           if (fileType === 'application/pdf') {
-            // For PDF, we would need a PDF parser
-            // This is simplified - in a real implementation use a PDF parsing library
-            fileText = `Extracted content from PDF: ${fileName}`;
+            // For real implementation, we would use a PDF parser
+            // For now, using a simplified approach
+            fileText = await file.text();
+            
+            // Handle PDF format specifically - at least try to skip binary data
+            if (fileText.includes('%PDF-')) {
+              fileText = `This is a PDF document titled "${fileName}". For better results, please upload a text file.`;
+            }
           } else if (fileType.includes('word')) {
-            // For Word documents, similar approach
-            fileText = `Extracted content from Word document: ${fileName}`;
+            // For real implementation, we would use a docx parser
+            fileText = `This is a Word document titled "${fileName}". For better results, please upload a text file.`;
           } else {
             // For text files, directly read the content
             fileText = await file.text();
@@ -144,8 +149,8 @@ serve(async (req) => {
             throw new Error('Could not extract text from file');
           }
 
-          // Limit text length to prevent API issues
-          const maxLength = 30000;
+          // Limit text length to prevent API issues and be more efficient
+          const maxLength = 10000; // Reduced from 30000
           if (fileText.length > maxLength) {
             console.log(`Truncating text from ${fileText.length} to ${maxLength} characters`);
             fileText = fileText.substring(0, maxLength) + "...";
@@ -153,21 +158,14 @@ serve(async (req) => {
           
           console.log(`Extracted ${fileText.length} characters of text`);
           
-          // Try using Gemini API first
-          let summary = null;
-          try {
-            summary = await analyzeWithGemini(fileText);
-          } catch (geminiError) {
-            console.error("Gemini API error:", geminiError);
-            // Fall back to OpenAI
-            if (OPENAI_API_KEY) {
-              console.log("Falling back to OpenAI...");
-              summary = await analyzeWithOpenAI(fileText);
-            } else {
-              throw new Error("All analysis methods failed");
-            }
+          // Use directly Gemini API for speed - no fallback logic to slow things down
+          if (!GEMINI_API_KEY) {
+            throw new Error("Gemini API key not configured");
           }
-
+          
+          // Optimize the prompt for faster, more concise responses
+          const summary = await analyzeWithGemini(fileText);
+          
           if (!summary) {
             throw new Error("Analysis did not produce a summary");
           }
@@ -194,7 +192,8 @@ serve(async (req) => {
           await adminClient
             .from('document_analyses')
             .update({
-              analysis_status: 'failed'
+              analysis_status: 'failed',
+              summary: `Analysis failed: ${error.message}`
             })
             .eq('id', document.id);
         }
@@ -203,7 +202,7 @@ serve(async (req) => {
       }
     };
 
-    // Start analysis in the background
+    // Start analysis in the background - this will not block the response
     EdgeRuntime.waitUntil(analyzeDocument());
 
     // Return immediate success response
@@ -224,6 +223,7 @@ serve(async (req) => {
   }
 });
 
+// Optimized Gemini analysis function
 async function analyzeWithGemini(text: string): Promise<string> {
   if (!GEMINI_API_KEY) {
     throw new Error("Gemini API key not configured");
@@ -240,16 +240,14 @@ async function analyzeWithGemini(text: string): Promise<string> {
     body: JSON.stringify({
       contents: [{
         parts: [{
-          text: `Please analyze this document and provide a comprehensive summary:
+          text: `Provide a brief summary of this document in 3-5 sentences:
           
-          ${text}
-          
-          Focus on key points, main arguments, and important details. Format your response in clear paragraphs.`
+          ${text}`
         }]
       }],
       generationConfig: {
-        temperature: 0.2,
-        maxOutputTokens: 1024,
+        temperature: 0.1, // Lower temperature for more focused responses
+        maxOutputTokens: 512, // Reduced token count for faster responses
       }
     })
   });
@@ -262,7 +260,7 @@ async function analyzeWithGemini(text: string): Promise<string> {
 
   const result = await response.json();
   
-  // Correctly extract the content from Gemini response
+  // Extract the content from Gemini response
   if (
     result.candidates && 
     result.candidates[0]?.content?.parts && 
@@ -273,48 +271,4 @@ async function analyzeWithGemini(text: string): Promise<string> {
     console.error("Unexpected Gemini response format:", JSON.stringify(result));
     throw new Error("Invalid response format from Gemini API");
   }
-}
-
-async function analyzeWithOpenAI(text: string): Promise<string> {
-  if (!OPENAI_API_KEY) {
-    throw new Error("OpenAI API key not configured");
-  }
-
-  console.log("Analyzing with OpenAI...");
-  
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are a document analysis assistant that provides comprehensive summaries of documents."
-        },
-        {
-          role: "user",
-          content: `Please analyze this document and provide a comprehensive summary:
-          
-          ${text}
-          
-          Focus on key points, main arguments, and important details. Format your response in clear paragraphs.`
-        }
-      ],
-      temperature: 0.2,
-      max_tokens: 1000
-    })
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("OpenAI API error response:", errorText);
-    throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
-  }
-
-  const result = await response.json();
-  return result.choices[0].message.content;
 }
