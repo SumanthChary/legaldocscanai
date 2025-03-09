@@ -1,18 +1,29 @@
 
 const GEMINI_API_KEY = "AIzaSyBinsVgP06EqfLE-jd0hn2FLMCcUa7Wt1g";
 
-// Improved Gemini analysis function with better error handling and fallback
+// Improved Gemini analysis function with better error handling and fallback strategies
 export async function analyzeWithGemini(text: string): Promise<string> {
   console.log("Analyzing with Gemini... Text length:", text.length);
   
+  // Check if the text is empty or contains only whitespace
+  if (!text || text.trim().length === 0) {
+    return "The document appears to be empty or contains only formatting. Please check the document and try again.";
+  }
+  
+  // Clean the text to remove problematic characters
+  const cleanedText = text
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+    .replace(/\s+/g, ' '); // Normalize whitespace
+  
   // Ensure text doesn't exceed maximum allowed length
-  const maxLength = 4000; // Significantly reduced for more reliable processing
-  const truncatedText = text.length > maxLength 
-    ? text.substring(0, maxLength) + "..." 
-    : text;
+  const maxLength = 4000; 
+  const truncatedText = cleanedText.length > maxLength 
+    ? cleanedText.substring(0, maxLength) + "..." 
+    : cleanedText;
   
   try {
     // First attempt with standard settings
+    console.log("Attempting first Gemini API call with standard settings");
     const summary = await callGeminiAPI(truncatedText);
     return summary;
   } catch (error) {
@@ -21,20 +32,35 @@ export async function analyzeWithGemini(text: string): Promise<string> {
     // Fallback with even shorter text and simpler prompt
     try {
       const shorterText = truncatedText.substring(0, 2000);
-      console.log("Retrying with shorter text (2000 chars)");
+      console.log("Retrying with shorter text (2000 chars) and simpler prompt");
       
-      const fallbackSummary = await callGeminiAPI(shorterText, "Summarize this briefly:", 0.1);
+      const fallbackSummary = await callGeminiAPI(shorterText, "Summarize this document briefly:", 0.1);
       return fallbackSummary;
     } catch (secondError) {
       console.error("Second Gemini API attempt failed:", secondError);
       
-      // Last resort fallback if all API calls fail
-      return "The document was processed, but we were unable to generate a summary. The content may be too complex or in an unsupported format.";
+      // Try with minimal settings as last resort
+      try {
+        const minimalText = truncatedText.substring(0, 1000);
+        console.log("Final attempt with minimal text (1000 chars)");
+        
+        const minimalSummary = await callGeminiAPI(minimalText, "What is this document about?", 0);
+        return minimalSummary;
+      } catch (finalError) {
+        console.error("All Gemini API attempts failed:", finalError);
+        
+        // Extract some content directly to provide at least some information
+        const extractedContent = truncatedText.substring(0, 300);
+        
+        return `We encountered challenges processing this document fully, but here's what we found:\n\n${extractedContent}...\n\n(Note: This is a partial extraction as the AI processing encountered difficulties with the full document.)`;
+      }
     }
   }
 }
 
-async function callGeminiAPI(text: string, promptPrefix = "Summarize this in 2-3 sentences:", temperature = 0.0): Promise<string> {
+async function callGeminiAPI(text: string, promptPrefix = "Summarize this document in detail:", temperature = 0.0): Promise<string> {
+  console.log(`Calling Gemini API with text length: ${text.length}, promptPrefix: "${promptPrefix}", temperature: ${temperature}`);
+  
   const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent", {
     method: 'POST',
     headers: {
