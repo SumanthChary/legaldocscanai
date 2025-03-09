@@ -1,5 +1,5 @@
 
-const GEMINI_API_KEY = "AIzaSyBinsVgP06EqfLE-jd0hn2FLMCcUa7Wt1g";
+const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") || "";
 
 // Improved Gemini analysis function with better error handling and fallback strategies
 export async function analyzeWithGemini(text: string): Promise<string> {
@@ -61,7 +61,7 @@ export async function analyzeWithGemini(text: string): Promise<string> {
 async function callGeminiAPI(text: string, promptPrefix = "Summarize this document in detail:", temperature = 0.0): Promise<string> {
   console.log(`Calling Gemini API with text length: ${text.length}, promptPrefix: "${promptPrefix}", temperature: ${temperature}`);
   
-  const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent", {
+  const response = await fetch("https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

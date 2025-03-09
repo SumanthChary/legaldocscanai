@@ -62,12 +62,13 @@ export const SummaryContent = ({ analysisStatus, summary }: SummaryContentProps)
           
           {isFallbackMessage && (
             <div className="mt-4 pt-4 border-t border-yellow-200 text-sm">
-              <p className="font-medium text-yellow-700">Suggestions:</p>
+              <p className="font-medium text-yellow-700">Suggestions for better results:</p>
               <ul className="list-disc pl-5 mt-2 space-y-1 text-yellow-700">
-                <li>Try uploading a different file format (plain text works best)</li>
-                <li>Convert PDFs to text before uploading</li>
-                <li>For Word documents, save as .txt first</li>
-                <li>If the document is large, try with a smaller section</li>
+                <li>For <strong>PDFs</strong>: Use an OCR tool if it contains scanned text, then save as .txt</li>
+                <li>For <strong>Word documents</strong>: Save as .txt or copy/paste text into a plain text file</li>
+                <li>Remove any images, tables, or special formatting before uploading</li>
+                <li>If the document is large, try with a smaller section (1-3 pages)</li>
+                <li>For complex documents, break them into smaller logical sections</li>
               </ul>
             </div>
           )}

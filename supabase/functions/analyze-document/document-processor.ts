@@ -40,17 +40,40 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
   try {
     console.log(`Starting analysis for document ${documentId}, file size: ${file.size} bytes, type: ${file.type}`);
     
-    // Extract text from file - optimized version
+    // Extract text from file with enhanced handling for different formats
     let fileText;
     
     try {
+      // Different strategies based on file type
+      const fileType = file.type.toLowerCase();
+      const fileName = file.name.toLowerCase();
+      
       // Read the file content with timeout handling
       const textPromise = file.text();
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("File reading timed out")), 20000) // Increased timeout
+        setTimeout(() => reject(new Error("File reading timed out")), 25000) // Increased timeout for larger files
       );
       
       fileText = await Promise.race([textPromise, timeoutPromise]);
+      
+      // Post-processing based on file type
+      if (fileName.endsWith('.pdf') || fileType.includes('pdf')) {
+        console.log("Processing PDF file");
+        // Clean up common PDF extraction artifacts
+        fileText = fileText
+          .replace(/\f/g, '\n') // Form feed to newline
+          .replace(/(\r\n|\r|\n){2,}/g, '\n\n') // Normalize multiple line breaks
+          .replace(/[^\x20-\x7E\n\t]/g, ' '); // Remove non-printable characters
+      } 
+      else if (fileName.endsWith('.doc') || fileName.endsWith('.docx') || fileType.includes('word')) {
+        console.log("Processing Word document");
+        // Clean up Word specific artifacts
+        fileText = fileText
+          .replace(/\[IMAGE\]/gi, '') 
+          .replace(/\[TABLE\]/gi, '')
+          .replace(/\[CHART\]/gi, '')
+          .replace(/\s{2,}/g, ' '); // Collapse multiple spaces
+      }
       
       // Basic content checks
       if (!fileText) {
@@ -97,10 +120,19 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
       // More specific fallback summaries based on error types
       let fallbackSummary = null;
       
+      // File type specific error handling
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      
       if (error.message?.includes("timed out")) {
         fallbackSummary = "This document was too large to process completely. Try uploading a smaller section or a plaintext version for better results.";
       } else if (error.message?.includes("binary")) {
-        fallbackSummary = "This appears to be a binary or non-text document format that we couldn't process. Please try converting it to a text format first.";
+        if (fileExt === 'pdf') {
+          fallbackSummary = "This PDF appears to be image-based or encrypted. For best results, try converting it to text first using an OCR tool.";
+        } else if (['doc', 'docx'].includes(fileExt || '')) {
+          fallbackSummary = "This Word document contains elements we couldn't process. Try saving it as a plain text (.txt) file first.";
+        } else {
+          fallbackSummary = "This appears to be a binary or non-text document format that we couldn't process. Please try converting it to a text format first.";
+        }
       } else if (error.message?.includes("insufficient text")) {
         fallbackSummary = "This document doesn't contain enough text content to generate a meaningful summary. Please check that it contains actual text content.";
       } else if (fileText && fileText.length > 0) {
@@ -108,8 +140,14 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
         const previewText = fileText.substring(0, 300).replace(/\s+/g, ' ').trim();
         fallbackSummary = `We encountered difficulties analyzing this document with our AI, but here's a preview of the content:\n\n${previewText}...\n\n(This is a direct excerpt as AI processing was unsuccessful.)`;
       } else {
-        // Generic fallback for unknown errors
-        fallbackSummary = "We were unable to generate a summary for this document. It may be in an unsupported format or contain content that's difficult to analyze.";
+        // File type specific generic fallbacks
+        if (fileExt === 'pdf') {
+          fallbackSummary = "We couldn't extract text from this PDF. It might be scanned, image-based, or encrypted. Try using an OCR tool first or upload a text version.";
+        } else if (['doc', 'docx'].includes(fileExt || '')) {
+          fallbackSummary = "We had trouble processing this Word document. For best results, save it as a plain text (.txt) file before uploading.";
+        } else {
+          fallbackSummary = "We were unable to generate a summary for this document. It may be in an unsupported format or contain content that's difficult to analyze.";
+        }
       }
       
       // Update the document with the fallback summary
