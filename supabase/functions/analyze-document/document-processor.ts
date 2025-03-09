@@ -38,26 +38,26 @@ export async function processDocument(supabaseClient: any, adminClient: any, use
 
 async function analyzeDocument(file: File, documentId: string, adminClient: any) {
   try {
+    console.log(`Starting analysis for document ${documentId}, file size: ${file.size} bytes`);
+    
     // Extract text from file - optimized version
     let fileText;
     
     try {
-      // Read the file content
-      fileText = await file.text();
+      // Read the file content with timeout handling
+      const textPromise = file.text();
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("File reading timed out")), 15000)
+      );
       
-      // Simplified text processing - faster
+      fileText = await Promise.race([textPromise, timeoutPromise]);
+      
+      // Basic validation
       if (!fileText || fileText.length === 0) {
         throw new Error('Could not extract text from file');
       }
 
-      // Limit text length to prevent API issues and be more efficient
-      const maxLength = 8000; // Reduced for faster processing
-      if (fileText.length > maxLength) {
-        console.log(`Truncating text from ${fileText.length} to ${maxLength} characters`);
-        fileText = fileText.substring(0, maxLength) + "...";
-      }
-      
-      console.log(`Extracted ${fileText.length} characters of text`);
+      console.log(`Successfully extracted ${fileText.length} characters of text`);
       
       // Get the summary from Gemini API
       const summary = await analyzeWithGemini(fileText);
@@ -80,20 +80,54 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
         throw new Error("Failed to save analysis results");
       }
       
-      console.log("Document analysis completed successfully");
+      console.log("Document analysis completed successfully for document:", documentId);
     } catch (error) {
-      console.error("Analysis error:", error);
+      console.error(`Analysis error for document ${documentId}:`, error);
       
-      // Update the document status to failed
+      // Generate a fallback summary for common errors
+      let fallbackSummary = null;
+      if (error.message?.includes("timed out") || 
+          error.message?.includes("Could not extract text")) {
+        fallbackSummary = "We were unable to fully process this document due to its format or size. " +
+                         "Please try uploading a smaller or plaintext version for better results.";
+      }
+      
+      // Update the document status based on whether we have a fallback
+      if (fallbackSummary) {
+        await adminClient
+          .from('document_analyses')
+          .update({
+            analysis_status: 'completed', // Mark as completed even with fallback
+            summary: fallbackSummary
+          })
+          .eq('id', documentId);
+        
+        console.log("Used fallback summary for document:", documentId);
+      } else {
+        // Only mark as failed if we don't have a fallback
+        await adminClient
+          .from('document_analyses')
+          .update({
+            analysis_status: 'failed',
+            summary: `Analysis failed: ${error.message}`
+          })
+          .eq('id', documentId);
+      }
+    }
+  } catch (backgroundError) {
+    console.error("Background task error:", backgroundError);
+    
+    // Final failsafe - ensure document doesn't remain in pending state indefinitely
+    try {
       await adminClient
         .from('document_analyses')
         .update({
           analysis_status: 'failed',
-          summary: `Analysis failed: ${error.message}`
+          summary: 'Analysis failed due to an internal error. Please try again.'
         })
         .eq('id', documentId);
+    } catch (e) {
+      console.error("Failed to update document status after error:", e);
     }
-  } catch (backgroundError) {
-    console.error("Background task error:", backgroundError);
   }
 }
