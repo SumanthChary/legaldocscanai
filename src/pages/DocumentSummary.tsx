@@ -47,6 +47,7 @@ const DocumentSummary = () => {
   }, [id]);
 
   const fetchAnalysis = async () => {
+    setRefreshing(true);
     try {
       const { data, error } = await supabase
         .from('document_analyses')
@@ -74,7 +75,6 @@ const DocumentSummary = () => {
   };
 
   const refreshAnalysis = () => {
-    setRefreshing(true);
     fetchAnalysis();
   };
 

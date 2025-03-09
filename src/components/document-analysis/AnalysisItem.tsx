@@ -74,6 +74,9 @@ export const AnalysisItem = ({ analysis, onDeleted }: AnalysisItemProps) => {
     }
   };
 
+  // Determine if we should show summary based on status
+  const canShowSummary = analysis.analysis_status === 'completed' && analysis.summary;
+
   return (
     <Card className="p-4">
       <div className="flex items-start justify-between">
@@ -104,7 +107,7 @@ export const AnalysisItem = ({ analysis, onDeleted }: AnalysisItemProps) => {
                       <p className="text-gray-500">No summary available</p>
                     )}
                   </div>
-                  {analysis.summary && (
+                  {canShowSummary && (
                     <Button 
                       variant="outline" 
                       size="sm" 

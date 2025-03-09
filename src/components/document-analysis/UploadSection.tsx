@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -65,7 +64,6 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
     setUploadError(null);
     
     try {
-      // Get the session
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
@@ -79,14 +77,12 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
 
       console.log("Uploading file:", file.name);
       
-      // Read the file and create chunks if needed
       const formData = new FormData();
       formData.append('file', file);
       formData.append('filename', file.name);
       formData.append('fileType', file.type);
       formData.append('fileSize', file.size.toString());
       
-      // Simulate progress for better UX
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           const newProgress = prev + Math.random() * 10;
@@ -118,7 +114,6 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
         description: "AI analysis has started...",
       });
       
-      // Call onSuccess callback if provided
       if (onSuccess) {
         onSuccess();
       }
@@ -158,7 +153,6 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
       
       setFile(droppedFile);
       
-      // Update the file input for consistency
       if (fileInputRef.current) {
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(droppedFile);
