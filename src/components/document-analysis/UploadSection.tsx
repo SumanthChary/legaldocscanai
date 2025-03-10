@@ -1,189 +1,32 @@
 
-import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Upload, Loader2, File, AlertCircle, X, FileText, FileWord, FileType } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { Progress } from "@/components/ui/progress";
+import { FileUploadArea } from "./upload/FileUploadArea";
+import { FilePreview } from "./upload/FilePreview";
+import { UploadError } from "./upload/UploadError";
+import { UploadProgress } from "./upload/UploadProgress";
+import { UploadButton } from "./upload/UploadButton";
+import { UploadTips } from "./upload/UploadTips";
+import { useFileUpload } from "./upload/useFileUpload";
 
 type UploadSectionProps = {
   onSuccess?: () => void;
 };
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-const ALLOWED_FILE_TYPES = ['.pdf', '.doc', '.docx', '.txt'];
-
 export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
-  const [file, setFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
-
-  const isValidFileType = (fileName: string) => {
-    const extension = fileName.slice(((fileName.lastIndexOf(".") - 1) >>> 0) + 1).toLowerCase();
-    return ALLOWED_FILE_TYPES.some(type => type.includes(extension));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUploadError(null);
-    
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      console.log("Selected file:", selectedFile.name, selectedFile.type, selectedFile.size);
-      
-      if (selectedFile.size > MAX_FILE_SIZE) {
-        setUploadError(`File size exceeds limit (${(MAX_FILE_SIZE / 1024 / 1024).toFixed(0)}MB)`);
-        if (fileInputRef.current) fileInputRef.current.value = '';
-        return;
-      }
-      
-      if (!isValidFileType(selectedFile.name)) {
-        setUploadError(`Invalid file type. Supported types: ${ALLOWED_FILE_TYPES.join(', ')}`);
-        if (fileInputRef.current) fileInputRef.current.value = '';
-        return;
-      }
-      
-      setFile(selectedFile);
-    }
-  };
-
-  const clearFile = () => {
-    setFile(null);
-    setUploadError(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  const handleUpload = async () => {
-    if (!file) return;
-
-    setIsUploading(true);
-    setUploadProgress(0);
-    setUploadError(null);
-    
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        toast({
-          title: "Authentication required",
-          description: "Please sign in to upload documents",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log("Uploading file:", file.name);
-      
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('filename', file.name);
-      formData.append('fileType', file.type);
-      formData.append('fileSize', file.size.toString());
-      
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          const newProgress = prev + Math.random() * 10;
-          return newProgress > 90 ? 90 : newProgress;
-        });
-      }, 500);
-
-      const response = await supabase.functions.invoke('analyze-document', {
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      clearInterval(progressInterval);
-      console.log("Upload response:", response);
-
-      if (response.error) {
-        console.error("Upload error:", response.error);
-        setUploadError(response.error.message || "Upload failed");
-        setUploadProgress(0);
-        throw new Error(response.error.message || "Upload failed");
-      }
-
-      setUploadProgress(100);
-      
-      toast({
-        title: "Document uploaded successfully",
-        description: "AI analysis has started...",
-      });
-      
-      if (onSuccess) {
-        onSuccess();
-      }
-      
-      clearFile();
-    } catch (error: any) {
-      console.error("Upload error:", error);
-      setUploadError(error.message || "An unexpected error occurred");
-      toast({
-        title: "Upload failed",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    setUploadError(null);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const droppedFile = e.dataTransfer.files[0];
-      
-      if (droppedFile.size > MAX_FILE_SIZE) {
-        setUploadError(`File size exceeds limit (${(MAX_FILE_SIZE / 1024 / 1024).toFixed(0)}MB)`);
-        return;
-      }
-      
-      if (!isValidFileType(droppedFile.name)) {
-        setUploadError(`Invalid file type. Supported types: ${ALLOWED_FILE_TYPES.join(', ')}`);
-        return;
-      }
-      
-      setFile(droppedFile);
-      
-      if (fileInputRef.current) {
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(droppedFile);
-        fileInputRef.current.files = dataTransfer.files;
-      }
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const getFileIcon = () => {
-    if (!file) return <Upload className="h-12 w-12 text-gray-400 mb-2" />;
-    
-    const extension = file.name.split('.').pop()?.toLowerCase();
-    
-    switch (extension) {
-      case 'pdf':
-        return <FileText className="h-8 w-8 text-red-500" />;
-      case 'doc':
-      case 'docx':
-        return <FileWord className="h-8 w-8 text-blue-500" />;
-      case 'txt':
-        return <FileType className="h-8 w-8 text-gray-500" />;
-      default:
-        return <File className="h-8 w-8 text-primary" />;
-    }
-  };
+  const {
+    file,
+    isUploading,
+    uploadProgress,
+    uploadError,
+    fileInputRef,
+    handleFileChange,
+    clearFile,
+    handleUpload,
+    handleDrop,
+    handleDragOver,
+    MAX_FILE_SIZE,
+    ALLOWED_FILE_TYPES
+  } = useFileUpload(onSuccess);
 
   return (
     <Card className="p-6">
@@ -196,91 +39,33 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
         onDragOver={handleDragOver}
       >
         {file ? (
-          <div className="flex flex-col items-center">
-            <div className="p-3 bg-primary/10 rounded-full mb-2">
-              {getFileIcon()}
-            </div>
-            <p className="font-medium">{file.name}</p>
-            <p className="text-sm text-gray-500">
-              {(file.size / 1024 / 1024).toFixed(2)} MB
-            </p>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="mt-2"
-              onClick={clearFile}
-            >
-              <X className="h-4 w-4 mr-1" />
-              Remove
-            </Button>
-          </div>
+          <FilePreview file={file} clearFile={clearFile} />
         ) : (
-          <div className="flex flex-col items-center">
-            <Upload className="h-12 w-12 text-gray-400 mb-2" />
-            <p className="font-medium mb-1">Drag and drop your file here</p>
-            <p className="text-sm text-gray-500 mb-4">
-              or click the button below to browse
-            </p>
-            <Input
-              ref={fileInputRef}
-              type="file"
-              onChange={handleFileChange}
-              accept={ALLOWED_FILE_TYPES.join(',')}
-              className="max-w-xs"
-            />
-          </div>
+          <FileUploadArea
+            handleFileChange={handleFileChange}
+            handleDrop={handleDrop}
+            handleDragOver={handleDragOver}
+            fileInputRef={fileInputRef}
+            allowedFileTypes={ALLOWED_FILE_TYPES}
+          />
         )}
       </div>
       
-      {uploadError && (
-        <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-md mb-4">
-          <AlertCircle className="h-5 w-5 flex-shrink-0" />
-          <p className="text-sm">{uploadError}</p>
-        </div>
-      )}
+      <UploadError errorMessage={uploadError || ""} />
       
-      {isUploading && (
-        <div className="mb-4">
-          <div className="flex justify-between text-sm mb-1">
-            <span>Uploading...</span>
-            <span>{Math.round(uploadProgress)}%</span>
-          </div>
-          <Progress value={uploadProgress} className="h-2" />
-        </div>
-      )}
+      <UploadProgress isUploading={isUploading} progress={uploadProgress} />
       
       <div className="mt-4">
-        <Button
-          onClick={handleUpload}
-          disabled={!file || isUploading}
-          className="w-full sm:w-auto flex items-center gap-2"
-        >
-          {isUploading ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Uploading...
-            </>
-          ) : (
-            <>
-              <Upload className="h-4 w-4" />
-              Upload Document
-            </>
-          )}
-        </Button>
-        <p className="text-xs text-gray-500 mt-2">
-          Max file size: {(MAX_FILE_SIZE / 1024 / 1024).toFixed(0)}MB. 
-          Supported formats: PDF, DOC, DOCX, TXT
-        </p>
+        <UploadButton
+          handleUpload={handleUpload}
+          isUploading={isUploading}
+          disabled={!file}
+        />
         
-        <div className="mt-4 p-4 bg-blue-50 rounded-md border border-blue-100">
-          <h3 className="text-sm font-medium text-blue-700 mb-2">Tips for best results:</h3>
-          <ul className="text-xs text-blue-600 space-y-1 list-disc pl-5">
-            <li>For PDFs, ensure they contain selectable text, not just scanned images</li>
-            <li>Word documents with simple formatting work best</li>
-            <li>For complex documents, try saving as plain text first</li>
-            <li>Large documents may be truncated - consider uploading key sections</li>
-          </ul>
-        </div>
+        <UploadTips
+          maxFileSize={MAX_FILE_SIZE}
+          allowedFileTypes={ALLOWED_FILE_TYPES}
+        />
       </div>
     </Card>
   );
