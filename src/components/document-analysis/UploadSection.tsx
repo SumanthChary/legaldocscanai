@@ -1,8 +1,9 @@
+
 import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, Loader2, File, AlertCircle, X } from "lucide-react";
+import { Upload, Loader2, File, AlertCircle, X, FileText, FileWord, FileType } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
@@ -166,6 +167,24 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
     e.stopPropagation();
   };
 
+  const getFileIcon = () => {
+    if (!file) return <Upload className="h-12 w-12 text-gray-400 mb-2" />;
+    
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    
+    switch (extension) {
+      case 'pdf':
+        return <FileText className="h-8 w-8 text-red-500" />;
+      case 'doc':
+      case 'docx':
+        return <FileWord className="h-8 w-8 text-blue-500" />;
+      case 'txt':
+        return <FileType className="h-8 w-8 text-gray-500" />;
+      default:
+        return <File className="h-8 w-8 text-primary" />;
+    }
+  };
+
   return (
     <Card className="p-6">
       <h2 className="text-2xl font-semibold mb-4">Upload Document</h2>
@@ -179,7 +198,7 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
         {file ? (
           <div className="flex flex-col items-center">
             <div className="p-3 bg-primary/10 rounded-full mb-2">
-              <File className="h-8 w-8 text-primary" />
+              {getFileIcon()}
             </div>
             <p className="font-medium">{file.name}</p>
             <p className="text-sm text-gray-500">
@@ -252,6 +271,16 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
           Max file size: {(MAX_FILE_SIZE / 1024 / 1024).toFixed(0)}MB. 
           Supported formats: PDF, DOC, DOCX, TXT
         </p>
+        
+        <div className="mt-4 p-4 bg-blue-50 rounded-md border border-blue-100">
+          <h3 className="text-sm font-medium text-blue-700 mb-2">Tips for best results:</h3>
+          <ul className="text-xs text-blue-600 space-y-1 list-disc pl-5">
+            <li>For PDFs, ensure they contain selectable text, not just scanned images</li>
+            <li>Word documents with simple formatting work best</li>
+            <li>For complex documents, try saving as plain text first</li>
+            <li>Large documents may be truncated - consider uploading key sections</li>
+          </ul>
+        </div>
       </div>
     </Card>
   );

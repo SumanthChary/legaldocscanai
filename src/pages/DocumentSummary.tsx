@@ -46,7 +46,8 @@ const DocumentSummary = () => {
 
             <SummaryContent 
               analysisStatus={analysis.analysis_status} 
-              summary={analysis.summary} 
+              summary={analysis.summary}
+              originalName={analysis.original_name}
             />
           </Card>
         </div>

@@ -42,41 +42,39 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
     
     // Extract text from file with enhanced handling for different formats
     let fileText;
+    const fileName = file.name.toLowerCase();
+    const fileType = file.type.toLowerCase();
     
     try {
-      // Different strategies based on file type
-      const fileType = file.type.toLowerCase();
-      const fileName = file.name.toLowerCase();
+      console.log(`Processing file: ${fileName}, type: ${fileType}`);
       
       // Read the file content with timeout handling
       const textPromise = file.text();
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("File reading timed out")), 25000) // Increased timeout for larger files
+        setTimeout(() => reject(new Error("File reading timed out")), 30000) // 30 second timeout for larger files
       );
       
       fileText = await Promise.race([textPromise, timeoutPromise]);
       
-      // Post-processing based on file type
+      // Format-specific post-processing
       if (fileName.endsWith('.pdf') || fileType.includes('pdf')) {
         console.log("Processing PDF file");
         // Clean up common PDF extraction artifacts
-        fileText = fileText
-          .replace(/\f/g, '\n') // Form feed to newline
-          .replace(/(\r\n|\r|\n){2,}/g, '\n\n') // Normalize multiple line breaks
-          .replace(/[^\x20-\x7E\n\t]/g, ' '); // Remove non-printable characters
+        fileText = cleanPdfText(fileText);
       } 
       else if (fileName.endsWith('.doc') || fileName.endsWith('.docx') || fileType.includes('word')) {
         console.log("Processing Word document");
         // Clean up Word specific artifacts
-        fileText = fileText
-          .replace(/\[IMAGE\]/gi, '') 
-          .replace(/\[TABLE\]/gi, '')
-          .replace(/\[CHART\]/gi, '')
-          .replace(/\s{2,}/g, ' '); // Collapse multiple spaces
+        fileText = cleanWordText(fileText);
+      }
+      else if (fileName.endsWith('.txt') || fileType.includes('text')) {
+        console.log("Processing plain text file");
+        // Basic text cleanup
+        fileText = fileText.replace(/\s{2,}/g, ' ').trim();
       }
       
       // Basic content checks
-      if (!fileText) {
+      if (!fileText || fileText.trim().length === 0) {
         throw new Error('Could not extract text from file');
       }
 
@@ -89,7 +87,7 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
       
       // For binary files that might be incorrectly decoded as text
       if (fileText.includes('�') && fileText.indexOf('�') < 100) {
-        throw new Error('This appears to be a binary or non-text document');
+        throw new Error(`This appears to be a binary or non-text document format: ${fileType}`);
       }
 
       // Get the summary from Gemini API
@@ -117,19 +115,17 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
     } catch (error) {
       console.error(`Analysis error for document ${documentId}:`, error);
       
-      // More specific fallback summaries based on error types
+      // More specific fallback summaries based on error types and file formats
       let fallbackSummary = null;
-      
-      // File type specific error handling
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      const fileExt = fileName.split('.').pop()?.toLowerCase();
       
       if (error.message?.includes("timed out")) {
         fallbackSummary = "This document was too large to process completely. Try uploading a smaller section or a plaintext version for better results.";
       } else if (error.message?.includes("binary")) {
         if (fileExt === 'pdf') {
-          fallbackSummary = "This PDF appears to be image-based or encrypted. For best results, try converting it to text first using an OCR tool.";
+          fallbackSummary = "This PDF appears to be image-based, encrypted, or contains complex formatting. For best results, try converting it to text first using an OCR tool.";
         } else if (['doc', 'docx'].includes(fileExt || '')) {
-          fallbackSummary = "This Word document contains elements we couldn't process. Try saving it as a plain text (.txt) file first.";
+          fallbackSummary = "This Word document contains elements we couldn't process. Try saving it as a plain text (.txt) file first or copy/paste the content directly.";
         } else {
           fallbackSummary = "This appears to be a binary or non-text document format that we couldn't process. Please try converting it to a text format first.";
         }
@@ -177,4 +173,30 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
       console.error("Failed to update document status after error:", e);
     }
   }
+}
+
+// Helper function to clean PDF text
+function cleanPdfText(text: string): string {
+  return text
+    .replace(/\f/g, '\n') // Form feed to newline
+    .replace(/(\r\n|\r|\n){2,}/g, '\n\n') // Normalize multiple line breaks
+    .replace(/[^\x20-\x7E\n\t]/g, ' ') // Remove non-printable characters
+    .replace(/\s{2,}/g, ' ') // Collapse multiple spaces
+    .replace(/•\s*/g, '• ') // Fix bullet points
+    .replace(/([.!?])\s*\n/g, '$1\n\n') // Make sure sentences end with proper spacing
+    .trim();
+}
+
+// Helper function to clean Word document text
+function cleanWordText(text: string): string {
+  return text
+    .replace(/\[IMAGE\]/gi, '') 
+    .replace(/\[TABLE\]/gi, '')
+    .replace(/\[CHART\]/gi, '')
+    .replace(/\[FIGURE\d*\]/gi, '')
+    .replace(/\[PAGE\d*\]/gi, '')
+    .replace(/(\r\n|\r|\n){2,}/g, '\n\n') // Normalize multiple line breaks
+    .replace(/\s{2,}/g, ' ') // Collapse multiple spaces
+    .replace(/•\s*/g, '• ') // Fix bullet points
+    .trim();
 }

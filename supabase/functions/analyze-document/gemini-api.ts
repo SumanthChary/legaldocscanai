@@ -58,7 +58,7 @@ export async function analyzeWithGemini(text: string): Promise<string> {
   }
 }
 
-async function callGeminiAPI(text: string, promptPrefix = "Summarize this document in detail:", temperature = 0.0): Promise<string> {
+async function callGeminiAPI(text: string, promptPrefix = "Analyze and summarize this document, identifying its main points, purpose, key findings, and important details:", temperature = 0.3): Promise<string> {
   console.log(`Calling Gemini API with text length: ${text.length}, promptPrefix: "${promptPrefix}", temperature: ${temperature}`);
   
   const response = await fetch("https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent", {
@@ -72,12 +72,17 @@ async function callGeminiAPI(text: string, promptPrefix = "Summarize this docume
         parts: [{
           text: `${promptPrefix}
           
-          ${text}`
+          Document content:
+          """
+          ${text}
+          """
+          
+          Please provide a detailed and structured summary that captures the key information.`
         }]
       }],
       generationConfig: {
         temperature: temperature,
-        maxOutputTokens: 256,
+        maxOutputTokens: 1024,
         topP: 0.95,
         topK: 40
       },
