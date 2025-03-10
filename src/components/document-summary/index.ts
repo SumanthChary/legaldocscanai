@@ -6,3 +6,4 @@ export * from "./SummaryContent";
 export * from "./DocumentNotFound";
 export * from "./DocumentLoading";
 export * from "./StatusBadge";
+export * from "./SummaryActions";

@@ -9,7 +9,8 @@ import {
   StatusDisplay, 
   SummaryContent,
   DocumentNotFound,
-  DocumentLoading
+  DocumentLoading,
+  SummaryActions
 } from "@/components/document-summary";
 import { useDocumentAnalysis } from "@/hooks/document-summary/useDocumentAnalysis";
 
@@ -37,10 +38,17 @@ const DocumentSummary = () => {
           />
 
           <Card className="p-6 mb-6">
-            <DocumentInfo 
-              originalName={analysis.original_name} 
-              createdAt={analysis.created_at} 
-            />
+            <div className="flex justify-between items-start mb-4">
+              <DocumentInfo 
+                originalName={analysis.original_name} 
+                createdAt={analysis.created_at} 
+              />
+              <SummaryActions 
+                refreshAnalysis={fetchAnalysis}
+                refreshing={refreshing}
+                analysisId={id || ''}
+              />
+            </div>
             
             <StatusDisplay analysisStatus={analysis.analysis_status} />
 
