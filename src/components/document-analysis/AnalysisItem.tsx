@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Loader2, ExternalLink, Trash2 } from "lucide-react";
@@ -26,7 +25,7 @@ type AnalysisItemProps = {
     analysis_status: string;
     summary?: string;
   };
-  onDeleted?: () => void;
+  onDeleted: (id: string) => void;
 };
 
 export const AnalysisItem = ({ analysis, onDeleted }: AnalysisItemProps) => {
@@ -57,10 +56,7 @@ export const AnalysisItem = ({ analysis, onDeleted }: AnalysisItemProps) => {
         description: "The document has been successfully removed",
       });
       
-      // Call the onDeleted callback to refresh the list
-      if (onDeleted) {
-        onDeleted();
-      }
+      onDeleted(analysis.id);
     } catch (error) {
       console.error("Error deleting document:", error);
       toast({
@@ -74,7 +70,6 @@ export const AnalysisItem = ({ analysis, onDeleted }: AnalysisItemProps) => {
     }
   };
 
-  // Determine if we should show summary based on status
   const canShowSummary = analysis.analysis_status === 'completed' && analysis.summary;
 
   return (

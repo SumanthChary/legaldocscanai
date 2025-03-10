@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,7 +26,6 @@ export const AnalysesList = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        // User not logged in, don't attempt to fetch analyses
         return;
       }
 
@@ -79,6 +77,10 @@ export const AnalysesList = () => {
     fetchAnalyses();
   };
 
+  const handleDocumentDeleted = (deletedId: string) => {
+    setAnalyses(current => current.filter(analysis => analysis.id !== deletedId));
+  };
+
   return (
     <Card className="p-6">
       <div className="flex justify-between items-center mb-4">
@@ -98,7 +100,7 @@ export const AnalysesList = () => {
           <AnalysisItem 
             key={analysis.id} 
             analysis={analysis} 
-            onDeleted={fetchAnalyses}
+            onDeleted={handleDocumentDeleted}
           />
         ))}
         {analyses.length === 0 && (
