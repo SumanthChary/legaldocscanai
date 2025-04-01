@@ -12,6 +12,8 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 
 serve(async (req) => {
+  console.log("Received request to analyze-document function");
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -37,6 +39,8 @@ serve(async (req) => {
     const formData = await req.formData();
     const file = formData.get('file') as File;
     
+    console.log("File received:", file ? `${file.name} (${file.size} bytes, ${file.type})` : "No file");
+    
     const fileValidation = validateFileUpload(file);
     if (!fileValidation.success) {
       return fileValidation.response;
@@ -55,7 +59,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Unexpected error:", error);
     return new Response(
-      JSON.stringify({ error: 'An unexpected error occurred' }),
+      JSON.stringify({ error: 'An unexpected error occurred: ' + (error.message || String(error)) }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

@@ -1,7 +1,7 @@
 
 import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ALLOWED_FILE_TYPES = ['.pdf', '.doc', '.docx', '.txt'];
@@ -64,6 +64,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
           description: "Please sign in to upload documents",
           variant: "destructive",
         });
+        setIsUploading(false);
         return;
       }
 
@@ -79,35 +80,43 @@ export const useFileUpload = (onSuccess?: () => void) => {
         });
       }, 500);
 
-      const response = await supabase.functions.invoke('analyze-document', {
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
+      try {
+        const response = await supabase.functions.invoke('analyze-document', {
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+        
+        clearInterval(progressInterval);
+        console.log("Upload response:", response);
 
-      clearInterval(progressInterval);
-      console.log("Upload response:", response);
+        if (response.error) {
+          console.error("Upload error from API:", response.error);
+          setUploadError(response.error.message || "Upload failed");
+          setUploadProgress(0);
+          throw new Error(response.error.message || "Upload failed");
+        }
 
-      if (response.error) {
-        console.error("Upload error:", response.error);
-        setUploadError(response.error.message || "Upload failed");
-        setUploadProgress(0);
-        throw new Error(response.error.message || "Upload failed");
+        setUploadProgress(100);
+        
+        toast({
+          title: "Document uploaded successfully",
+          description: "AI analysis has started...",
+        });
+        
+        if (onSuccess) {
+          setTimeout(() => {
+            onSuccess();
+          }, 1000);
+        }
+        
+        clearFile();
+      } catch (invokeError: any) {
+        console.error("Function invoke error:", invokeError);
+        setUploadError(invokeError.message || "Error calling analyze-document function");
+        throw invokeError;
       }
-
-      setUploadProgress(100);
-      
-      toast({
-        title: "Document uploaded successfully",
-        description: "AI analysis has started...",
-      });
-      
-      if (onSuccess) {
-        onSuccess();
-      }
-      
-      clearFile();
     } catch (error: any) {
       console.error("Upload error:", error);
       setUploadError(error.message || "An unexpected error occurred");
@@ -143,9 +152,13 @@ export const useFileUpload = (onSuccess?: () => void) => {
       setFile(droppedFile);
       
       if (fileInputRef.current) {
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(droppedFile);
-        fileInputRef.current.files = dataTransfer.files;
+        try {
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(droppedFile);
+          fileInputRef.current.files = dataTransfer.files;
+        } catch (error) {
+          console.error("Error setting file input value:", error);
+        }
       }
     }
   };
