@@ -15,8 +15,8 @@ export const useFileUpload = (onSuccess?: () => void) => {
   const { toast } = useToast();
   
   const isValidFileType = (fileName: string) => {
-    const extension = fileName.slice(((fileName.lastIndexOf(".") - 1) >>> 0) + 1).toLowerCase();
-    return ALLOWED_FILE_TYPES.some(type => type.replace('.', '') === extension);
+    const extension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+    return ALLOWED_FILE_TYPES.includes(extension);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,7 +108,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
         if (onSuccess) {
           setTimeout(() => {
             onSuccess();
-          }, 1000);
+          }, 2000); // Increased delay to ensure processing starts
         }
         
         clearFile();
@@ -138,6 +138,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const droppedFile = e.dataTransfer.files[0];
+      console.log("Dropped file:", droppedFile.name, droppedFile.type, droppedFile.size);
       
       if (droppedFile.size > MAX_FILE_SIZE) {
         setUploadError(`File size exceeds limit (${(MAX_FILE_SIZE / 1024 / 1024).toFixed(0)}MB)`);

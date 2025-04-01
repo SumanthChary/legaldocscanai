@@ -17,10 +17,11 @@ export const UploadTips = ({ maxFileSize, allowedFileTypes }: UploadTipsProps) =
         <ul className="text-xs text-blue-600 space-y-1 list-disc pl-5">
           <li>For PDFs, ensure text is selectable, not scanned images</li>
           <li>Word documents with simple formatting work best</li>
-          <li>For complex documents, try saving as plain text first</li>
+          <li>Plain text (.txt) files are most reliable for analysis</li>
           <li>Large documents may be truncated - consider uploading key sections</li>
           <li>Make sure your document is not encrypted or password protected</li>
           <li>If upload fails, try with a smaller file or different format</li>
+          <li>For best results, use plain text formats</li>
         </ul>
       </div>
     </div>
