@@ -1,12 +1,9 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { PricingButton } from "@/components/pricing/PricingButton";
 
 const Pricing = () => {
-  const navigate = useNavigate();
-
   const plans = [
     {
       name: "Free",
@@ -100,18 +97,6 @@ const Pricing = () => {
     }
   ];
 
-  const handleGetStarted = (plan: any) => {
-    navigate("/payment", { 
-      state: { 
-        plan: {
-          name: plan.name,
-          price: plan.name === "Free" ? "0" : `$${plan.price}`,
-          period: plan.period
-        }
-      }
-    });
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -157,13 +142,7 @@ const Pricing = () => {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  className="w-full"
-                  variant={plan.name === "Free" ? "outline" : "default"}
-                  onClick={() => handleGetStarted(plan)}
-                >
-                  {plan.name === "Free" ? "Start Free Trial" : "Get Started"}
-                </Button>
+                <PricingButton plan={plan} />
               </div>
             ))}
           </div>
