@@ -16,7 +16,7 @@ export async function analyzeWithGemini(text: string): Promise<string> {
     .replace(/\s+/g, ' '); // Normalize whitespace
   
   // Ensure text doesn't exceed maximum allowed length
-  const maxLength = 4000; 
+  const maxLength = 10000; // Increased max length to handle larger documents
   const truncatedText = cleanedText.length > maxLength 
     ? cleanedText.substring(0, maxLength) + "..." 
     : cleanedText;
@@ -31,8 +31,8 @@ export async function analyzeWithGemini(text: string): Promise<string> {
     
     // Fallback with even shorter text and simpler prompt
     try {
-      const shorterText = truncatedText.substring(0, 2000);
-      console.log("Retrying with shorter text (2000 chars) and simpler prompt");
+      const shorterText = truncatedText.substring(0, 5000);
+      console.log("Retrying with shorter text (5000 chars) and simpler prompt");
       
       const fallbackSummary = await callGeminiAPI(shorterText, "Summarize this document briefly:", 0.1);
       return fallbackSummary;
@@ -41,8 +41,8 @@ export async function analyzeWithGemini(text: string): Promise<string> {
       
       // Try with minimal settings as last resort
       try {
-        const minimalText = truncatedText.substring(0, 1000);
-        console.log("Final attempt with minimal text (1000 chars)");
+        const minimalText = truncatedText.substring(0, 2000);
+        console.log("Final attempt with minimal text (2000 chars)");
         
         const minimalSummary = await callGeminiAPI(minimalText, "What is this document about?", 0);
         return minimalSummary;
@@ -50,7 +50,7 @@ export async function analyzeWithGemini(text: string): Promise<string> {
         console.error("All Gemini API attempts failed:", finalError);
         
         // Extract some content directly to provide at least some information
-        const extractedContent = truncatedText.substring(0, 300);
+        const extractedContent = truncatedText.substring(0, 500);
         
         return `We encountered challenges processing this document fully, but here's what we found:\n\n${extractedContent}...\n\n(Note: This is a partial extraction as the AI processing encountered difficulties with the full document.)`;
       }
@@ -61,71 +61,76 @@ export async function analyzeWithGemini(text: string): Promise<string> {
 async function callGeminiAPI(text: string, promptPrefix = "Analyze and summarize this document, identifying its main points, purpose, key findings, and important details:", temperature = 0.3): Promise<string> {
   console.log(`Calling Gemini API with text length: ${text.length}, promptPrefix: "${promptPrefix}", temperature: ${temperature}`);
   
-  const response = await fetch("https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': GEMINI_API_KEY
-    },
-    body: JSON.stringify({
-      contents: [{
-        parts: [{
-          text: `${promptPrefix}
-          
-          Document content:
-          """
-          ${text}
-          """
-          
-          Please provide a detailed and structured summary that captures the key information.`
-        }]
-      }],
-      generationConfig: {
-        temperature: temperature,
-        maxOutputTokens: 1024,
-        topP: 0.95,
-        topK: 40
+  try {
+    const response = await fetch("https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': GEMINI_API_KEY
       },
-      safetySettings: [
-        {
-          category: "HARM_CATEGORY_HARASSMENT",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `${promptPrefix}
+            
+            Document content:
+            """
+            ${text}
+            """
+            
+            Please provide a detailed and structured summary that captures the key information.`
+          }]
+        }],
+        generationConfig: {
+          temperature: temperature,
+          maxOutputTokens: 2048, // Increased token limit for longer summaries
+          topP: 0.95,
+          topK: 40
         },
-        {
-          category: "HARM_CATEGORY_HATE_SPEECH",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        },
-        {
-          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        },
-        {
-          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-          threshold: "BLOCK_MEDIUM_AND_ABOVE"
-        }
-      ]
-    })
-  });
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
+      })
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("Gemini API error response:", errorText);
-    throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
-  }
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Gemini API error response:", errorText);
+      throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+    }
 
-  const result = await response.json();
-  
-  // Extract the content from Gemini response
-  if (
-    result.candidates && 
-    result.candidates[0]?.content?.parts && 
-    result.candidates[0].content.parts[0]?.text
-  ) {
-    const summary = result.candidates[0].content.parts[0].text.trim();
-    console.log("Successfully generated summary:", summary.substring(0, 100) + "...");
-    return summary;
-  } else {
-    console.error("Unexpected Gemini response format:", JSON.stringify(result));
-    throw new Error("Invalid response format from Gemini API");
+    const result = await response.json();
+    
+    // Extract the content from Gemini response
+    if (
+      result.candidates && 
+      result.candidates[0]?.content?.parts && 
+      result.candidates[0].content.parts[0]?.text
+    ) {
+      const summary = result.candidates[0].content.parts[0].text.trim();
+      console.log("Successfully generated summary:", summary.substring(0, 100) + "...");
+      return summary;
+    } else {
+      console.error("Unexpected Gemini response format:", JSON.stringify(result));
+      throw new Error("Invalid response format from Gemini API");
+    }
+  } catch (error) {
+    console.error("Error calling Gemini API:", error);
+    throw error;
   }
 }

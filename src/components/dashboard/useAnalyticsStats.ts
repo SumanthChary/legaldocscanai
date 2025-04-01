@@ -15,7 +15,6 @@ export const useAnalyticsStats = (userId: string | undefined) => {
     improvementRate: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [showDonationDialog, setShowDonationDialog] = useState(false);
 
   useEffect(() => {
     const fetchAnalysisStats = async () => {
@@ -37,17 +36,6 @@ export const useAnalyticsStats = (userId: string | undefined) => {
           return;
         }
 
-        const hasAnalysesWithSummary = analyses?.some(analysis => analysis.summary);
-        const lastDonationPrompt = localStorage.getItem('lastDonationPrompt');
-        const now = new Date().getTime();
-        const showAfterDays = 7; // Show dialog every 7 days if feature is used
-
-        if (hasAnalysesWithSummary && 
-            (!lastDonationPrompt || (now - parseInt(lastDonationPrompt)) > (showAfterDays * 24 * 60 * 60 * 1000))) {
-          setShowDonationDialog(true);
-          localStorage.setItem('lastDonationPrompt', now.toString());
-        }
-
         setAnalysisStats({
           totalDocuments: analyses?.length || 0,
           averageScore: 85,
@@ -65,5 +53,5 @@ export const useAnalyticsStats = (userId: string | undefined) => {
     }
   }, [userId]);
 
-  return { analysisStats, isLoading, showDonationDialog, setShowDonationDialog };
+  return { analysisStats, isLoading };
 };

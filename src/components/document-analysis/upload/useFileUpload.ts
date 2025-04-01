@@ -16,7 +16,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
   
   const isValidFileType = (fileName: string) => {
     const extension = fileName.slice(((fileName.lastIndexOf(".") - 1) >>> 0) + 1).toLowerCase();
-    return ALLOWED_FILE_TYPES.some(type => type.includes(extension));
+    return ALLOWED_FILE_TYPES.some(type => type.replace('.', '') === extension);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,9 +71,6 @@ export const useFileUpload = (onSuccess?: () => void) => {
       
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('filename', file.name);
-      formData.append('fileType', file.type);
-      formData.append('fileSize', file.size.toString());
       
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {

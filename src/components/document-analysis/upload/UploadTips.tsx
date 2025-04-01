@@ -19,6 +19,7 @@ export const UploadTips = ({ maxFileSize, allowedFileTypes }: UploadTipsProps) =
           <li>Word documents with simple formatting work best</li>
           <li>For complex documents, try saving as plain text first</li>
           <li>Large documents may be truncated - consider uploading key sections</li>
+          <li>Make sure your document is not encrypted or password protected</li>
         </ul>
       </div>
     </div>

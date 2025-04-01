@@ -13,16 +13,21 @@ export const EmptyState = () => {
         <FileText className="h-8 w-8 text-primary" />
       </div>
       <h3 className="text-lg font-medium text-gray-900 mb-2">No documents analyzed yet</h3>
-      <p className="text-gray-500 mb-6 max-w-md mx-auto">
-        Upload your first legal document to experience the power of AI-assisted document analysis
+      <p className="text-gray-500 mb-4 max-w-md mx-auto">
+        Upload legal documents (PDF, DOC, DOCX, TXT) to get AI-powered analysis and summaries
       </p>
-      <Button 
-        onClick={() => navigate("/document-analysis")}
-        className="inline-flex items-center"
-      >
-        <Upload className="mr-2 h-4 w-4" />
-        Upload Document
-      </Button>
+      <div className="space-y-4">
+        <Button 
+          onClick={() => navigate("/document-analysis")}
+          className="inline-flex items-center"
+        >
+          <Upload className="mr-2 h-4 w-4" />
+          Upload Document
+        </Button>
+        <div className="text-xs text-gray-500 max-w-md mx-auto">
+          Supported formats: PDF, DOC, DOCX, TXT (up to 50MB)
+        </div>
+      </div>
     </div>
   );
 };

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { UpgradeBanner } from "@/components/ui/upgrade-banner";
 import { useNavigate } from "react-router-dom";
-import { DonationDialog } from "./DonationDialog";
 import { WelcomeHeader } from "./WelcomeHeader";
 import { QuickActions } from "./QuickActions";
 import { AnalyticsCards } from "./AnalyticsCards";
@@ -35,7 +34,7 @@ export const Dashboard = () => {
     getSession();
   }, []);
 
-  const { analysisStats, isLoading: statsLoading, showDonationDialog, setShowDonationDialog } = useAnalyticsStats(session?.user?.id);
+  const { analysisStats, isLoading: statsLoading } = useAnalyticsStats(session?.user?.id);
 
   if (!session && isLoading) {
     return (
@@ -70,11 +69,6 @@ export const Dashboard = () => {
           />
         </div>
       )}
-
-      <DonationDialog 
-        open={showDonationDialog} 
-        onOpenChange={setShowDonationDialog} 
-      />
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
         <WelcomeHeader session={session} />

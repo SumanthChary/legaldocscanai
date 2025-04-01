@@ -51,7 +51,7 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
       // Read the file content with timeout handling
       const textPromise = file.text();
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("File reading timed out")), 30000) // 30 second timeout for larger files
+        setTimeout(() => reject(new Error("File reading timed out")), 60000) // 60 second timeout for larger files
       );
       
       fileText = await Promise.race([textPromise, timeoutPromise]);
@@ -62,7 +62,7 @@ async function analyzeDocument(file: File, documentId: string, adminClient: any)
         // Clean up common PDF extraction artifacts
         fileText = cleanPdfText(fileText);
       } 
-      else if (fileName.endsWith('.doc') || fileName.endsWith('.docx') || fileType.includes('word')) {
+      else if (fileName.endsWith('.doc') || fileName.endsWith('.docx') || fileType.includes('word') || fileType.includes('document')) {
         console.log("Processing Word document");
         // Clean up Word specific artifacts
         fileText = cleanWordText(fileText);
