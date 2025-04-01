@@ -7,6 +7,8 @@ import { TestimonialsSection } from "@/components/blocks/testimonials-with-marqu
 import { AboutSection } from "@/components/blocks/about-section";
 import { FAQSection } from "@/components/blocks/faq-section";
 import { CTASection } from "@/components/blocks/cta-section";
+import { PricingSection } from "@/components/blocks/pricing-section";
+import { useEffect } from "react";
 
 const Landing = () => {
   const benefits = [
@@ -67,6 +69,14 @@ const Landing = () => {
       text: "Finally, a legal tech solution that actually understands context! The accuracy in legal document processing is impressive."
     }
   ];
+  
+  // Add smooth scroll behavior
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth';
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -74,6 +84,7 @@ const Landing = () => {
       <main className="flex-grow">
         <HeroSection benefits={benefits} />
         <FeaturesSection />
+        <PricingSection />
         <TestimonialsSection
           title="Trusted by Legal Professionals Worldwide"
           description="Join thousands of legal professionals who are already transforming their document workflow with LegalBriefAI"
