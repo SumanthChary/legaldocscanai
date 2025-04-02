@@ -32,19 +32,16 @@ enabled = true
 enabled = false
 port = 54327
 vector_port = 54328
-backend = "rudderstack"
+backend = "postgres"
 
-[[functions]]
-name = "analyze-document"
+[functions."analyze-document"]
 verify_jwt = true
 system_import = true
 
-[[functions]]
-name = "subscribe-email"
+[functions."subscribe-email"]
 verify_jwt = false
 system_import = true
 
-[[functions]]
-name = "check-expiring-trials"
+[functions."check-expiring-trials"]
 verify_jwt = true
 system_import = true

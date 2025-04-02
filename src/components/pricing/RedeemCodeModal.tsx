@@ -38,23 +38,23 @@ export const RedeemCodeModal = ({ isOpen, onClose }: RedeemCodeModalProps) => {
       }
 
       // 2. Verify the redemption code
-      const { data: codes, error: codeError } = await supabase
-        .from("redemption_codes")
-        .select("id, code, duration_days, plan_type")
-        .eq("code", code)
-        .eq("active", true)
+      const { data: codeData, error: codeError } = await supabase
+        .from('redemption_codes')
+        .select('*')
+        .eq('code', code)
+        .eq('active', true)
         .single();
 
-      if (codeError || !codes) {
+      if (codeError || !codeData) {
         throw new Error("Invalid redemption code");
       }
 
       // 3. Check if the user has already used this code
       const { data: existingRedemption, error: redemptionError } = await supabase
-        .from("code_redemptions")
-        .select("id")
-        .eq("user_id", session.user.id)
-        .eq("code_id", codes.id)
+        .from('code_redemptions')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .eq('code_id', codeData.id)
         .maybeSingle();
 
       if (existingRedemption) {
@@ -63,14 +63,14 @@ export const RedeemCodeModal = ({ isOpen, onClose }: RedeemCodeModalProps) => {
 
       // 4. Calculate expiration date
       const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + codes.duration_days);
+      expiresAt.setDate(expiresAt.getDate() + codeData.duration_days);
 
       // 5. Record the redemption
       const { error: insertError } = await supabase
-        .from("code_redemptions")
+        .from('code_redemptions')
         .insert({
           user_id: session.user.id,
-          code_id: codes.id,
+          code_id: codeData.id,
           expires_at: expiresAt.toISOString()
         });
 
@@ -82,7 +82,7 @@ export const RedeemCodeModal = ({ isOpen, onClose }: RedeemCodeModalProps) => {
       // For now, this is a simple notification
       toast({
         title: "Code redeemed successfully!",
-        description: `You've activated ${codes.duration_days} days of the ${codes.plan_type} plan.`,
+        description: `You've activated ${codeData.duration_days} days of the ${codeData.plan_type} plan.`,
       });
 
       onClose();
