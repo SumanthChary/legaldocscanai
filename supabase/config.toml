@@ -10,27 +10,41 @@ schemas = ["public", "storage", "graphql_public"]
 port = 54322
 
 [studio]
+enabled = true
 port = 54323
+api_url = "http://localhost"
 
 [inbucket]
-port = 54324
-
-[auth]
 enabled = true
+port = 54324
 
 [storage]
 enabled = true
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
 
 [realtime]
 enabled = true
 
 [analytics]
 enabled = false
+port = 54327
+vector_port = 54328
+backend = "rudderstack"
 
-[functions]
-[functions.analyze-document]
+[[functions]]
+name = "analyze-document"
 verify_jwt = true
+system_import = true
 
-[functions.subscribe-email]
+[[functions]]
+name = "subscribe-email"
 verify_jwt = false
+system_import = true
 
+[[functions]]
+name = "check-expiring-trials"
+verify_jwt = true
+system_import = true

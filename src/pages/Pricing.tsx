@@ -1,13 +1,16 @@
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Check } from "lucide-react";
+import { Check, Ticket } from "lucide-react";
 import { useState } from "react";
 import { PricingButton } from "@/components/pricing/PricingButton";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { RedeemCodeModal } from "@/components/pricing/RedeemCodeModal";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
   
   const plans = [
     {
@@ -114,6 +117,14 @@ const Pricing = () => {
             <p className="text-xl text-gray-600">
               Try our document analyzer for free, then choose the plan that's right for you
             </p>
+            <Button 
+              onClick={() => setIsRedeemModalOpen(true)}
+              variant="outline"
+              className="mt-4 flex items-center mx-auto"
+            >
+              <Ticket className="mr-2 h-4 w-4" />
+              Redeem a Promotion Code
+            </Button>
           </div>
           
           <div className="flex justify-center items-center gap-3 mb-10">
@@ -182,6 +193,12 @@ const Pricing = () => {
         </div>
       </main>
       <Footer />
+      
+      {/* Redeem Code Modal */}
+      <RedeemCodeModal 
+        isOpen={isRedeemModalOpen} 
+        onClose={() => setIsRedeemModalOpen(false)} 
+      />
     </div>
   );
 };

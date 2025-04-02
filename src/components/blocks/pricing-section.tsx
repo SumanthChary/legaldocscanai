@@ -1,15 +1,17 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Ticket } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { InView } from "@/components/ui/in-view";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { RedeemCodeModal } from "@/components/pricing/RedeemCodeModal";
 
 export const PricingSection = () => {
   const navigate = useNavigate();
   const [isAnnual, setIsAnnual] = useState(false);
+  const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
 
   const plans = [
     {
@@ -85,6 +87,14 @@ export const PricingSection = () => {
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Start with 3 free documents, then choose the plan that works best for you
             </p>
+            <Button 
+              onClick={() => setIsRedeemModalOpen(true)}
+              variant="outline"
+              className="mt-4 flex items-center mx-auto"
+            >
+              <Ticket className="mr-2 h-4 w-4" />
+              Redeem a Promotion Code
+            </Button>
           </div>
 
           <div className="flex justify-center items-center gap-3 mb-10">
@@ -164,6 +174,12 @@ export const PricingSection = () => {
           </Button>
         </div>
       </div>
+      
+      {/* Redeem Code Modal */}
+      <RedeemCodeModal 
+        isOpen={isRedeemModalOpen} 
+        onClose={() => setIsRedeemModalOpen(false)} 
+      />
     </div>
   );
 };

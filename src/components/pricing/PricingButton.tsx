@@ -1,6 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 interface PlanType {
   name: string;
@@ -17,16 +19,62 @@ export const PricingButton = ({ plan, className }: PricingButtonProps) => {
   const navigate = useNavigate();
   const isFree = plan.price === "0";
 
-  const handleGetStarted = () => {
-    navigate("/payment", { 
-      state: { 
-        plan: {
-          name: plan.name,
-          price: plan.name === "Free" ? "0" : `$${plan.price}`,
-          period: plan.period
+  const handleGetStarted = async () => {
+    // Check if the user is authenticated
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to continue",
+      });
+      navigate("/auth", {
+        state: {
+          redirectAfterAuth: "/pricing",
+          selectedPlan: plan
         }
+      });
+      return;
+    }
+
+    // For the free plan, check if the user is eligible
+    if (isFree) {
+      // Check if the user already has document limits from a free trial
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("document_limit")
+        .eq("id", session.user.id)
+        .single();
+
+      if (!profileError && profile && profile.document_limit > 3) {
+        // User already has more than the default free plan limit
+        toast({
+          title: "You already have an active plan",
+          description: "Your current plan includes more documents than the free plan",
+        });
+        navigate("/dashboard");
+        return;
       }
-    });
+    }
+
+    // Navigate to payment page for paid plans or dashboard for free plan
+    if (isFree) {
+      navigate("/dashboard");
+      toast({
+        title: "Free plan activated",
+        description: "You now have access to 3 free document analyses",
+      });
+    } else {
+      navigate("/payment", { 
+        state: { 
+          plan: {
+            name: plan.name,
+            price: plan.name === "Free" ? "0" : `$${plan.price}`,
+            period: plan.period
+          }
+        }
+      });
+    }
   };
 
   return (
