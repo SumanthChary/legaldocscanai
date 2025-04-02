@@ -1,9 +1,14 @@
+
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Check } from "lucide-react";
+import { useState } from "react";
 import { PricingButton } from "@/components/pricing/PricingButton";
+import { Switch } from "@/components/ui/switch";
 
 const Pricing = () => {
+  const [isAnnual, setIsAnnual] = useState(false);
+  
   const plans = [
     {
       name: "Free",
@@ -20,8 +25,8 @@ const Pricing = () => {
     },
     {
       name: "Basic",
-      price: "20",
-      period: "/month",
+      price: isAnnual ? "16" : "20",
+      period: isAnnual ? "/month, billed annually" : "/month",
       description: "For Individual Users",
       features: [
         "Summarize up to 25 documents/month",
@@ -34,8 +39,8 @@ const Pricing = () => {
     },
     {
       name: "Professional",
-      price: "99",
-      period: "/month",
+      price: isAnnual ? "79" : "99",
+      period: isAnnual ? "/month, billed annually" : "/month",
       description: "For Small to Mid-Size Firms",
       features: [
         "Summarize up to 500 documents/month",
@@ -109,6 +114,18 @@ const Pricing = () => {
             <p className="text-xl text-gray-600">
               Try our document analyzer for free, then choose the plan that's right for you
             </p>
+          </div>
+          
+          <div className="flex justify-center items-center gap-3 mb-10">
+            <span className={`text-sm ${!isAnnual ? 'font-medium text-gray-900' : 'text-gray-600'}`}>Monthly</span>
+            <Switch 
+              id="billing-toggle"
+              checked={isAnnual}
+              onCheckedChange={setIsAnnual}
+            />
+            <span className={`text-sm ${isAnnual ? 'font-medium text-gray-900' : 'text-gray-600'}`}>
+              Annual <span className="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded ml-1">Save 20%</span>
+            </span>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 max-w-7xl mx-auto mb-16">

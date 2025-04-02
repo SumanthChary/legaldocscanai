@@ -1,12 +1,15 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { InView } from "@/components/ui/in-view";
 import { Card, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 
 export const PricingSection = () => {
   const navigate = useNavigate();
+  const [isAnnual, setIsAnnual] = useState(false);
 
   const plans = [
     {
@@ -24,8 +27,8 @@ export const PricingSection = () => {
     },
     {
       name: "Basic",
-      price: "20",
-      period: "/month",
+      price: isAnnual ? "16" : "20",
+      period: isAnnual ? "/month, billed annually" : "/month",
       description: "For Individual Users",
       features: [
         "Summarize up to 25 documents/month",
@@ -38,8 +41,8 @@ export const PricingSection = () => {
     },
     {
       name: "Professional",
-      price: "99",
-      period: "/month",
+      price: isAnnual ? "79" : "99",
+      period: isAnnual ? "/month, billed annually" : "/month",
       description: "For Small to Mid-Size Firms",
       features: [
         "Summarize up to 500 documents/month",
@@ -82,6 +85,18 @@ export const PricingSection = () => {
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Start with 3 free documents, then choose the plan that works best for you
             </p>
+          </div>
+
+          <div className="flex justify-center items-center gap-3 mb-10">
+            <span className={`text-sm ${!isAnnual ? 'font-medium' : 'text-gray-600'}`}>Monthly</span>
+            <Switch 
+              id="landing-pricing-toggle"
+              checked={isAnnual}
+              onCheckedChange={setIsAnnual}
+            />
+            <span className={`text-sm ${isAnnual ? 'font-medium' : 'text-gray-600'}`}>
+              Annual <span className="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded ml-1">Save 20%</span>
+            </span>
           </div>
         </InView>
 
