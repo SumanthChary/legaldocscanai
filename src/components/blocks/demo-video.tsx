@@ -7,8 +7,9 @@ import { InView } from "@/components/ui/in-view";
 export const DemoVideo = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   
-  // Replace this with your actual Vimeo video ID
-  const vimeoVideoId = "1059312783";
+  // Updated Vimeo video ID
+  const vimeoVideoId = "1071862312";
+  const privateHash = "e0a6f50161";
   
   const togglePlay = () => {
     const iframe = document.querySelector('iframe');
@@ -34,7 +35,7 @@ export const DemoVideo = () => {
         
         <div className="relative aspect-video">
           <iframe
-            src={`https://player.vimeo.com/video/${vimeoVideoId}?h=6dbcdc93e5&background=1&autoplay=0&loop=1&byline=0&title=0`}
+            src={`https://player.vimeo.com/video/${vimeoVideoId}?h=${privateHash}&background=1&autoplay=0&loop=1&byline=0&title=0`}
             className="w-full h-full absolute inset-0"
             allow="autoplay; fullscreen; picture-in-picture"
             style={{ border: 0 }}
