@@ -1,17 +1,13 @@
 
-import { Card } from "@/components/ui/card";
-import { FileText, AlertTriangle, Search, Clock, TrendingUp, Users, Target, Zap, BarChart, Heart, HelpCircle, Book, Activity, Bell, Gift } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DocumentAnalysis } from "@/components/DocumentAnalysis";
-import { Progress } from "@/components/ui/progress";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { DocumentGallery } from "@/components/DocumentGallery";
 import { UpgradeBanner } from "@/components/ui/upgrade-banner";
 import { useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { DashboardHeader } from "./dashboard/DashboardHeader";
+import { StatsCards } from "./dashboard/StatsCards";
+import { ActivitySummary } from "./dashboard/ActivitySummary";
+import { ContentTabs } from "./dashboard/ContentTabs";
+import { DonationDialog } from "./dashboard/DonationDialog";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -82,43 +78,9 @@ export const Dashboard = () => {
     }
   }, [session?.user?.id]);
 
-  const quickActions = [
-    {
-      title: "New Analysis",
-      icon: FileText,
-      action: () => navigate("/document-analysis"),
-      color: "text-blue-500"
-    },
-    {
-      title: "View Documents",
-      icon: Book,
-      action: () => setActiveTab("documents"),
-      color: "text-green-500"
-    },
-    {
-      title: "Documentation",
-      icon: HelpCircle,
-      action: () => window.open("https://docs.legalbriefai.com", "_blank"),
-      color: "text-purple-500"
-    }
-  ];
-
-  const recentActivities = [
-    {
-      title: "Document Analysis Completed",
-      time: "2 hours ago",
-      icon: Activity,
-      color: "text-green-500"
-    },
-    {
-      title: "New Feature Available",
-      time: "1 day ago",
-      icon: Bell,
-      color: "text-blue-500"
-    }
-  ];
-
   if (!session) return null;
+
+  const userName = userProfile?.full_name || session?.user?.email?.split('@')[0] || 'User';
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -133,218 +95,25 @@ export const Dashboard = () => {
         </div>
       )}
 
-      <Dialog open={showDonationDialog} onOpenChange={setShowDonationDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Heart className="h-6 w-6 text-red-500 animate-pulse" />
-              Support LegalBriefAI
-            </DialogTitle>
-            <Separator className="my-4" />
-            <DialogDescription className="text-base space-y-4">
-              <div className="flex items-start gap-3">
-                <Gift className="h-5 w-5 text-primary mt-1" />
-                <p>
-                  We need Donations for Multiple Improvements and if anyone does we will provide him Pro Plan Features for 1-2 months.
-                </p>
-              </div>
-              <div className="bg-accent/10 p-4 rounded-lg mt-4">
-                <p className="font-medium text-sm text-accent">
-                  Your support helps us continue improving our AI capabilities and adding new features!
-                </p>
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-3 sm:gap-0">
-            <Button
-              variant="outline"
-              onClick={() => setShowDonationDialog(false)}
-            >
-              Maybe Later
-            </Button>
-            <Button
-              variant="default"
-              onClick={() => {
-                window.open("https://www.figma.com/proto/eWAJORd1BV6OLT8V8a7CeE/LegalBriefAI?node-id=1-2&p=f&t=lxhZSOMTKwa7ZmrQ-1&scaling=scale-down-width&content-scaling=fixed&page-id=0%3A1", "_blank");
-                setShowDonationDialog(false);
-              }}
-              className="gap-2"
-            >
-              <Heart className="h-4 w-4" />
-              Support Us
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DonationDialog 
+        open={showDonationDialog} 
+        onOpenChange={setShowDonationDialog} 
+      />
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-primary mb-2">
-            Welcome back, {userProfile?.full_name || session?.user?.email?.split('@')[0] || 'User'}
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground">
-            Here's what's happening with your documents today.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2 md:gap-3 justify-start md:justify-end">
-          {quickActions.map((action, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className="flex items-center gap-2 text-xs md:text-sm w-full sm:w-auto"
-              onClick={action.action}
-            >
-              <action.icon className={`h-4 w-4 ${action.color}`} />
-              {action.title}
-            </Button>
-          ))}
-        </div>
-      </div>
+      <DashboardHeader 
+        userName={userName} 
+        onTabChange={setActiveTab} 
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="col-span-2 p-6">
-          <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            {recentActivities.map((activity, index) => (
-              <div key={index} className="flex items-center gap-4">
-                <div className={`p-2 rounded-full bg-gray-100 ${activity.color}`}>
-                  <activity.icon className="h-4 w-4" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">{activity.title}</p>
-                  <p className="text-sm text-muted-foreground">{activity.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
+      <StatsCards stats={analysisStats} />
 
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Performance</h2>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span>Analysis Speed</span>
-                <span className="text-green-500">+12%</span>
-              </div>
-              <Progress value={78} className="h-2" />
-            </div>
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span>Accuracy Rate</span>
-                <span className="text-blue-500">99%</span>
-              </div>
-              <Progress value={99} className="h-2" />
-            </div>
-          </div>
-        </Card>
-      </div>
+      <ActivitySummary />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card key={0} className="p-4 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <FileText className="h-8 w-8 text-accent" />
-            <span className="text-2xl font-bold">{analysisStats.totalDocuments.toString()}</span>
-          </div>
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Documents Analyzed</h3>
-          <div className="flex items-center text-xs">
-            <TrendingUp className="h-4 w-4 mr-1 text-success" />
-            <span className="text-success">+12% from last month</span>
-          </div>
-        </Card>
-
-        <Card key={1} className="p-4 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <BarChart className="h-8 w-8 text-success" />
-            <span className="text-2xl font-bold">${analysisStats.averageScore}%</span>
-          </div>
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Analysis Score</h3>
-          <div className="flex items-center text-xs">
-            <TrendingUp className="h-4 w-4 mr-1 text-success" />
-            <span className="text-success">+5% improvement</span>
-          </div>
-        </Card>
-
-        <Card key={2} className="p-4 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <Clock className="h-8 w-8 text-warning" />
-            <span className="text-2xl font-bold">2.5s</span>
-          </div>
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Processing Time</h3>
-          <div className="flex items-center text-xs">
-            <TrendingUp className="h-4 w-4 mr-1 text-warning" />
-            <span className="text-warning">-30% faster</span>
-          </div>
-        </Card>
-
-        <Card key={3} className="p-4 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <Target className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">99%</span>
-          </div>
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Accuracy Rate</h3>
-          <div className="flex items-center text-xs">
-            <TrendingUp className="h-4 w-4 mr-1 text-success" />
-            <span className="text-success">Consistent</span>
-          </div>
-        </Card>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="w-full justify-start overflow-x-auto">
-          <TabsTrigger value="documents">Documents</TabsTrigger>
-          <TabsTrigger value="upload">Upload</TabsTrigger>
-          <TabsTrigger value="insights">Insights</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="documents">
-          <DocumentGallery userId={session.user.id} />
-        </TabsContent>
-
-        <TabsContent value="upload">
-          <DocumentAnalysis />
-        </TabsContent>
-
-        <TabsContent value="insights">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: "Processing Speed",
-                value: "2.5x",
-                icon: Zap,
-                description: "Faster than manual review"
-              },
-              {
-                title: "Quality Score",
-                value: "92%",
-                icon: Target,
-                description: "Document quality rating"
-              },
-              {
-                title: "Success Rate",
-                value: "98%",
-                icon: TrendingUp,
-                description: "Analysis completion rate"
-              },
-              {
-                title: "Time Saved",
-                value: "75%",
-                icon: Clock,
-                description: "Compared to manual process"
-              }
-            ].map((insight, index) => (
-              <Card key={index} className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <insight.icon className="h-8 w-8 text-accent" />
-                  <span className="text-2xl font-bold">{insight.value}</span>
-                </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-2">{insight.title}</h3>
-                <p className="text-xs text-gray-500">{insight.description}</p>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+      <ContentTabs 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        userId={session.user.id} 
+      />
     </div>
   );
 };
