@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +20,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Documentation from "./pages/Documentation";
 import UpcomingFeatures from "./pages/UpcomingFeatures";
+import { Dashboard } from "@/components/dashboard";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +75,7 @@ function App() {
               <Route path="/payment" element={<Payment />} />
               <Route path="/documentation" element={<Documentation />} />
               <Route path="/upcoming-features" element={<UpcomingFeatures />} />
+              <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

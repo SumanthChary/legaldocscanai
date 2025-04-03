@@ -1,7 +1,7 @@
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Dashboard } from "@/components/dashboard/Dashboard";
+import { Dashboard } from "@/components/dashboard";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import { useState } from "react";
