@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,10 +17,12 @@ import DocumentAnalysis from "./pages/DocumentAnalysis";
 import DocumentSummary from "./pages/DocumentSummary";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import Documentation from "./pages/Documentation";
+import UpcomingFeatures from "./pages/UpcomingFeatures";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -60,36 +61,24 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Landing />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:id" element={<BlogPost />} />
-              <Route path="/document-analysis" element={<DocumentAnalysis />} />
-              <Route path="/document/:id/summary" element={
-                session ? <DocumentSummary /> : <Navigate to="/auth" />
-              } />
-              <Route
-                path="/dashboard"
-                element={session ? <Index /> : <Navigate to="/auth" />}
-              />
-              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/index" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
               <Route path="/features" element={<Features />} />
-              <Route
-                path="/auth"
-                element={!session ? <Auth /> : <Navigate to="/dashboard" />}
-              />
-              <Route
-                path="/profile"
-                element={session ? <Profile /> : <Navigate to="/auth" />}
-              />
-              <Route
-                path="/payment"
-                element={session ? <Payment /> : <Navigate to="/auth" />}
-              />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/document-analysis" element={<DocumentAnalysis />} />
+              <Route path="/document-summary/:id" element={<DocumentSummary />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/documentation" element={<Documentation />} />
+              <Route path="/upcoming-features" element={<UpcomingFeatures />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
     </PayPalScriptProvider>
   );
-};
+}
 
 export default App;

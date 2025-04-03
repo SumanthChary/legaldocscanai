@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Facebook, Instagram, Linkedin, Send, Twitter, HelpCircle } from "lucide-react";
@@ -16,9 +17,19 @@ export const Footer = () => {
     e.preventDefault();
     setIsLoading(true);
 
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // Call the subscribe-email edge function instead of directly querying the database
-      const { error } = await supabase.functions.invoke('subscribe-email', {
+      // Call the subscribe-email edge function
+      const { data, error } = await supabase.functions.invoke('subscribe-email', {
         body: { email }
       });
 
@@ -30,12 +41,12 @@ export const Footer = () => {
       });
       setEmail("");
     } catch (error: any) {
+      console.error("Subscription error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to subscribe. Please try again later.",
+        description: error.message || "Failed to subscribe. Please try again later.",
       });
-      console.error("Subscription error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -79,6 +90,7 @@ export const Footer = () => {
               </Button>
             </form>
           </div>
+          
           <div>
             <h3 className="mb-4 text-lg font-semibold">Quick Links</h3>
             <nav className="space-y-2 text-sm">
@@ -101,6 +113,7 @@ export const Footer = () => {
               </Button>
             </nav>
           </div>
+          
           <div>
             <h3 className="mb-4 text-lg font-semibold">Contact</h3>
             <div className="space-y-2 text-sm text-muted-foreground">
@@ -108,6 +121,7 @@ export const Footer = () => {
               <p>+91 8125228079</p>
             </div>
           </div>
+          
           <div>
             <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
             <div className="flex space-x-4">
@@ -129,6 +143,7 @@ export const Footer = () => {
             </div>
           </div>
         </div>
+        
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
           <p>© 2024 LegalAI. All rights reserved.</p>
         </div>

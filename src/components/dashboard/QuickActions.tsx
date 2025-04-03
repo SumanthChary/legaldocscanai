@@ -33,7 +33,7 @@ export const QuickActions = ({ onTabChange }: QuickActionsProps) => {
     {
       title: "Documentation",
       icon: HelpCircle,
-      action: () => window.open("https://docs.legalbriefai.com", "_blank"),
+      action: () => navigate("/documentation"),
       color: "text-purple-500"
     }
   ];
