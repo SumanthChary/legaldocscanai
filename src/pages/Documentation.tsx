@@ -1,6 +1,4 @@
-
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { PageLayout } from "@/components/layout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Book, Code, FileText, Info, Play, Shield, FileCheck, Pen } from "lucide-react";
@@ -33,9 +31,8 @@ const Documentation = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
-      <main className="flex-grow container mx-auto px-4 py-12">
+    <PageLayout>
+      <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-2 text-center">LegalBriefAI Documentation</h1>
           <p className="text-muted-foreground text-center mb-12">
@@ -116,9 +113,8 @@ const Documentation = () => {
             </div>
           </Card>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 

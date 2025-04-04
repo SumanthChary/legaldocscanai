@@ -1,7 +1,6 @@
 
 import { useParams } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { PageLayout } from "@/components/layout";
 import { Card } from "@/components/ui/card";
 import { 
   DocumentHeader, 
@@ -27,9 +26,8 @@ const DocumentSummary = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">
+    <PageLayout>
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <DocumentHeader 
             refreshAnalysis={fetchAnalysis} 
@@ -59,9 +57,8 @@ const DocumentSummary = () => {
             />
           </Card>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 

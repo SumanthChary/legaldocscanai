@@ -1,6 +1,4 @@
-
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { PageLayout } from "@/components/layout";
 import { HeroSection } from "@/components/blocks/hero-section";
 import { FeaturesSection } from "@/components/blocks/features-section";
 import { TestimonialsSection } from "@/components/blocks/testimonials-with-marquee";
@@ -79,23 +77,19 @@ const Landing = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-grow">
-        <HeroSection benefits={benefits} />
-        <FeaturesSection />
-        <PricingSection />
-        <TestimonialsSection
-          title="Trusted by Legal Professionals Worldwide"
-          description="Join thousands of legal professionals who are already transforming their document workflow with LegalBriefAI"
-          testimonials={testimonials}
-        />
-        <AboutSection />
-        <FAQSection faqs={faqs} />
-        <CTASection />
-      </main>
-      <Footer />
-    </div>
+    <PageLayout>
+      <HeroSection benefits={benefits} />
+      <FeaturesSection />
+      <PricingSection />
+      <TestimonialsSection
+        title="Trusted by Legal Professionals Worldwide"
+        description="Join thousands of legal professionals who are already transforming their document workflow with LegalBriefAI"
+        testimonials={testimonials}
+      />
+      <AboutSection />
+      <FAQSection faqs={faqs} />
+      <CTASection />
+    </PageLayout>
   );
 };
 

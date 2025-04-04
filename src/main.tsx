@@ -4,8 +4,28 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
-createRoot(document.getElementById("root")!).render(
+// Use this for performance measurement if needed
+const reportWebVitals = (onPerfEntry?: any) => {
+  if (onPerfEntry && onPerfEntry instanceof Function) {
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      getCLS(onPerfEntry);
+      getFID(onPerfEntry);
+      getFCP(onPerfEntry);
+      getLCP(onPerfEntry);
+      getTTFB(onPerfEntry);
+    });
+  }
+};
+
+// Create the root once
+const root = createRoot(document.getElementById("root")!);
+
+// Use strict mode for development checks
+root.render(
   <StrictMode>
     <App />
   </StrictMode>
 );
+
+// Uncomment to measure performance
+// reportWebVitals(console.log);

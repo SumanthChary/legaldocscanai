@@ -1,6 +1,4 @@
-
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { PageLayout } from "@/components/layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, FileCheck, FileText, Shield, FileSignature, Component } from "lucide-react";
@@ -68,9 +66,8 @@ const UpcomingFeatures = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-grow bg-gray-50 py-12">
+    <PageLayout>
+      <div className="py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto mb-12 text-center">
             <h1 className="text-3xl font-bold mb-4">New Legal AI Features Coming Soon</h1>
@@ -139,9 +136,8 @@ const UpcomingFeatures = () => {
             </Button>
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 
