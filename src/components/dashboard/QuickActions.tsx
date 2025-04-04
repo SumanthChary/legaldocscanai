@@ -1,5 +1,5 @@
 
-import { Book, FileText, HelpCircle } from "lucide-react";
+import { Book, FileText, HelpCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -35,6 +35,12 @@ export const QuickActions = ({ onTabChange }: QuickActionsProps) => {
       icon: HelpCircle,
       action: () => navigate("/documentation"),
       color: "text-purple-500"
+    },
+    {
+      title: "Coming Soon",
+      icon: Sparkles,
+      action: () => navigate("/upcoming-features"),
+      color: "text-amber-500"
     }
   ];
 

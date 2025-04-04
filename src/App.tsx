@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 
 // Lazy load pages for better performance
 const Landing = lazy(() => import("./pages/Landing"));
@@ -78,6 +79,7 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
               </Routes>
             </Suspense>
+            <ChatWidget />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
