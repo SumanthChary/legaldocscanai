@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandLogo, DesktopMenu, MobileMenu, useAuthSession } from "./header";
 import { Button } from "./ui/button";
-import { Book, Sparkles } from "lucide-react";
+import { Book } from "lucide-react";
 
 export function Header() {
   const navigate = useNavigate();
@@ -41,15 +41,6 @@ export function Header() {
             >
               <Book className="h-4 w-4" />
               <span>Docs</span>
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="flex items-center gap-1" 
-              onClick={() => navigate("/upcoming-features")}
-            >
-              <Sparkles className="h-4 w-4" />
-              <span>Coming Soon</span>
             </Button>
           </div>
           
