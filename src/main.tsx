@@ -1,5 +1,5 @@
 
-import { StrictMode } from 'react';
+import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
@@ -18,7 +18,9 @@ const reportWebVitals = (onPerfEntry?: any) => {
 };
 
 // Create the root once
-const root = createRoot(document.getElementById("root")!);
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error('Root element not found');
+const root = createRoot(rootElement);
 
 // Use strict mode for development checks
 root.render(

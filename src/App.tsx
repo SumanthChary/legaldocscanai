@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -70,6 +71,7 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/document-analysis" element={<DocumentAnalysis />} />
                 <Route path="/document-summary/:id" element={<DocumentSummary />} />
+                <Route path="/document/:id/summary" element={<DocumentSummary />} />
                 <Route path="/payment" element={<Payment />} />
                 <Route path="/documentation" element={<Documentation />} />
                 <Route path="/upcoming-features" element={<UpcomingFeatures />} />
