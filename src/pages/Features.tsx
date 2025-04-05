@@ -1,4 +1,3 @@
-
 import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { 
@@ -12,7 +11,7 @@ import {
   Component,
   Database,
   Languages,
-  Timeline,
+  Clock,
   Link,
   Users2
 } from "lucide-react";
@@ -230,7 +229,7 @@ const Features = () => {
       ]
     },
     {
-      icon: Timeline,
+      icon: Clock,
       title: "Interactive Summaries with Visualizations",
       description: "Transform summaries into interactive charts and timelines",
       status: "coming-soon" as const,
