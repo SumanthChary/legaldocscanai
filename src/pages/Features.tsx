@@ -13,11 +13,16 @@ import {
   Languages,
   Clock,
   Link,
-  Users2
+  Users2,
+  Sparkles,
+  Eye
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
+import { useState } from "react";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { toast } from "@/hooks/use-toast";
 
 const UpcomingFeature = ({ 
   icon: Icon, 
@@ -25,12 +30,14 @@ const UpcomingFeature = ({
   description, 
   status, 
   infoList,
+  isPreview = false
 }: { 
   icon: React.ElementType;
   title: string;
   description: string;
   status: "available" | "coming-soon" | "beta";
   infoList: string[];
+  isPreview?: boolean;
 }) => {
   const statusColors = {
     "available": "bg-green-100 text-green-700",
@@ -45,7 +52,7 @@ const UpcomingFeature = ({
   };
 
   return (
-    <Card>
+    <Card className={isPreview ? "hover:shadow-md transition-shadow" : ""}>
       <CardHeader>
         <div className="flex justify-between items-start">
           <div className="flex gap-3">
@@ -63,15 +70,23 @@ const UpcomingFeature = ({
         </div>
       </CardHeader>
       <CardContent>
-        <h4 className="text-sm font-medium mb-2">How It Works:</h4>
-        <ul className="space-y-2">
-          {infoList.map((info, index) => (
-            <li key={index} className="flex items-start text-sm">
-              <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 shrink-0" />
-              <span>{info}</span>
-            </li>
-          ))}
-        </ul>
+        {isPreview ? (
+          <p className="text-sm text-muted-foreground">
+            More details available in our beta program or for enterprise customers.
+          </p>
+        ) : (
+          <>
+            <h4 className="text-sm font-medium mb-2">How It Works:</h4>
+            <ul className="space-y-2">
+              {infoList.map((info, index) => (
+                <li key={index} className="flex items-start text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 shrink-0" />
+                  <span>{info}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </CardContent>
     </Card>
   );
@@ -79,6 +94,9 @@ const UpcomingFeature = ({
 
 const Features = () => {
   const navigate = useNavigate();
+  const [showBetaForm, setShowBetaForm] = useState(false);
+  const [email, setEmail] = useState("");
+  const [betaFeatureInterest, setBetaFeatureInterest] = useState("");
 
   const features = [
     {
@@ -143,7 +161,7 @@ const Features = () => {
     }
   ];
   
-  const upcomingFeatures = [
+  const highlightedUpcomingFeatures = [
     {
       icon: FileText,
       title: "AI Contract Analyzer",
@@ -191,80 +209,54 @@ const Features = () => {
         "AI helps fill in appropriate clauses",
         "Export documents in multiple formats"
       ]
-    },
+    }
+  ];
+
+  const previewFeatures = [
     {
       icon: Languages,
-      title: "Multilingual Legal Document Summarization",
-      description: "AI-powered summarization across multiple languages",
+      title: "Advanced Language Processing",
+      description: "Sophisticated language capabilities coming to our platform",
       status: "coming-soon" as const,
-      infoList: [
-        "Support for English, Spanish, French, and more",
-        "Accurate legal terminology across languages",
-        "Maintain legal meaning in translations",
-        "Perfect for global law firms and multinational corporations"
-      ]
-    },
-    {
-      icon: Database,
-      title: "Meta-Summarization for Long Documents",
-      description: "Hierarchical summaries for lengthy documents",
-      status: "coming-soon" as const,
-      infoList: [
-        "Chapter-level or clause-level summaries",
-        "Maintains context across large documents",
-        "Ideal for litigation teams handling discovery",
-        "Navigate complex contracts without losing details"
-      ]
-    },
-    {
-      icon: Shield,
-      title: "Clause Extraction and Comparative Analysis",
-      description: "Extract and compare clauses across multiple agreements",
-      status: "coming-soon" as const,
-      infoList: [
-        "Automatically identify specific clause types",
-        "Side-by-side comparison of similar contracts",
-        "Identify discrepancies and potential issues",
-        "Save time reviewing similar agreements"
-      ]
+      infoList: []
     },
     {
       icon: Clock,
-      title: "Interactive Summaries with Visualizations",
-      description: "Transform summaries into interactive charts and timelines",
+      title: "Visual Analytics Suite",
+      description: "Transform complex legal information into visual insights",
       status: "coming-soon" as const,
-      infoList: [
-        "Visual representation of case progression",
-        "Contract obligation timelines",
-        "Exportable charts and graphs",
-        "Make complex information more accessible"
-      ]
+      infoList: []
     },
     {
       icon: Users2,
-      title: "Real-Time Collaboration on Summaries",
-      description: "Simultaneous editing and annotation by multiple users",
+      title: "Enhanced Collaboration Tools",
+      description: "Next-generation team workflows for legal professionals",
       status: "coming-soon" as const,
-      infoList: [
-        "Multiple users edit in real-time",
-        "Track changes and contributions",
-        "Comment and annotation features",
-        "Perfect for distributed legal teams"
-      ]
-    },
-    {
-      icon: Link,
-      title: "Integration with Legal Research Databases",
-      description: "Link summarized content to relevant case law or statutes",
-      status: "coming-soon" as const,
-      infoList: [
-        "One-click access to supporting legal materials",
-        "Automated citation suggestions",
-        "Integration with major legal research platforms",
-        "Save time on additional research"
-      ]
+      infoList: []
     }
   ];
+
+  const handleBetaSignup = () => {
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please provide your email address to join the beta waitlist.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    console.log("Beta signup:", { email, featureInterest: betaFeatureInterest });
+    
+    toast({
+      title: "Beta Access Request Received",
+      description: "Thank you for your interest! We'll be in touch with more details about our beta program.",
+    });
+    
+    setShowBetaForm(false);
+    setEmail("");
+    setBetaFeatureInterest("");
+  };
 
   return (
     <PageLayout>
@@ -301,15 +293,90 @@ const Features = () => {
             ))}
           </div>
 
-          <div className="max-w-3xl mx-auto mb-12 text-center">
-            <h2 className="text-3xl font-bold mb-4">Coming Soon</h2>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-xl shadow-sm mb-16">
+            <div className="flex flex-col md:flex-row items-center justify-between">
+              <div className="mb-6 md:mb-0 md:mr-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
+                  <Sparkles className="h-6 w-6 text-blue-500 mr-2" />
+                  Exclusive Beta Program
+                </h2>
+                <p className="text-gray-700">
+                  Get early access to our most innovative features before they're publicly available.
+                  Join our beta program to help shape the future of legal document analysis.
+                </p>
+              </div>
+              <Sheet open={showBetaForm} onOpenChange={setShowBetaForm}>
+                <SheetTrigger asChild>
+                  <Button size="lg" className="shrink-0">
+                    Join Beta Waitlist
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Join Our Beta Program</SheetTitle>
+                    <SheetDescription>
+                      Get early access to our upcoming features and help shape the future of legal document analysis.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-4">
+                    <div>
+                      <label htmlFor="email" className="text-sm font-medium block mb-2">Email Address</label>
+                      <input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="feature-interest" className="text-sm font-medium block mb-2">
+                        Which feature are you most interested in?
+                      </label>
+                      <select
+                        id="feature-interest"
+                        value={betaFeatureInterest}
+                        onChange={(e) => setBetaFeatureInterest(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                      >
+                        <option value="">Select a feature</option>
+                        <option value="AI Contract Analyzer">AI Contract Analyzer</option>
+                        <option value="Legal Compliance Checker">Legal Compliance Checker</option>
+                        <option value="Multilingual Support">Advanced Language Processing</option>
+                        <option value="Visual Analytics">Visual Analytics Suite</option>
+                        <option value="Collaboration Tools">Enhanced Collaboration Tools</option>
+                      </select>
+                    </div>
+                    <Button 
+                      onClick={handleBetaSignup} 
+                      className="w-full mt-4"
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
+
+          <div className="max-w-3xl mx-auto mb-6 text-center">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <h2 className="text-3xl font-bold">Key Upcoming Features</h2>
+              <div className="relative">
+                <Eye className="h-5 w-5 text-blue-500 cursor-pointer hover:text-blue-700" />
+                <div className="absolute -top-10 right-0 bg-black text-white text-xs p-2 rounded w-40 opacity-0 group-hover:opacity-100 pointer-events-none">
+                  Enterprise customers see our full roadmap
+                </div>
+              </div>
+            </div>
             <p className="text-lg text-muted-foreground">
-              We're constantly enhancing our platform with innovative AI tools designed specifically for legal professionals.
+              Get a glimpse of the innovations we're developing to enhance your legal workflow
             </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 mb-12">
-            {upcomingFeatures.map((feature, index) => (
+            {highlightedUpcomingFeatures.map((feature, index) => (
               <UpcomingFeature 
                 key={index}
                 icon={feature.icon}
@@ -321,7 +388,31 @@ const Features = () => {
             ))}
           </div>
           
+          <div className="max-w-3xl mx-auto mb-6 text-center">
+            <h2 className="text-2xl font-bold mb-4">More Innovations in Development</h2>
+            <p className="text-muted-foreground">
+              A preview of additional capabilities on our roadmap
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3 mb-16">
+            {previewFeatures.map((feature, index) => (
+              <UpcomingFeature 
+                key={index}
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+                status={feature.status}
+                infoList={feature.infoList}
+                isPreview={true}
+              />
+            ))}
+          </div>
+          
           <div className="text-center">
+            <p className="mb-6 text-gray-600">
+              Ready to experience our powerful document analysis capabilities?
+            </p>
             <Button size="lg" onClick={() => navigate("/pricing")}>
               View Pricing Plans
             </Button>

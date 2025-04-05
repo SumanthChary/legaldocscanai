@@ -1,7 +1,7 @@
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Check, Ticket } from "lucide-react";
+import { Check, Ticket, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { PricingButton } from "@/components/pricing/PricingButton";
 import { Switch } from "@/components/ui/switch";
@@ -51,7 +51,8 @@ const Pricing = () => {
         "Jurisdiction-specific insights",
         "Multi-user access (up to 5 team members)",
         "Real-time collaboration tools",
-        "Priority email support"
+        "Priority email support",
+        "Beta access to select new features"
       ],
       highlight: true,
       popular: true
@@ -67,7 +68,9 @@ const Pricing = () => {
         "Batch processing and advanced analytics",
         "Integration with legal software",
         "Dedicated account manager and 24/7 support",
-        "On-premises or private cloud option"
+        "On-premises or private cloud option",
+        "Full access to all beta features",
+        "Exclusive roadmap visibility and input"
       ],
       highlight: false
     },
@@ -165,7 +168,11 @@ const Pricing = () => {
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start text-gray-600">
-                      <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      {feature.includes("beta") ? (
+                        <Sparkles className="h-5 w-5 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
+                      ) : (
+                        <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      )}
                       <span>{feature}</span>
                     </li>
                   ))}
