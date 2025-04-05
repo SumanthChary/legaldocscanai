@@ -65,7 +65,7 @@ export const HeroSection = ({ benefits }: HeroProps) => {
                   size="lg"
                   variant="outline"
                   className="text-base md:text-lg px-6 md:px-8"
-                  onClick={() => navigate("/document-analysis")}
+                  onClick={() => navigate("/documentation")}
                 >
                   Learn More
                 </Button>

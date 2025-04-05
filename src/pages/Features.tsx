@@ -8,10 +8,13 @@ import {
   Cloud, 
   Headphones,
   Server,
-  Sparkles,
   FileSignature,
   Component,
-  FileCheck
+  Database,
+  Languages,
+  Timeline,
+  Link,
+  Users2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -140,6 +143,129 @@ const Features = () => {
       ]
     }
   ];
+  
+  const upcomingFeatures = [
+    {
+      icon: FileText,
+      title: "AI Contract Analyzer",
+      description: "Deep analysis of legal contracts with risk assessment",
+      status: "beta" as const,
+      infoList: [
+        "Upload contracts (PDF, DOCX, TXT)",
+        "AI scans and extracts key clauses and risks",
+        "Highlights missing terms and obligations",
+        "Provides easy-to-understand summaries"
+      ]
+    },
+    {
+      icon: FileSignature,
+      title: "E-Signature Integration",
+      description: "Secure digital signatures for your legal documents",
+      status: "coming-soon" as const,
+      infoList: [
+        "Upload AI-generated or existing legal documents",
+        "Add signature fields for multiple parties",
+        "Secure digital signing process",
+        "Tamper-proof document storage and download"
+      ]
+    },
+    {
+      icon: Shield,
+      title: "Legal Compliance Checker",
+      description: "Ensure your documents comply with relevant regulations",
+      status: "coming-soon" as const,
+      infoList: [
+        "Upload legal documents for compliance review",
+        "AI checks against GDPR, CCPA, and other regulations",
+        "Flags violations and missing clauses",
+        "Provides remediation suggestions"
+      ]
+    },
+    {
+      icon: Component,
+      title: "Customizable Document Templates",
+      description: "Create legal documents with customizable templates",
+      status: "coming-soon" as const,
+      infoList: [
+        "Access library of pre-made legal templates",
+        "Customize with your specific requirements",
+        "AI helps fill in appropriate clauses",
+        "Export documents in multiple formats"
+      ]
+    },
+    {
+      icon: Languages,
+      title: "Multilingual Legal Document Summarization",
+      description: "AI-powered summarization across multiple languages",
+      status: "coming-soon" as const,
+      infoList: [
+        "Support for English, Spanish, French, and more",
+        "Accurate legal terminology across languages",
+        "Maintain legal meaning in translations",
+        "Perfect for global law firms and multinational corporations"
+      ]
+    },
+    {
+      icon: Database,
+      title: "Meta-Summarization for Long Documents",
+      description: "Hierarchical summaries for lengthy documents",
+      status: "coming-soon" as const,
+      infoList: [
+        "Chapter-level or clause-level summaries",
+        "Maintains context across large documents",
+        "Ideal for litigation teams handling discovery",
+        "Navigate complex contracts without losing details"
+      ]
+    },
+    {
+      icon: Shield,
+      title: "Clause Extraction and Comparative Analysis",
+      description: "Extract and compare clauses across multiple agreements",
+      status: "coming-soon" as const,
+      infoList: [
+        "Automatically identify specific clause types",
+        "Side-by-side comparison of similar contracts",
+        "Identify discrepancies and potential issues",
+        "Save time reviewing similar agreements"
+      ]
+    },
+    {
+      icon: Timeline,
+      title: "Interactive Summaries with Visualizations",
+      description: "Transform summaries into interactive charts and timelines",
+      status: "coming-soon" as const,
+      infoList: [
+        "Visual representation of case progression",
+        "Contract obligation timelines",
+        "Exportable charts and graphs",
+        "Make complex information more accessible"
+      ]
+    },
+    {
+      icon: Users2,
+      title: "Real-Time Collaboration on Summaries",
+      description: "Simultaneous editing and annotation by multiple users",
+      status: "coming-soon" as const,
+      infoList: [
+        "Multiple users edit in real-time",
+        "Track changes and contributions",
+        "Comment and annotation features",
+        "Perfect for distributed legal teams"
+      ]
+    },
+    {
+      icon: Link,
+      title: "Integration with Legal Research Databases",
+      description: "Link summarized content to relevant case law or statutes",
+      status: "coming-soon" as const,
+      infoList: [
+        "One-click access to supporting legal materials",
+        "Automated citation suggestions",
+        "Integration with major legal research platforms",
+        "Save time on additional research"
+      ]
+    }
+  ];
 
   return (
     <PageLayout>
@@ -184,57 +310,16 @@ const Features = () => {
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 mb-12">
-            <UpcomingFeature 
-              icon={FileText}
-              title="AI Contract Analyzer"
-              description="Deep analysis of legal contracts with risk assessment"
-              status="beta"
-              infoList={[
-                "Upload contracts (PDF, DOCX, TXT)",
-                "AI scans and extracts key clauses and risks",
-                "Highlights missing terms and obligations",
-                "Provides easy-to-understand summaries"
-              ]}
-            />
-            
-            <UpcomingFeature 
-              icon={FileSignature}
-              title="E-Signature Integration"
-              description="Secure digital signatures for your legal documents"
-              status="coming-soon"
-              infoList={[
-                "Upload AI-generated or existing legal documents",
-                "Add signature fields for multiple parties",
-                "Secure digital signing process",
-                "Tamper-proof document storage and download"
-              ]}
-            />
-            
-            <UpcomingFeature 
-              icon={Shield}
-              title="Legal Compliance Checker"
-              description="Ensure your documents comply with relevant regulations"
-              status="coming-soon"
-              infoList={[
-                "Upload legal documents for compliance review",
-                "AI checks against GDPR, CCPA, and other regulations",
-                "Flags violations and missing clauses",
-                "Provides remediation suggestions"
-              ]}
-            />
-            
-            <UpcomingFeature 
-              icon={Component}
-              title="Customizable Document Templates"
-              description="Create legal documents with customizable templates"
-              status="coming-soon"
-              infoList={[
-                "Access library of pre-made legal templates",
-                "Customize with your specific requirements",
-                "AI helps fill in appropriate clauses",
-                "Export documents in multiple formats"
-              ]}
-            />
+            {upcomingFeatures.map((feature, index) => (
+              <UpcomingFeature 
+                key={index}
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+                status={feature.status}
+                infoList={feature.infoList}
+              />
+            ))}
           </div>
           
           <div className="text-center">

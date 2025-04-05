@@ -20,7 +20,7 @@ const Index = () => {
             </div>
             <div className="flex items-center gap-3">
               <Button variant="link" size="sm" className="text-primary p-0" asChild>
-                <Link to="/upcoming-features">Learn more</Link>
+                <Link to="/documentation">Learn more</Link>
               </Button>
               <button 
                 onClick={() => setShowNewFeatures(false)}
