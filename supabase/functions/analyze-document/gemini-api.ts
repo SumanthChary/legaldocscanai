@@ -1,7 +1,6 @@
-
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") || "";
 
-// Improved Gemini analysis function with better error handling and fallback strategies
+// Improved Gemini analysis function with better error handling, fallback strategies, and enhanced prompts
 export async function analyzeWithGemini(text: string): Promise<string> {
   console.log("Analyzing with Gemini... Text length:", text.length);
   
@@ -15,42 +14,81 @@ export async function analyzeWithGemini(text: string): Promise<string> {
     .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
     .replace(/\s+/g, ' '); // Normalize whitespace
   
-  // Ensure text doesn't exceed maximum allowed length
-  const maxLength = 10000; // Increased max length to handle larger documents
-  const truncatedText = cleanedText.length > maxLength 
-    ? cleanedText.substring(0, maxLength) + "..." 
-    : cleanedText;
+  // Smart chunking for very large documents
+  const chunks = smartChunking(cleanedText);
   
   try {
-    // First attempt with standard settings
-    console.log("Attempting first Gemini API call with standard settings");
-    const summary = await callGeminiAPI(truncatedText);
-    return summary;
-  } catch (error) {
-    console.error("First Gemini API attempt failed:", error);
-    
-    // Fallback with even shorter text and simpler prompt
-    try {
-      const shorterText = truncatedText.substring(0, 5000);
-      console.log("Retrying with shorter text (5000 chars) and simpler prompt");
+    if (chunks.length === 1) {
+      // For documents that fit in a single chunk
+      console.log("Attempting complete document analysis with enhanced prompting");
+      const summary = await callGeminiAPI(
+        chunks[0],
+        getDetailedPrompt("complete"),
+        0.3
+      );
+      return summary;
+    } else {
+      // For documents that needed to be chunked
+      console.log(`Document required chunking into ${chunks.length} parts`);
       
-      const fallbackSummary = await callGeminiAPI(shorterText, "Summarize this document briefly:", 0.1);
+      // Process each chunk and then combine the results
+      const chunkSummaries = [];
+      for (let i = 0; i < chunks.length; i++) {
+        console.log(`Processing chunk ${i+1}/${chunks.length}`);
+        const chunkSummary = await callGeminiAPI(
+          chunks[i],
+          getDetailedPrompt("chunk", i+1, chunks.length),
+          0.3
+        );
+        chunkSummaries.push(chunkSummary);
+      }
+      
+      // Combine chunk summaries into a coherent whole
+      const combinedText = chunkSummaries.join("\n\n--- Next Section ---\n\n");
+      console.log("Creating final combined summary");
+      
+      // Final pass to create a coherent summary from the chunks
+      const finalSummary = await callGeminiAPI(
+        combinedText,
+        getDetailedPrompt("combine"),
+        0.2
+      );
+      
+      return finalSummary;
+    }
+  } catch (error) {
+    console.error("Primary analysis approach failed:", error);
+    
+    // Enhanced fallback approach
+    try {
+      const shorterText = chunks[0].substring(0, 8000);
+      console.log("Retrying with comprehensive fallback approach");
+      
+      const fallbackSummary = await callGeminiAPI(
+        shorterText,
+        "Provide a comprehensive and detailed summary of this document, covering all key points, findings, and information:", 
+        0.2
+      );
       return fallbackSummary;
     } catch (secondError) {
-      console.error("Second Gemini API attempt failed:", secondError);
+      console.error("Enhanced fallback approach failed:", secondError);
       
-      // Try with minimal settings as last resort
+      // Final simplified fallback
       try {
-        const minimalText = truncatedText.substring(0, 2000);
-        console.log("Final attempt with minimal text (2000 chars)");
+        const minimalText = chunks[0].substring(0, 3000);
+        console.log("Final attempt with minimal text");
         
-        const minimalSummary = await callGeminiAPI(minimalText, "What is this document about?", 0);
+        const minimalSummary = await callGeminiAPI(
+          minimalText,
+          "Summarize this document text as thoroughly as possible:", 
+          0.1
+        );
         return minimalSummary;
       } catch (finalError) {
         console.error("All Gemini API attempts failed:", finalError);
         
-        // Extract some content directly to provide at least some information
-        const extractedContent = truncatedText.substring(0, 500);
+        // Last resort extraction
+        const extractedContent = chunks[0].substring(0, 500);
         
         return `We encountered challenges processing this document fully, but here's what we found:\n\n${extractedContent}...\n\n(Note: This is a partial extraction as the AI processing encountered difficulties with the full document.)`;
       }
@@ -58,8 +96,106 @@ export async function analyzeWithGemini(text: string): Promise<string> {
   }
 }
 
-async function callGeminiAPI(text: string, promptPrefix = "Analyze and summarize this document, identifying its main points, purpose, key findings, and important details:", temperature = 0.3): Promise<string> {
-  console.log(`Calling Gemini API with text length: ${text.length}, promptPrefix: "${promptPrefix}", temperature: ${temperature}`);
+// Smart chunking that preserves document structure
+function smartChunking(text: string): string[] {
+  const MAX_CHUNK_SIZE = 12000; // Increased from previous implementation
+  
+  if (text.length <= MAX_CHUNK_SIZE) {
+    return [text]; // No chunking needed
+  }
+  
+  const chunks: string[] = [];
+  let currentIndex = 0;
+  
+  while (currentIndex < text.length) {
+    // Try to find a good breaking point near MAX_CHUNK_SIZE
+    let breakPoint = currentIndex + MAX_CHUNK_SIZE;
+    
+    if (breakPoint >= text.length) {
+      // Last chunk
+      chunks.push(text.substring(currentIndex));
+      break;
+    }
+    
+    // Look for natural break points like paragraph ends, headings, sections
+    const paragraphBreak = text.lastIndexOf('\n\n', breakPoint);
+    const sectionBreak = text.lastIndexOf('\n## ', breakPoint);
+    const headingBreak = text.lastIndexOf('\n# ', breakPoint);
+    
+    // Find the best break point that doesn't go too far back
+    const potentialBreaks = [paragraphBreak, sectionBreak, headingBreak]
+      .filter(bp => bp > currentIndex && bp > currentIndex + (MAX_CHUNK_SIZE * 0.7)); // At least 70% of max size
+    
+    if (potentialBreaks.length > 0) {
+      // Use the latest natural break point
+      breakPoint = Math.max(...potentialBreaks) + 2; // +2 to include the newline
+    } else {
+      // Fall back to sentence boundary if no good structural breaks
+      const sentenceBreak = text.lastIndexOf('. ', breakPoint);
+      if (sentenceBreak > currentIndex + (MAX_CHUNK_SIZE * 0.5)) { // At least 50% of max size
+        breakPoint = sentenceBreak + 2; // +2 to include the period and space
+      }
+      // Otherwise use the original breakpoint
+    }
+    
+    chunks.push(text.substring(currentIndex, breakPoint));
+    currentIndex = breakPoint;
+  }
+  
+  return chunks;
+}
+
+// Generate detailed prompts based on document context
+function getDetailedPrompt(type: "complete" | "chunk" | "combine", chunkNum?: number, totalChunks?: number): string {
+  switch (type) {
+    case "complete":
+      return `Provide a comprehensive, detailed, and structured analysis of this document. 
+      
+      Your summary should include:
+      
+      1. Main purpose and topic of the document
+      2. Key findings, arguments, or data presented
+      3. Important details and supporting evidence
+      4. Any conclusions or recommendations
+      5. Structure your analysis with clear sections and bullet points when appropriate
+      
+      Aim to capture ALL significant information so the reader doesn't need to reference the original document. Be thorough but concise, prioritizing accuracy and completeness.
+      
+      Document content:
+      """`;
+    
+    case "chunk":
+      return `This is part ${chunkNum} of ${totalChunks} from a larger document. Please analyze this section thoroughly, capturing all key information.
+      
+      Focus on:
+      1. Main topics and arguments in this section
+      2. Any important data, facts or figures presented
+      3. Key supporting information and context
+      4. Any partial conclusions or findings
+      
+      Document section content (part ${chunkNum}/${totalChunks}):
+      """`;
+    
+    case "combine":
+      return `Below are summaries from different sections of a document. Please combine them into one cohesive, comprehensive summary.
+      
+      Your combined summary should:
+      1. Present a unified view of the entire document
+      2. Maintain all key information from each section
+      3. Eliminate redundancies
+      4. Ensure proper flow and logical organization
+      5. Provide a complete picture of the document's content, findings, and conclusions
+      
+      Section summaries to combine:
+      """`;
+    
+    default:
+      return "Analyze and summarize this document thoroughly:";
+  }
+}
+
+async function callGeminiAPI(text: string, promptPrefix: string, temperature = 0.3): Promise<string> {
+  console.log(`Calling Gemini API with text length: ${text.length}, temperature: ${temperature}`);
   
   try {
     const response = await fetch("https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent", {
@@ -73,17 +209,15 @@ async function callGeminiAPI(text: string, promptPrefix = "Analyze and summarize
           parts: [{
             text: `${promptPrefix}
             
-            Document content:
-            """
             ${text}
             """
             
-            Please provide a detailed and structured summary that captures the key information.`
+            Please provide a comprehensive and structured summary that captures ALL the key information.`
           }]
         }],
         generationConfig: {
           temperature: temperature,
-          maxOutputTokens: 2048, // Increased token limit for longer summaries
+          maxOutputTokens: 4096, // Significantly increased token limit for more detailed summaries
           topP: 0.95,
           topK: 40
         },
