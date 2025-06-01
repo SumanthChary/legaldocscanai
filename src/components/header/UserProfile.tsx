@@ -21,22 +21,28 @@ export const UserProfile = ({ profile, handleSignOut }: UserProfileProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center space-x-2">
-          <Avatar className="h-8 w-8">
+        <Button variant="ghost" className="flex items-center space-x-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200">
+          <Avatar className="h-8 w-8 ring-2 ring-gradient-to-r ring-from-blue-200 ring-to-purple-200">
             <AvatarImage src={profile?.avatar_url} />
-            <AvatarFallback>
-              <User className="h-4 w-4" />
+            <AvatarFallback className="bg-gradient-to-r from-blue-100 to-purple-100">
+              <User className="h-4 w-4 text-blue-600" />
             </AvatarFallback>
           </Avatar>
-          <span>{profile?.username || "Profile"}</span>
+          <span className="font-medium">{profile?.username || "Profile"}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => navigate("/profile")}>
+      <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-md border border-gray-200/50 shadow-xl">
+        <DropdownMenuItem 
+          onClick={() => navigate("/profile")}
+          className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
+        >
           <User className="mr-2 h-4 w-4" />
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleSignOut}>
+        <DropdownMenuItem 
+          onClick={handleSignOut}
+          className="hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 text-red-600 transition-all duration-200"
+        >
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out
         </DropdownMenuItem>

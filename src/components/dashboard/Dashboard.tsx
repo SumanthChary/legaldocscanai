@@ -45,35 +45,46 @@ export const Dashboard = () => {
 
   return (
     <PageLayout>
-      <div className="container mx-auto px-4 py-8">
-        {showUpgradeBanner && (
-          <div className="mb-8">
-            <UpgradeBanner
-              buttonText="Upgrade Now"
-              description="for unlimited document analysis"
-              onClose={() => setShowUpgradeBanner(false)}
-              onClick={() => navigate("/pricing")}
+      {/* Enhanced background with professional gradients */}
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+        <div className="container mx-auto px-4 py-8 relative">
+          {/* Subtle background elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-20 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full filter blur-3xl"></div>
+            <div className="absolute bottom-40 right-1/4 w-80 h-80 bg-gradient-to-br from-purple-400/8 to-pink-500/8 rounded-full filter blur-3xl"></div>
+          </div>
+
+          <div className="relative z-10">
+            {showUpgradeBanner && (
+              <div className="mb-8">
+                <UpgradeBanner
+                  buttonText="Upgrade Now"
+                  description="for unlimited document analysis"
+                  onClose={() => setShowUpgradeBanner(false)}
+                  onClick={() => navigate("/pricing")}
+                />
+              </div>
+            )}
+
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
+              <WelcomeHeader session={session} />
+              <QuickActions onTabChange={setActiveTab} />
+            </div>
+
+            <AnalyticsCards stats={analysisStats} isLoading={statsLoading} />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <RecentActivity isLoading={statsLoading} />
+              <PerformanceMetrics isLoading={statsLoading} />
+            </div>
+
+            <MainContent 
+              activeTab={activeTab} 
+              setActiveTab={setActiveTab} 
+              userId={session.user.id} 
             />
           </div>
-        )}
-
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
-          <WelcomeHeader session={session} />
-          <QuickActions onTabChange={setActiveTab} />
         </div>
-
-        <AnalyticsCards stats={analysisStats} isLoading={statsLoading} />
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <RecentActivity isLoading={statsLoading} />
-          <PerformanceMetrics isLoading={statsLoading} />
-        </div>
-
-        <MainContent 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-          userId={session.user.id} 
-        />
       </div>
     </PageLayout>
   );
