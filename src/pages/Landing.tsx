@@ -1,3 +1,4 @@
+
 import { PageLayout } from "@/components/layout";
 import { HeroSection } from "@/components/blocks/hero-section";
 import { FeaturesSection } from "@/components/blocks/features-section";
@@ -10,8 +11,8 @@ import { useEffect } from "react";
 
 const Landing = () => {
   const benefits = [
-    "Reduce document review time by 75%",
-    "Improve accuracy in legal analysis",
+    "Reduce review time by 75%",
+    "Improve analysis accuracy",
     "Ensure compliance across jurisdictions",
     "Streamline team collaboration"
   ];
@@ -77,19 +78,33 @@ const Landing = () => {
   }, []);
 
   return (
-    <PageLayout>
-      <HeroSection benefits={benefits} />
-      <FeaturesSection />
-      <PricingSection />
-      <TestimonialsSection
-        title="Trusted by Legal Professionals Worldwide"
-        description="Join thousands of legal professionals who are already transforming their document workflow with LegalBriefAI"
-        testimonials={testimonials}
-      />
-      <AboutSection />
-      <FAQSection faqs={faqs} />
-      <CTASection />
-    </PageLayout>
+    <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+      <PageLayout>
+        <HeroSection benefits={benefits} />
+        <div className="bg-white/80 backdrop-blur-sm">
+          <FeaturesSection />
+        </div>
+        <div className="bg-gradient-to-br from-gray-50 to-blue-50/50">
+          <PricingSection />
+        </div>
+        <div className="bg-white/90 backdrop-blur-sm">
+          <TestimonialsSection
+            title="Trusted by Legal Professionals Worldwide"
+            description="Join thousands of legal professionals who are already transforming their document workflow with LegalBriefAI"
+            testimonials={testimonials}
+          />
+        </div>
+        <div className="bg-gradient-to-br from-slate-50 to-gray-100/50">
+          <AboutSection />
+        </div>
+        <div className="bg-white/90 backdrop-blur-sm">
+          <FAQSection faqs={faqs} />
+        </div>
+        <div className="bg-gradient-to-br from-blue-50/50 to-purple-50/30">
+          <CTASection />
+        </div>
+      </PageLayout>
+    </div>
   );
 };
 

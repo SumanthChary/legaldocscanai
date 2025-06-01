@@ -23,41 +23,55 @@ export const DemoVideo = () => {
   return (
     <InView
       variants={{
-        hidden: { opacity: 0, scale: 0.9 },
-        visible: { opacity: 1, scale: 1 }
+        hidden: { opacity: 0, y: 30, scale: 0.95 },
+        visible: { opacity: 1, y: 0, scale: 1 }
       }}
-      transition={{ duration: 0.5 }}
-      viewOptions={{ once: true }}
+      transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+      viewOptions={{ once: true, margin: "-100px" }}
     >
-      <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-        {/* Glow effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-accent/30 to-primary/30 rounded-3xl blur-xl opacity-70"></div>
+      <div className="relative group">
+        {/* Sophisticated glow effect */}
+        <div className="absolute -inset-4 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-blue-600/20 rounded-2xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
         
-        <div className="relative aspect-video">
-          <iframe
-            src={`https://player.vimeo.com/video/${vimeoVideoId}?h=${privateHash}&background=1&autoplay=0&loop=1&byline=0&title=0`}
-            className="w-full h-full absolute inset-0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            style={{ border: 0 }}
-          ></iframe>
+        {/* Main container with refined styling */}
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-1">
+          {/* Inner glow border */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-blue-500/30 opacity-50"></div>
+          
+          <div className="relative aspect-video rounded-xl overflow-hidden bg-black">
+            <iframe
+              src={`https://player.vimeo.com/video/${vimeoVideoId}?h=${privateHash}&background=1&autoplay=0&loop=1&byline=0&title=0&portrait=0`}
+              className="w-full h-full absolute inset-0"
+              allow="autoplay; fullscreen; picture-in-picture"
+              style={{ border: 0 }}
+            ></iframe>
+            
+            {/* Professional overlay */}
+            <div
+              className={`absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/20 transition-all duration-500 ${
+                isPlaying ? "opacity-0 pointer-events-none" : "opacity-100"
+              }`}
+            />
+            
+            {/* Elegant play button */}
+            <Button
+              size="icon"
+              variant="secondary"
+              className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                rounded-full w-20 h-20 bg-white/95 hover:bg-white backdrop-blur-sm 
+                shadow-2xl transition-all duration-300 hover:scale-110 border-0
+                ${isPlaying ? "opacity-0 pointer-events-none" : "opacity-100"}
+              `}
+              onClick={togglePlay}
+            >
+              {isPlaying ? (
+                <Pause className="h-8 w-8 text-gray-800" />
+              ) : (
+                <Play className="h-8 w-8 text-gray-800 ml-1" />
+              )}
+            </Button>
+          </div>
         </div>
-        <div
-          className={`absolute inset-0 bg-black/20 transition-opacity duration-300 ${
-            isPlaying ? "opacity-0" : "opacity-100"
-          }`}
-        />
-        <Button
-          size="icon"
-          variant="secondary"
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full w-24 h-24 bg-white/90 hover:bg-white/95 shadow-lg transition-all duration-300 hover:scale-110"
-          onClick={togglePlay}
-        >
-          {isPlaying ? (
-            <Pause className="h-12 w-12 text-primary" />
-          ) : (
-            <Play className="h-12 w-12 text-primary ml-2" />
-          )}
-        </Button>
       </div>
     </InView>
   );
