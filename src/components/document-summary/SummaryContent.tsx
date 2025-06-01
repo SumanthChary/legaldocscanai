@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Download, AlertTriangle, Info, ChevronDown, ChevronUp, Copy, CheckCircle } from "lucide-react";
+import { Download, AlertTriangle, Info, ChevronDown, ChevronUp, Copy, CheckCircle, FileText, Shield } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -21,24 +21,21 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
   }
 
   const handleDownload = () => {
-    // Create a blob with the summary text
     const blob = new Blob([summary], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     
-    // Create a temporary link element and trigger the download
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${originalName ? originalName.split('.')[0] : 'document'}-summary-${new Date().toISOString().split('T')[0]}.txt`;
+    a.download = `${originalName ? originalName.split('.')[0] : 'document'}-analysis-${new Date().toISOString().split('T')[0]}.txt`;
     document.body.appendChild(a);
     a.click();
     
-    // Clean up
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
     toast({
-      title: "Summary downloaded",
-      description: "The document summary has been downloaded to your device.",
+      title: "Analysis downloaded",
+      description: "The document analysis has been downloaded to your device.",
     });
   };
 
@@ -48,7 +45,7 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
         setCopied(true);
         toast({
           title: "Copied to clipboard",
-          description: "The summary has been copied to your clipboard.",
+          description: "The analysis has been copied to your clipboard.",
         });
         setTimeout(() => setCopied(false), 2000);
       })
@@ -62,16 +59,14 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
       });
   }, [summary, toast]);
 
-  // Detect if this is likely a fallback message
   const isFallbackMessage = summary.includes("unable to generate") || 
                            summary.includes("couldn't process") ||
                            summary.includes("encountered difficulties") ||
-                           summary.includes("encountered challenges");
+                           summary.includes("Processing challenges") ||
+                           summary.includes("Emergency Processing");
 
-  // Format the summary with proper spacing for sections
   const formattedSummary = formatSummary(summary);
 
-  // Determine file type for specific suggestions
   const getFileType = () => {
     if (!originalName) return 'document';
     
@@ -88,25 +83,35 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
   const fileType = getFileType();
 
   return (
-    <div className="space-y-4">
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold">AI Summary</h2>
+    <div className="space-y-6">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-0 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl">
+              <FileText className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                AI Analysis Results
+              </h2>
+              <p className="text-gray-600">Professional document analysis powered by advanced AI</p>
+            </div>
+          </div>
           <div className="flex gap-2 items-center">
             <StatusBadge status={analysisStatus} />
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 hover:bg-blue-50 border-blue-200"
               onClick={handleCopy}
             >
-              {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? <CheckCircle className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
               {copied ? "Copied" : "Copy"}
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 hover:bg-purple-50 border-purple-200"
               onClick={handleDownload}
             >
               <Download className="h-4 w-4" />
@@ -116,46 +121,49 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
         </div>
         
         <div className={`relative ${isExpanded ? '' : 'max-h-80 overflow-hidden'}`}>
-          <div className={`bg-accent/5 p-4 rounded-lg border ${isFallbackMessage ? 'border-yellow-200 bg-yellow-50' : 'border-accent/10'} text-gray-700 whitespace-pre-line`}>
+          <div className={`p-6 rounded-xl border text-gray-700 whitespace-pre-line ${
+            isFallbackMessage 
+              ? 'border-yellow-200 bg-yellow-50' 
+              : 'border-blue-100 bg-gradient-to-br from-blue-50/50 to-purple-50/50'
+          }`}>
             {formattedSummary}
             
             {isFallbackMessage && (
-              <div className="mt-4 pt-4 border-t border-yellow-200 text-sm">
-                <div className="flex items-start gap-2">
+              <div className="mt-6 pt-6 border-t border-yellow-200">
+                <div className="flex items-start gap-3">
                   <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-yellow-700">Processing challenges with your {fileType}</p>
-                    <ul className="list-disc pl-5 mt-2 space-y-1 text-yellow-700">
-                      {fileType === 'PDF' && (
-                        <>
-                          <li>This PDF may contain scanned text or images that can't be processed</li>
-                          <li>Try using an OCR tool to convert it to a searchable PDF first</li>
-                          <li>Consider copying the text manually into a plain text (.txt) file</li>
-                        </>
-                      )}
-                      {fileType.includes('Word') && (
-                        <>
-                          <li>This Word document may contain complex formatting or embedded objects</li>
-                          <li>Try saving it as a plain text (.txt) file and upload again</li>
-                          <li>Remove any images, tables, or special formatting</li>
-                        </>
-                      )}
-                      {fileType === 'text file' && (
-                        <>
-                          <li>The text file may contain unusual formatting or characters</li>
-                          <li>Check for and remove any non-standard characters</li>
-                        </>
-                      )}
-                      <li>If the document is large, try with a smaller section (1-3 pages)</li>
-                      <li>For complex documents, break them into smaller logical sections</li>
-                    </ul>
+                    <p className="font-semibold text-yellow-800 mb-3">Processing Challenges Detected</p>
+                    <div className="space-y-3 text-yellow-700">
+                      <div className="bg-yellow-100 rounded-lg p-3">
+                        <p className="font-medium mb-2">For {fileType} files:</p>
+                        <ul className="list-disc pl-5 space-y-1 text-sm">
+                          {fileType === 'PDF' && (
+                            <>
+                              <li>Ensure PDF contains searchable text (not scanned images)</li>
+                              <li>Try using OCR software to convert scanned PDFs</li>
+                              <li>Remove password protection if applicable</li>
+                            </>
+                          )}
+                          {fileType.includes('Word') && (
+                            <>
+                              <li>Save as plain text (.txt) format</li>
+                              <li>Remove embedded images and complex formatting</li>
+                              <li>Ensure document isn't corrupted</li>
+                            </>
+                          )}
+                          <li>Break large documents into smaller sections (1-3 pages)</li>
+                          <li>Verify document contains actual text content</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
             
             {!isFallbackMessage && !isExpanded && (
-              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent rounded-b-xl"></div>
             )}
           </div>
         </div>
@@ -165,7 +173,7 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-2 w-full flex items-center justify-center"
+            className="mt-4 w-full flex items-center justify-center hover:bg-blue-50"
           >
             {isExpanded ? (
               <>
@@ -175,21 +183,23 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
             ) : (
               <>
                 <ChevronDown className="h-4 w-4 mr-2" />
-                Show Full Summary
+                Show Full Analysis
               </>
             )}
           </Button>
         )}
         
         {!isFallbackMessage && (
-          <div className="mt-4 pt-4 border-t border-blue-100 text-sm text-blue-700">
-            <div className="flex items-start gap-2">
-              <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-              <p>
-                This AI-generated summary is based on the extracted text from your {fileType}.
-                Save or copy this summary for future reference. You can also upload
-                different documents to analyze and compare them.
-              </p>
+          <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+            <div className="flex items-start gap-3">
+              <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-blue-800">
+                <p className="font-semibold mb-1">Professional AI Analysis Complete</p>
+                <p>
+                  This comprehensive analysis was generated using advanced AI technology specifically trained for legal and business documents. 
+                  The insights provided are based on the extracted content from your {fileType} and should be reviewed by qualified professionals for critical decisions.
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -198,22 +208,18 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
   );
 };
 
-// Helper function to improve summary formatting
 function formatSummary(text: string): string {
-  // Check if the text already has structured formats (titles, sections, bullet points)
   const hasStructure = /#+\s|^\d+\.\s|\n\s*[-•*]\s|\n\s*\d+\.\s/m.test(text);
   
   if (hasStructure) {
-    // If there's already structure, just ensure consistent spacing
     return text
-      .replace(/\n#+\s/g, '\n\n$&') // Add extra line break before headings
-      .replace(/(\n\s*[-•*]\s.*?)(\n[^-•*\s])/g, '$1\n$2') // Add line break after bullet lists
-      .replace(/(\n\s*\d+\.\s.*?)(\n[^\d\s])/g, '$1\n$2'); // Add line break after numbered lists
+      .replace(/\n#+\s/g, '\n\n$&')
+      .replace(/(\n\s*[-•*]\s.*?)(\n[^-•*\s])/g, '$1\n$2')
+      .replace(/(\n\s*\d+\.\s.*?)(\n[^\d\s])/g, '$1\n$2');
   }
   
-  // If not structured, try to detect and enhance paragraphs
   return text
-    .replace(/\n{3,}/g, '\n\n') // Normalize multiple line breaks
-    .replace(/([.!?])\s+/g, '$1\n\n') // Break into paragraphs at sentence ends
-    .replace(/\n{3,}/g, '\n\n'); // Clean up any excessive line breaks created
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/([.!?])\s+/g, '$1\n\n')
+    .replace(/\n{3,}/g, '\n\n');
 }
