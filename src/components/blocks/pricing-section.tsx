@@ -71,8 +71,8 @@ export const PricingSection = () => {
   };
 
   return (
-    <div className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/20">
-      <div className="container mx-auto px-4">
+    <div className="py-12 md:py-16 lg:py-24 bg-gradient-to-b from-background to-secondary/20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <InView
           variants={{
             hidden: { opacity: 0, y: 20 },
@@ -80,37 +80,38 @@ export const PricingSection = () => {
           }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-4 md:mb-6">
               Simple, Transparent Pricing
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto mb-6">
               Start with 3 free documents, then choose the plan that works best for you
             </p>
             <Button 
               onClick={() => setIsRedeemModalOpen(true)}
               variant="outline"
-              className="mt-4 flex items-center mx-auto"
+              size="lg"
+              className="flex items-center mx-auto text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
             >
               <Ticket className="mr-2 h-4 w-4" />
               Redeem a Promotion Code
             </Button>
           </div>
 
-          <div className="flex justify-center items-center gap-3 mb-10">
-            <span className={`text-sm ${!isAnnual ? 'font-medium' : 'text-gray-600'}`}>Monthly</span>
+          <div className="flex justify-center items-center gap-3 mb-8 md:mb-10">
+            <span className={`text-sm md:text-base ${!isAnnual ? 'font-medium' : 'text-gray-600'}`}>Monthly</span>
             <Switch 
               id="landing-pricing-toggle"
               checked={isAnnual}
               onCheckedChange={setIsAnnual}
             />
-            <span className={`text-sm ${isAnnual ? 'font-medium' : 'text-gray-600'}`}>
+            <span className={`text-sm md:text-base ${isAnnual ? 'font-medium' : 'text-gray-600'}`}>
               Annual <span className="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded ml-1">Save 20%</span>
             </span>
           </div>
         </InView>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <InView
               key={plan.name}
@@ -128,31 +129,31 @@ export const PricingSection = () => {
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-accent text-white px-4 py-1 rounded-full text-sm font-medium">
+                  <div className="absolute -top-3 md:-top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-accent text-white px-3 md:px-4 py-1 rounded-full text-xs md:text-sm font-medium">
                       Most Popular
                     </span>
                   </div>
                 )}
                 
-                <CardContent className="pt-8 pb-6 px-6">
-                  <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                <CardContent className="pt-6 md:pt-8 pb-6 px-4 md:px-6">
+                  <h3 className="text-lg md:text-xl font-semibold mb-2">{plan.name}</h3>
                   <div className="flex items-baseline mb-4">
-                    {plan.price !== "0" && <span>$</span>}
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    <span className="text-gray-600 ml-1">{plan.period}</span>
+                    {plan.price !== "0" && <span className="text-lg md:text-xl">$</span>}
+                    <span className="text-3xl md:text-4xl font-bold">{plan.price}</span>
+                    <span className="text-gray-600 ml-1 text-sm md:text-base">{plan.period}</span>
                   </div>
-                  <p className="text-gray-600 mb-6">{plan.description}</p>
-                  <ul className="space-y-4 mb-8">
+                  <p className="text-gray-600 mb-6 text-sm md:text-base">{plan.description}</p>
+                  <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                     {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start text-gray-600">
-                        <Check className="h-5 w-5 text-success mr-2 mt-0.5 flex-shrink-0" />
+                      <li key={idx} className="flex items-start text-gray-600 text-sm md:text-base">
+                        <Check className="h-4 w-4 md:h-5 md:w-5 text-success mr-2 mt-0.5 flex-shrink-0" />
                         <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
                   <Button
-                    className="w-full mt-auto"
+                    className="w-full mt-auto text-sm md:text-base py-2 md:py-3"
                     variant={plan.name === "Free" ? "outline" : "default"}
                     onClick={() => handleGetStarted(plan)}
                   >
@@ -164,10 +165,10 @@ export const PricingSection = () => {
           ))}
         </div>
         
-        <div className="text-center mt-10">
+        <div className="text-center mt-8 md:mt-10">
           <Button 
             variant="link"
-            className="text-primary font-medium"
+            className="text-primary font-medium text-sm md:text-base"
             onClick={() => navigate("/pricing")}
           >
             View all pricing options
@@ -175,7 +176,6 @@ export const PricingSection = () => {
         </div>
       </div>
       
-      {/* Redeem Code Modal */}
       <RedeemCodeModal 
         isOpen={isRedeemModalOpen} 
         onClose={() => setIsRedeemModalOpen(false)} 
