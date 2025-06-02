@@ -45,7 +45,7 @@ const Landing = () => {
       author: {
         name: "Sarah Johnson",
         handle: "@sarahlegal",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face"
+        avatar: "/lovable-uploads/d4f6190e-3f8c-497d-b549-b42ff6e42fc9.png"
       },
       text: "LegalBriefAI has revolutionized how we handle legal documents. The AI-powered analysis saves us countless hours of manual review.",
       href: "https://twitter.com/sarahlegal"
@@ -54,7 +54,7 @@ const Landing = () => {
       author: {
         name: "Michael Chen",
         handle: "@mchenlaw",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+        avatar: "/lovable-uploads/35e692b0-631a-4e2b-aa40-cb49baefe0bc.png"
       },
       text: "The accuracy and speed of document analysis are remarkable. It's become an indispensable tool for our law firm.",
       href: "https://twitter.com/mchenlaw"
@@ -63,9 +63,33 @@ const Landing = () => {
       author: {
         name: "Emily Rodriguez",
         handle: "@emilylaw",
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face"
+        avatar: "/lovable-uploads/a579bbd7-742e-438a-9342-e6a274fad70e.png"
       },
       text: "Finally, a legal tech solution that actually understands context! The accuracy in legal document processing is impressive."
+    },
+    {
+      author: {
+        name: "David Wilson",
+        handle: "@davidwilsonlaw",
+        avatar: "/lovable-uploads/438ac072-620d-4a9f-ab0b-22342130bced.png"
+      },
+      text: "This platform has transformed our document workflow. The AI insights help us identify critical clauses and potential issues quickly."
+    },
+    {
+      author: {
+        name: "Jessica Thompson",
+        handle: "@jessicaesq",
+        avatar: "/lovable-uploads/dde2af26-05a4-45a1-b170-0b6f52391280.png"
+      },
+      text: "The time savings are incredible. What used to take hours now takes minutes, and the analysis quality is consistently excellent."
+    },
+    {
+      author: {
+        name: "Alex Rodriguez",
+        handle: "@alexlegal",
+        avatar: "/lovable-uploads/f08be41c-008a-4051-8ed1-425c928d09c0.png"
+      },
+      text: "As a solo practitioner, this tool levels the playing field. I can now handle complex document analysis with confidence and efficiency."
     }
   ];
   
