@@ -1,10 +1,10 @@
-
 import { useState, useRef, useEffect } from "react";
 import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Paperclip, Send, X, Bot, User, Sparkles } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 type Message = {
   id: string;
@@ -48,37 +48,81 @@ const ChatPage = () => {
       fileName: file?.name,
     };
     setMessages((prev) => [...prev, userMessage]);
+    
+    const currentInput = input;
     setInput("");
     setIsLoading(true);
 
-    if (file) {
-      try {
-        toast({
-          title: "File uploaded",
-          description: `${file.name} has been uploaded successfully.`,
-        });
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Upload failed",
-          description: "There was an error uploading your file.",
-        });
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("Please sign in to use the AI chat");
       }
-    }
 
-    setTimeout(() => {
+      // Handle file upload if present
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const { data: uploadResult, error: uploadError } = await supabase.functions.invoke('analyze-document', {
+          body: formData
+        });
+
+        if (uploadError) {
+          throw new Error(`Upload failed: ${uploadError.message}`);
+        }
+
+        toast({
+          title: "File uploaded and analyzed",
+          description: `${file.name} has been processed successfully.`,
+        });
+        
+        setFile(null);
+      }
+
+      // Send message to AI chat
+      const { data: chatResult, error: chatError } = await supabase.functions.invoke('ai-chat', {
+        body: {
+          message: currentInput || `I just uploaded a file: ${file?.name}. Please analyze it and tell me about it.`,
+          userId: user.id
+        }
+      });
+
+      if (chatError) {
+        throw new Error(`Chat failed: ${chatError.message}`);
+      }
+
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: file 
-          ? `I've analyzed the document "${file?.name}". This appears to be a legal document that requires careful review. Based on my analysis, I can provide insights on key clauses, potential risks, compliance requirements, and recommendations for action. Would you like me to focus on any specific aspects?` 
-          : generateResponse(input),
+        content: chatResult.response,
         sender: "ai",
         timestamp: new Date(),
       };
+      
       setMessages((prev) => [...prev, aiResponse]);
+
+    } catch (error) {
+      console.error("Chat error:", error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: `I apologize, but I encountered an error: ${error.message}. Please try again or contact support if the issue persists.`,
+        sender: "ai",
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, errorMessage]);
+      
+      toast({
+        variant: "destructive",
+        title: "Chat Error",
+        description: error.message,
+      });
+    } finally {
       setIsLoading(false);
-      setFile(null);
-    }, 1000);
+    }
   };
 
   const generateResponse = (userInput: string): string => {
