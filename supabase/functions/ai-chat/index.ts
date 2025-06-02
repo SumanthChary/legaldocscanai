@@ -19,6 +19,10 @@ serve(async (req) => {
     const { message, userId } = await req.json();
     console.log(`AI Chat request from user: ${userId}`);
 
+    if (!message || !userId) {
+      throw new Error("Message and userId are required");
+    }
+
     // Get user's recent documents for context
     const knowledgeBase = ChatKnowledgeBase.getInstance();
     const userDocuments = knowledgeBase.getUserDocuments(userId);
@@ -46,7 +50,7 @@ Your capabilities include:
 - Answering questions about recently uploaded documents
 - Offering strategic legal advice (while noting this is not formal legal counsel)
 
-Always provide professional, clear responses without using symbols like #, *, or markdown formatting. Use proper paragraph structure and bullet points with simple text formatting.
+Always provide professional, clear responses without using symbols like hash, asterisk, or markdown formatting. Use proper paragraph structure and bullet points with simple text formatting.
 
 Legal Knowledge Base: ${legalKnowledge}
 ${documentContext}
@@ -68,14 +72,23 @@ Remember to be helpful, professional, and accurate. If referencing specific docu
 
     return new Response(
       JSON.stringify({ response: cleanResponse }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200 
+      }
     );
 
   } catch (error) {
     console.error('AI Chat error:', error);
     return new Response(
-      JSON.stringify({ error: 'Failed to process chat message' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        error: 'I apologize, but I encountered an issue processing your request. Please try again or contact support if the problem persists.',
+        details: error.message 
+      }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     );
   }
 });

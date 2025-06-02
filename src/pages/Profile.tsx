@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { PageLayout } from "@/components/layout";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { User, Mail, Settings, Save } from "lucide-react";
 
 const Profile = () => {
@@ -91,8 +92,43 @@ const Profile = () => {
   if (loading) {
     return (
       <PageLayout>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 flex justify-center items-center">
-          <div className="animate-pulse text-xl text-gray-600">Loading profile...</div>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 py-12">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto">
+              <div className="text-center mb-8">
+                <Skeleton className="h-8 w-64 mx-auto mb-2" />
+                <Skeleton className="h-5 w-80 mx-auto" />
+              </div>
+
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl p-8">
+                <div className="flex items-center mb-8">
+                  <Skeleton className="h-12 w-12 rounded-xl mr-4" />
+                  <Skeleton className="h-7 w-48" />
+                </div>
+
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-20" />
+                    <Skeleton className="h-12 w-full" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-4 w-64" />
+                  </div>
+
+                  <div className="pt-6 border-t border-gray-200">
+                    <Skeleton className="h-12 w-full" />
+                  </div>
+                </div>
+
+                <div className="mt-8">
+                  <Skeleton className="h-20 w-full rounded-lg" />
+                </div>
+              </Card>
+            </div>
+          </div>
         </div>
       </PageLayout>
     );

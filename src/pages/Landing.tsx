@@ -1,9 +1,9 @@
-
 import { PageLayout } from "@/components/layout";
 import { HeroSection } from "@/components/blocks/hero-section";
 import { FeaturesSection } from "@/components/blocks/features-section";
 import { TestimonialsSection } from "@/components/blocks/testimonials-with-marquee";
 import { AboutSection } from "@/components/blocks/about-section";
+import { TrustSection } from "@/components/blocks/trust-section";
 import { FAQSection } from "@/components/blocks/faq-section";
 import { CTASection } from "@/components/blocks/cta-section";
 import { PricingSection } from "@/components/blocks/pricing-section";
@@ -24,11 +24,11 @@ const Landing = () => {
     },
     {
       question: "How secure is my data on LegalBriefAI?",
-      answer: "We prioritize your data security with end-to-end encryption and compliance with major privacy regulations. All documents are stored securely, and we maintain strict access controls to ensure your sensitive legal information remains confidential."
+      answer: "We prioritize your data security with end-to-end encryption and compliance with major privacy regulations including GDPR, HIPAA, and SOC 2. All documents are stored securely with bank-grade encryption, and we maintain strict access controls to ensure your sensitive legal information remains confidential."
     },
     {
       question: "What types of documents can LegalBriefAI process?",
-      answer: "LegalBriefAI can process a wide range of legal documents including contracts, agreements, legal briefs, court documents, and regulatory filings. Our system is trained to understand complex legal terminology across various practice areas."
+      answer: "LegalBriefAI can process a wide range of legal documents including contracts, agreements, legal briefs, court documents, regulatory filings, and complex PDFs with images and charts. Our advanced AI can handle multiple formats and extract insights from both text and visual content."
     },
     {
       question: "Do you offer a free trial?",
@@ -36,7 +36,11 @@ const Landing = () => {
     },
     {
       question: "How accurate is the AI analysis?",
-      answer: "Our AI system maintains a high accuracy rate in document analysis and summary generation. However, we recommend using it as a supportive tool alongside professional legal judgment, not as a replacement for legal expertise."
+      answer: "Our AI system maintains a high accuracy rate in document analysis and summary generation, powered by advanced models including Llama 4 and specialized legal training. However, we recommend using it as a supportive tool alongside professional legal judgment, not as a replacement for legal expertise."
+    },
+    {
+      question: "Can I integrate LegalBriefAI with my existing workflow?",
+      answer: "Absolutely! LegalBriefAI is designed to seamlessly integrate with your existing legal workflow. Our platform offers API access, bulk processing capabilities, and can be customized to fit your firm's specific needs and requirements."
     }
   ];
 
@@ -108,6 +112,7 @@ const Landing = () => {
         <div className="bg-white/80 backdrop-blur-sm">
           <FeaturesSection />
         </div>
+        <TrustSection />
         <div className="bg-gradient-to-br from-gray-50 to-blue-50/50">
           <PricingSection />
         </div>

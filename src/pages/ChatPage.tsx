@@ -1,8 +1,10 @@
+
 import { useState, useRef, useEffect } from "react";
 import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Paperclip, Send, X, Bot, User, Sparkles } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Paperclip, Send, X, Bot, User } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -19,7 +21,7 @@ const ChatPage = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
-      content: "Hello! I'm your AI legal assistant powered by advanced language models. I can help you analyze legal documents, answer questions about legal concepts, and provide detailed insights. How can I assist you today?",
+      content: "Hello! I'm your AI legal assistant. I can help you analyze legal documents, answer questions about legal concepts, and provide detailed insights about your uploaded documents. How can I assist you today?",
       sender: "ai",
       timestamp: new Date(),
     },
@@ -125,22 +127,6 @@ const ChatPage = () => {
     }
   };
 
-  const generateResponse = (userInput: string): string => {
-    const lowerInput = userInput.toLowerCase();
-    
-    if (lowerInput.includes("hello") || lowerInput.includes("hi")) {
-      return "Hello! I'm here to help with your legal document analysis and questions. I can review contracts, explain legal terms, identify key clauses, and provide strategic insights. What would you like to work on?";
-    } else if (lowerInput.includes("contract") || lowerInput.includes("agreement")) {
-      return "I can help you analyze contracts and agreements. I'll review key terms, identify potential risks, check for missing clauses, and provide recommendations. Please upload your document or ask specific questions about contract elements.";
-    } else if (lowerInput.includes("compliance") || lowerInput.includes("regulation")) {
-      return "I can assist with compliance analysis and regulatory review. I'll help identify applicable regulations, compliance requirements, potential violations, and recommended actions. What specific compliance area are you concerned about?";
-    } else if (lowerInput.includes("risk") || lowerInput.includes("liability")) {
-      return "Risk assessment is one of my key capabilities. I can identify legal risks, liability exposures, mitigation strategies, and recommend protective measures. Please share the document or specific risk concerns you'd like me to analyze.";
-    } else {
-      return "I'm here to provide comprehensive legal document analysis and insights. I can help with contract review, compliance checking, risk assessment, legal research, and strategic recommendations. Please share your document or specific legal question.";
-    }
-  };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
@@ -163,26 +149,20 @@ const ChatPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
         <div className="container mx-auto px-4 py-8 flex flex-col h-[calc(100vh-200px)]">
           <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg">
-                  <Bot className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                    AI Legal Assistant
-                  </h1>
-                  <p className="text-gray-600">Powered by advanced AI for comprehensive legal analysis</p>
-                </div>
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg">
+                <Bot className="h-6 w-6 text-white" />
               </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <Sparkles className="h-4 w-4" />
-                <span>Enhanced Intelligence</span>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  AI Legal Assistant
+                </h1>
+                <p className="text-gray-600">Professional legal document analysis and consultation</p>
               </div>
             </div>
           </div>
           
-          <div className="flex-1 overflow-y-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-0 p-6 mb-6 space-y-6">
+          <div className="flex-1 overflow-y-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-0 p-6 mb-6 space-y-6 scrollbar-hide">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -279,13 +259,16 @@ const ChatPage = () => {
             >
               <Paperclip className="h-5 w-5" />
             </Button>
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about legal documents, contracts, compliance..."
-              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-              className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 bg-white/80 backdrop-blur-sm"
-            />
+            <div className="flex-1 relative">
+              <Textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about legal documents, contracts, compliance..."
+                onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
+                className="min-h-[48px] max-h-32 border-gray-200 focus:border-blue-500 focus:ring-blue-500 bg-white/80 backdrop-blur-sm resize-none scrollbar-hide"
+                rows={1}
+              />
+            </div>
             <Button 
               size="default" 
               onClick={handleSend} 

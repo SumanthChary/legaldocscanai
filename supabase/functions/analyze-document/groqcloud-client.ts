@@ -8,7 +8,8 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
   console.log(`Calling GroqCloud API with model: ${model}, text length: ${text.length}`);
   
   if (!GROQCLOUD_API_KEY) {
-    throw new Error("GROQCLOUD_API_KEY environment variable is not set");
+    console.error("GROQCLOUD_API_KEY environment variable is not set");
+    throw new Error("GroqCloud API configuration is missing. Please contact support.");
   }
   
   try {
@@ -23,11 +24,11 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
         messages: [
           {
             role: "system",
-            content: `You are a professional legal document analyst. Provide comprehensive, detailed analysis without using symbols like #, *, or markdown formatting. Use clear professional language with proper structure.`
+            content: `You are a professional legal document analyst. Provide comprehensive, detailed analysis without using symbols like hash, asterisk, or markdown formatting. Use clear professional language with proper structure.`
           },
           {
             role: "user",
-            content: `${promptPrefix}\n\n${text}\n\nProvide a detailed professional analysis without using symbols like #, *, or special formatting. Use clear headings and bullet points with regular text formatting.`
+            content: `${promptPrefix}\n\n${text}\n\nProvide a detailed professional analysis without using symbols like hash, asterisk, or special formatting. Use clear headings and bullet points with regular text formatting.`
           }
         ],
         temperature: 0.2,
@@ -40,7 +41,14 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
     if (!response.ok) {
       const errorText = await response.text();
       console.error("GroqCloud API error response:", errorText);
-      throw new Error(`GroqCloud API error: ${response.status} ${response.statusText}`);
+      
+      if (response.status === 401) {
+        throw new Error("Authentication failed. Please check your GroqCloud API key.");
+      } else if (response.status === 429) {
+        throw new Error("Rate limit exceeded. Please try again in a moment.");
+      } else {
+        throw new Error(`GroqCloud API error: ${response.status} ${response.statusText}`);
+      }
     }
 
     const result = await response.json();
@@ -56,7 +64,7 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
         .replace(/\n{3,}/g, '\n\n') // Clean excessive line breaks
         .trim();
       
-      console.log(`GroqCloud analysis completed: ${content.length} characters`);
+      console.log(`GroqCloud analysis completed successfully: ${content.length} characters`);
       return content;
     } else {
       console.error("Unexpected GroqCloud response format:", JSON.stringify(result, null, 2));
@@ -64,6 +72,9 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
     }
   } catch (error) {
     console.error("Error calling GroqCloud API:", error);
+    if (error.message.includes('fetch')) {
+      throw new Error("Network error connecting to GroqCloud. Please check your internet connection.");
+    }
     throw error;
   }
 }
@@ -73,6 +84,10 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
  */
 export async function analyzeWithVision(imageData: string, text: string): Promise<string> {
   console.log("Starting vision analysis with GroqCloud");
+  
+  if (!GROQCLOUD_API_KEY) {
+    throw new Error("GroqCloud API configuration is missing for vision analysis.");
+  }
   
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -86,7 +101,7 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
         messages: [
           {
             role: "system",
-            content: "You are a professional legal document analyst with vision capabilities. Analyze both text and visual content. Provide comprehensive analysis without using symbols like #, *, or markdown formatting."
+            content: "You are a professional legal document analyst with vision capabilities. Analyze both text and visual content. Provide comprehensive analysis without using symbols like hash, asterisk, or markdown formatting."
           },
           {
             role: "user",
@@ -110,6 +125,7 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
     });
 
     if (!response.ok) {
+      console.error(`Vision analysis failed: ${response.status} ${response.statusText}`);
       throw new Error(`Vision analysis failed: ${response.status}`);
     }
 
@@ -123,10 +139,11 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
       .replace(/^\s*[\*\-\+]\s*/gm, '• ')
       .trim();
     
+    console.log("Vision analysis completed successfully");
     return content;
   } catch (error) {
     console.error("Vision analysis error:", error);
-    throw error;
+    throw new Error("Vision analysis failed. Falling back to text-only analysis.");
   }
 }
 
