@@ -8,8 +8,19 @@ import { useToast } from "@/components/ui/use-toast";
 import { AnalysisItem } from "@/components/document-analysis/AnalysisItem";
 import { Skeleton } from "@/components/ui/skeleton";
 
+interface DocumentAnalysis {
+  id: string;
+  original_name: string;
+  created_at: string;
+  updated_at: string;
+  analysis_status: string;
+  summary?: string;
+  is_deleted?: boolean;
+  user_id: string;
+}
+
 export const TrashSection = () => {
-  const [trashedDocuments, setTrashedDocuments] = useState<any[]>([]);
+  const [trashedDocuments, setTrashedDocuments] = useState<DocumentAnalysis[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { toast } = useToast();
@@ -76,7 +87,7 @@ export const TrashSection = () => {
       });
 
       setTrashedDocuments([]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error clearing trash:", error);
       toast({
         title: "Error clearing trash",

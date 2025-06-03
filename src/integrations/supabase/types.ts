@@ -47,6 +47,7 @@ export type Database = {
           created_at: string
           document_path: string
           id: string
+          is_deleted: boolean | null
           original_name: string
           summary: string | null
           updated_at: string
@@ -57,6 +58,7 @@ export type Database = {
           created_at?: string
           document_path: string
           id?: string
+          is_deleted?: boolean | null
           original_name: string
           summary?: string | null
           updated_at?: string
@@ -67,6 +69,7 @@ export type Database = {
           created_at?: string
           document_path?: string
           id?: string
+          is_deleted?: boolean | null
           original_name?: string
           summary?: string | null
           updated_at?: string
