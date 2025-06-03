@@ -24,16 +24,33 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
         messages: [
           {
             role: "system",
-            content: `You are a professional legal document analyst. Provide comprehensive, detailed analysis without using symbols like hash, asterisk, or markdown formatting. Use clear professional language with proper structure.`
+            content: `You are a professional legal document analyst. Provide comprehensive analysis in clean, professional format. 
+            
+            STRICT FORMATTING RULES:
+            - NEVER use hash symbols (#) for headings
+            - NEVER use asterisks (*) for emphasis or lists
+            - Use simple bullet points with dash (-)
+            - Use clear section breaks with line spacing
+            - Write in professional business language
+            - Use proper paragraphs and sentence structure
+            - No markdown formatting whatsoever
+            
+            Structure your analysis with clear sections like:
+            EXECUTIVE SUMMARY
+            KEY FINDINGS
+            RECOMMENDATIONS
+            RISK ASSESSMENT
+            
+            Use professional language suitable for legal professionals.`
           },
           {
             role: "user",
-            content: `${promptPrefix}\n\n${text}\n\nProvide a detailed professional analysis without using symbols like hash, asterisk, or special formatting. Use clear headings and bullet points with regular text formatting.`
+            content: `${promptPrefix}\n\nDocument Content:\n${text}\n\nProvide detailed professional analysis following the strict formatting rules. No hash symbols, no asterisks, no markdown. Use clear headings and professional structure.`
           }
         ],
-        temperature: 0.2,
+        temperature: 0.1,
         max_tokens: 8192,
-        top_p: 0.8,
+        top_p: 0.9,
         stream: false
       })
     });
@@ -43,9 +60,11 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
       console.error("GroqCloud API error response:", errorText);
       
       if (response.status === 401) {
-        throw new Error("Authentication failed. Please check your GroqCloud API key.");
+        throw new Error("Authentication failed with GroqCloud API. Please check your API key.");
       } else if (response.status === 429) {
         throw new Error("Rate limit exceeded. Please try again in a moment.");
+      } else if (response.status === 503) {
+        throw new Error("GroqCloud service temporarily unavailable. Please try again.");
       } else {
         throw new Error(`GroqCloud API error: ${response.status} ${response.statusText}`);
       }
@@ -56,12 +75,15 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
     if (result.choices && result.choices[0]?.message?.content) {
       let content = result.choices[0].message.content.trim();
       
-      // Clean up unwanted symbols and formatting
+      // Aggressively clean unwanted symbols and formatting
       content = content
-        .replace(/#{1,6}\s*/g, '') // Remove markdown headers
-        .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1') // Remove bold/italic
-        .replace(/^\s*[\*\-\+]\s*/gm, '• ') // Convert markdown lists to bullet points
+        .replace(/#{1,6}\s*/g, '') // Remove all markdown headers
+        .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1') // Remove all bold/italic
+        .replace(/\*\s/g, '- ') // Convert asterisk lists to dashes
+        .replace(/^\s*[\*\+]\s*/gm, '- ') // Convert markdown lists to dash lists
         .replace(/\n{3,}/g, '\n\n') // Clean excessive line breaks
+        .replace(/(\*\*|__)/g, '') // Remove any remaining emphasis markers
+        .replace(/`([^`]+)`/g, '$1') // Remove backticks
         .trim();
       
       console.log(`GroqCloud analysis completed successfully: ${content.length} characters`);
@@ -73,7 +95,7 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
   } catch (error) {
     console.error("Error calling GroqCloud API:", error);
     if (error.message.includes('fetch')) {
-      throw new Error("Network error connecting to GroqCloud. Please check your internet connection.");
+      throw new Error("Network error connecting to GroqCloud. Please check your internet connection and try again.");
     }
     throw error;
   }
@@ -97,18 +119,28 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
         'Authorization': `Bearer ${GROQCLOUD_API_KEY}`
       },
       body: JSON.stringify({
-        model: "llama-vision-free", // Use vision model for image analysis
+        model: "llama-3.2-90b-vision-preview",
         messages: [
           {
             role: "system",
-            content: "You are a professional legal document analyst with vision capabilities. Analyze both text and visual content. Provide comprehensive analysis without using symbols like hash, asterisk, or markdown formatting."
+            content: `You are a professional legal document analyst with vision capabilities. 
+            
+            STRICT FORMATTING RULES:
+            - NEVER use hash symbols (#) for headings
+            - NEVER use asterisks (*) for emphasis or lists
+            - Use simple bullet points with dash (-)
+            - Use clear section breaks with line spacing
+            - Write in professional business language
+            - No markdown formatting whatsoever
+            
+            Analyze both text and visual content comprehensively.`
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Analyze this document comprehensively. Extract and analyze all text content from images, charts, tables, and diagrams. Combined with the extracted text: ${text}\n\nProvide detailed professional analysis without special formatting symbols.`
+                text: `Analyze this document comprehensively. Extract and analyze all text content from images, charts, tables, and diagrams. Combined with the extracted text: ${text}\n\nProvide detailed professional analysis following strict formatting rules. No symbols, no markdown.`
               },
               {
                 type: "image_url",
@@ -119,7 +151,7 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
             ]
           }
         ],
-        temperature: 0.2,
+        temperature: 0.1,
         max_tokens: 8192
       })
     });
@@ -132,11 +164,14 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
     const result = await response.json();
     let content = result.choices[0].message.content.trim();
     
-    // Clean formatting
+    // Clean formatting aggressively
     content = content
       .replace(/#{1,6}\s*/g, '')
-      .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
-      .replace(/^\s*[\*\-\+]\s*/gm, '• ')
+      .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
+      .replace(/\*\s/g, '- ')
+      .replace(/^\s*[\*\+]\s*/gm, '- ')
+      .replace(/(\*\*|__)/g, '')
+      .replace(/`([^`]+)`/g, '$1')
       .trim();
     
     console.log("Vision analysis completed successfully");
@@ -152,17 +187,17 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
  */
 export function getBestModel(documentType: string, hasImages: boolean): string {
   if (hasImages) {
-    return "llama-vision-free";
+    return "llama-3.2-90b-vision-preview";
   }
   
   switch (documentType) {
     case 'legal':
-      return "llama-3.3-70b-versatile"; // Best for complex legal analysis
+      return "llama-3.3-70b-versatile";
     case 'business':
-      return "llama-3.1-70b-versatile"; // Good for business documents
+      return "llama-3.1-70b-versatile";
     case 'technical':
-      return "qwen-qwq-32b-preview"; // Reasoning model for technical docs
+      return "llama-3.3-70b-versatile";
     default:
-      return "llama-3.3-70b-versatile"; // Default high-quality model
+      return "llama-3.3-70b-versatile";
   }
 }

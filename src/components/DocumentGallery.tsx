@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { FileText, AlertTriangle, ChevronDown, RefreshCw } from "lucide-react";
@@ -27,6 +26,7 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
         .from('document_analyses')
         .select('*')
         .eq('user_id', userId)
+        .or('is_deleted.is.null,is_deleted.eq.false')
         .order('created_at', { ascending: false });
 
       if (error) {

@@ -3,7 +3,6 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 import { callGroqCloudAPI } from "../analyze-document/groqcloud-client.ts";
-import { ChatKnowledgeBase } from "../analyze-document/chat-knowledge-base.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,25 +22,45 @@ serve(async (req) => {
       throw new Error("Message and userId are required");
     }
 
+    // Initialize Supabase client to get user's documents
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     // Get user's recent documents for context
-    const knowledgeBase = ChatKnowledgeBase.getInstance();
-    const userDocuments = knowledgeBase.getUserDocuments(userId);
-    const relevantDocs = knowledgeBase.searchDocuments(userId, message);
+    const { data: userDocuments, error: docsError } = await supabase
+      .from('document_analyses')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('analysis_status', 'completed')
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    if (docsError) {
+      console.error('Error fetching user documents:', docsError);
+    }
 
     // Build context from user's documents
     let documentContext = "";
-    if (relevantDocs.length > 0) {
+    if (userDocuments && userDocuments.length > 0) {
       documentContext = `\n\nUser's Recent Documents Context:\n`;
-      relevantDocs.slice(0, 3).forEach((doc, index) => {
+      userDocuments.forEach((doc, index) => {
         documentContext += `${index + 1}. Document: ${doc.original_name}\n`;
-        documentContext += `   Summary: ${doc.summary.substring(0, 500)}...\n\n`;
+        if (doc.summary) {
+          documentContext += `   Analysis: ${doc.summary.substring(0, 800)}...\n\n`;
+        }
       });
     }
 
-    // Get legal knowledge if needed
-    const legalKnowledge = knowledgeBase.getLegalKnowledge(message);
-
     const systemPrompt = `You are a professional legal AI assistant with expertise in legal document analysis and law. You have access to the user's recently analyzed documents and can provide detailed insights about them.
+
+STRICT RESPONSE FORMATTING RULES:
+- NEVER use hash symbols (#) for headings
+- NEVER use asterisks (*) for emphasis or lists  
+- Use simple bullet points with dash (-)
+- Use clear section breaks with line spacing
+- Write in professional business language
+- No markdown formatting whatsoever
 
 Your capabilities include:
 - Analyzing legal documents and contracts
@@ -50,9 +69,8 @@ Your capabilities include:
 - Answering questions about recently uploaded documents
 - Offering strategic legal advice (while noting this is not formal legal counsel)
 
-Always provide professional, clear responses without using symbols like hash, asterisk, or markdown formatting. Use proper paragraph structure and bullet points with simple text formatting.
+Always provide professional, clear responses using proper paragraph structure and simple dash bullet points.
 
-Legal Knowledge Base: ${legalKnowledge}
 ${documentContext}
 
 Remember to be helpful, professional, and accurate. If referencing specific documents, mention them by name.`;
@@ -63,11 +81,14 @@ Remember to be helpful, professional, and accurate. If referencing specific docu
       "llama-3.3-70b-versatile"
     );
 
-    // Clean response of any unwanted formatting
+    // Additional cleaning for chat responses
     const cleanResponse = response
       .replace(/#{1,6}\s*/g, '')
-      .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
-      .replace(/^\s*[\*\-\+]\s*/gm, '• ')
+      .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
+      .replace(/\*\s/g, '- ')
+      .replace(/^\s*[\*\+]\s*/gm, '- ')
+      .replace(/(\*\*|__)/g, '')
+      .replace(/`([^`]+)`/g, '$1')
       .trim();
 
     return new Response(
