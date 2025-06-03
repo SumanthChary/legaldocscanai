@@ -24,10 +24,10 @@ export const MessageList = ({ messages, isLoading }: MessageListProps) => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, isLoading]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-0 p-6 mb-6 space-y-6 scrollbar-hide">
+    <div className="flex-1 overflow-y-auto bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 p-6 md:p-8 mb-4 space-y-8 scrollbar-hide">
       {messages.map((message) => (
         <ChatMessage key={message.id} message={message} />
       ))}

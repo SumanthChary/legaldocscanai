@@ -134,11 +134,19 @@ const ChatPage = () => {
 
   return (
     <PageLayout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
-        <div className="container mx-auto px-4 py-8 flex flex-col h-[calc(100vh-200px)]">
-          <ChatHeader />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20">
+        <div className="flex flex-col h-screen">
+          <div className="flex-shrink-0 px-4 md:px-6 lg:px-8 pt-6 md:pt-8">
+            <div className="max-w-4xl mx-auto">
+              <ChatHeader />
+            </div>
+          </div>
           
-          <MessageList messages={messages} isLoading={isLoading} />
+          <div className="flex-1 flex flex-col min-h-0 px-4 md:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto w-full flex flex-col h-full">
+              <MessageList messages={messages} isLoading={isLoading} />
+            </div>
+          </div>
           
           <ChatInput 
             input={input}

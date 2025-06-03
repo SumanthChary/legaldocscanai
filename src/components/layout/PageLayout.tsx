@@ -13,7 +13,7 @@ export const PageLayout = ({ children, className = "", withBanner = false }: Pag
   return (
     <div className={`min-h-screen flex flex-col bg-background ${className}`}>
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow w-full">
         {children}
       </main>
       <Footer />
