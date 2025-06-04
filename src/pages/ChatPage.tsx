@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { PageLayout } from "@/components/layout";
 import { useToast } from "@/components/ui/use-toast";
@@ -48,14 +47,12 @@ const ChatPage = () => {
     setIsLoading(true);
 
     try {
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         throw new Error("Please sign in to use the AI chat");
       }
 
-      // Handle file upload if present
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
@@ -76,7 +73,6 @@ const ChatPage = () => {
         setFile(null);
       }
 
-      // Send message to AI chat
       const { data: chatResult, error: chatError } = await supabase.functions.invoke('ai-chat', {
         body: {
           message: currentInput || `I just uploaded a file: ${file?.name}. Please analyze it and tell me about it.`,
@@ -136,13 +132,13 @@ const ChatPage = () => {
     <PageLayout>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/20">
         <div className="flex flex-col h-screen">
-          <div className="flex-shrink-0 px-4 md:px-6 lg:px-8 pt-6 md:pt-8">
+          <div className="flex-shrink-0 px-4 md:px-6 pt-6">
             <div className="max-w-4xl mx-auto">
               <ChatHeader />
             </div>
           </div>
           
-          <div className="flex-1 flex flex-col min-h-0 px-4 md:px-6 lg:px-8">
+          <div className="flex-1 flex flex-col min-h-0 px-4 md:px-6">
             <div className="max-w-4xl mx-auto w-full flex flex-col h-full">
               <MessageList messages={messages} isLoading={isLoading} />
             </div>
