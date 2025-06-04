@@ -2,12 +2,113 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
-import { callGroqCloudAPI } from "../analyze-document/groqcloud-client.ts";
+
+const GROQCLOUD_API_KEY = Deno.env.get("GROQCLOUD_API_KEY") || "";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+/**
+ * GroqCloud API client for chat functionality
+ */
+async function callGroqCloudAPI(text: string, promptPrefix: string, model = "llama-3.3-70b-versatile"): Promise<string> {
+  console.log(`Calling GroqCloud API with model: ${model}, text length: ${text.length}`);
+  
+  if (!GROQCLOUD_API_KEY) {
+    console.error("GROQCLOUD_API_KEY environment variable is not set");
+    throw new Error("GroqCloud API configuration is missing. Please contact support.");
+  }
+  
+  try {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQCLOUD_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional legal document analyst. Provide comprehensive analysis in clean, professional format. 
+            
+            STRICT FORMATTING RULES:
+            - NEVER use hash symbols (#) for headings
+            - NEVER use asterisks (*) for emphasis or lists
+            - Use simple bullet points with dash (-)
+            - Use clear section breaks with line spacing
+            - Write in professional business language
+            - Use proper paragraphs and sentence structure
+            - No markdown formatting whatsoever
+            
+            Structure your analysis with clear sections like:
+            EXECUTIVE SUMMARY
+            KEY FINDINGS
+            RECOMMENDATIONS
+            RISK ASSESSMENT
+            
+            Use professional language suitable for legal professionals.`
+          },
+          {
+            role: "user",
+            content: `${promptPrefix}\n\nDocument Content:\n${text}\n\nProvide detailed professional analysis following the strict formatting rules. No hash symbols, no asterisks, no markdown. Use clear headings and professional structure.`
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: 8192,
+        top_p: 0.9,
+        stream: false
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("GroqCloud API error response:", errorText);
+      
+      if (response.status === 401) {
+        throw new Error("Authentication failed with GroqCloud API. Please check your API key.");
+      } else if (response.status === 429) {
+        throw new Error("Rate limit exceeded. Please try again in a moment.");
+      } else if (response.status === 503) {
+        throw new Error("GroqCloud service temporarily unavailable. Please try again.");
+      } else {
+        throw new Error(`GroqCloud API error: ${response.status} ${response.statusText}`);
+      }
+    }
+
+    const result = await response.json();
+    
+    if (result.choices && result.choices[0]?.message?.content) {
+      let content = result.choices[0].message.content.trim();
+      
+      // Aggressively clean unwanted symbols and formatting
+      content = content
+        .replace(/#{1,6}\s*/g, '') // Remove all markdown headers
+        .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1') // Remove all bold/italic
+        .replace(/\*\s/g, '- ') // Convert asterisk lists to dashes
+        .replace(/^\s*[\*\+]\s*/gm, '- ') // Convert markdown lists to dash lists
+        .replace(/\n{3,}/g, '\n\n') // Clean excessive line breaks
+        .replace(/(\*\*|__)/g, '') // Remove any remaining emphasis markers
+        .replace(/`([^`]+)`/g, '$1') // Remove backticks
+        .trim();
+      
+      console.log(`GroqCloud analysis completed successfully: ${content.length} characters`);
+      return content;
+    } else {
+      console.error("Unexpected GroqCloud response format:", JSON.stringify(result, null, 2));
+      throw new Error("Invalid response format from GroqCloud API");
+    }
+  } catch (error) {
+    console.error("Error calling GroqCloud API:", error);
+    if (error.message.includes('fetch')) {
+      throw new Error("Network error connecting to GroqCloud. Please check your internet connection and try again.");
+    }
+    throw error;
+  }
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
