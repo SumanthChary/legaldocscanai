@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import { MessageList } from "@/components/chat/MessageList";
-import { ChatInput } from "@/components/chat/ChatInput";
+import { ModernChatInput } from "@/components/chat/ModernChatInput";
 
 type Message = {
   id: string;
@@ -148,7 +148,7 @@ const ChatPage = () => {
             </div>
           </div>
           
-          <ChatInput 
+          <ModernChatInput 
             input={input}
             setInput={setInput}
             onSend={handleSend}

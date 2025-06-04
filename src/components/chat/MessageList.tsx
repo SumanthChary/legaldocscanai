@@ -27,7 +27,7 @@ export const MessageList = ({ messages, isLoading }: MessageListProps) => {
   }, [messages, isLoading]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 p-6 md:p-8 mb-4 space-y-8 scrollbar-hide">
+    <div className="flex-1 overflow-y-auto bg-white/70 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-2xl border border-gray-200/50 p-4 md:p-6 lg:p-8 mb-4 space-y-6 md:space-y-8 scrollbar-hide">
       {messages.map((message) => (
         <ChatMessage key={message.id} message={message} />
       ))}
