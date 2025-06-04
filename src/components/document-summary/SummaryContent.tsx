@@ -76,6 +76,12 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
       case 'doc': 
       case 'docx': return 'Word document';
       case 'txt': return 'text file';
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+      case 'gif':
+      case 'bmp':
+      case 'webp': return 'image';
       default: return 'document';
     }
   };
@@ -92,9 +98,9 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
             </div>
             <div>
               <h2 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                AI Analysis Results
+                Lightning AI Analysis Results
               </h2>
-              <p className="text-gray-600">Professional document analysis powered by advanced AI</p>
+              <p className="text-gray-600">Professional document analysis powered by GroqCloud AI</p>
             </div>
           </div>
           <div className="flex gap-2 items-center">
@@ -128,41 +134,7 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
           }`}>
             {formattedSummary}
             
-            {isFallbackMessage && (
-              <div className="mt-6 pt-6 border-t border-yellow-200">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-yellow-800 mb-3">Processing Challenges Detected</p>
-                    <div className="space-y-3 text-yellow-700">
-                      <div className="bg-yellow-100 rounded-lg p-3">
-                        <p className="font-medium mb-2">For {fileType} files:</p>
-                        <ul className="list-disc pl-5 space-y-1 text-sm">
-                          {fileType === 'PDF' && (
-                            <>
-                              <li>Ensure PDF contains searchable text (not scanned images)</li>
-                              <li>Try using OCR software to convert scanned PDFs</li>
-                              <li>Remove password protection if applicable</li>
-                            </>
-                          )}
-                          {fileType.includes('Word') && (
-                            <>
-                              <li>Save as plain text (.txt) format</li>
-                              <li>Remove embedded images and complex formatting</li>
-                              <li>Ensure document isn't corrupted</li>
-                            </>
-                          )}
-                          <li>Break large documents into smaller sections (1-3 pages)</li>
-                          <li>Verify document contains actual text content</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {!isFallbackMessage && !isExpanded && (
+            {!isExpanded && summary.length > 500 && (
               <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent rounded-b-xl"></div>
             )}
           </div>
@@ -194,10 +166,11 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
             <div className="flex items-start gap-3">
               <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-blue-800">
-                <p className="font-semibold mb-1">Professional AI Analysis Complete</p>
+                <p className="font-semibold mb-1">Lightning Professional AI Analysis Complete</p>
                 <p>
-                  This comprehensive analysis was generated using advanced AI technology specifically trained for legal and business documents. 
-                  The insights provided are based on the extracted content from your {fileType} and should be reviewed by qualified professionals for critical decisions.
+                  This comprehensive analysis was generated using GroqCloud's advanced AI technology optimized for speed and accuracy. 
+                  Perfect for {fileType} files and all document types. 
+                  Results are professionally formatted and ready for business use.
                 </p>
               </div>
             </div>

@@ -172,7 +172,7 @@ export const AnalysisItem = ({
               {analysis.analysis_status === 'pending' && !analysis.is_deleted ? (
                 <div className="flex items-center space-x-2 text-yellow-600 bg-yellow-50 px-3 py-2 rounded-md">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <p className="text-sm">AI is analyzing your document...</p>
+                  <p className="text-sm">Lightning AI analysis in progress...</p>
                 </div>
               ) : analysis.analysis_status === 'failed' ? (
                 <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">
@@ -181,7 +181,7 @@ export const AnalysisItem = ({
               ) : !analysis.is_deleted ? (
                 <div>
                   <div className="text-sm text-gray-700 bg-gray-50 p-3 rounded-md mb-2">
-                    <p className="font-medium text-primary mb-1">AI Summary:</p>
+                    <p className="font-medium text-primary mb-1">Lightning AI Summary:</p>
                     {analysis.summary ? (
                       <p className="line-clamp-3">{analysis.summary}</p>
                     ) : (
@@ -196,7 +196,7 @@ export const AnalysisItem = ({
                       onClick={viewSummary}
                     >
                       <ExternalLink className="h-3 w-3 mr-1" />
-                      View Full Summary
+                      View Full Analysis
                     </Button>
                   )}
                 </div>
@@ -225,8 +225,8 @@ export const AnalysisItem = ({
                 </Button>
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                  size="icon-sm"
+                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
                   onClick={() => setShowDeleteConfirm(true)}
                   disabled={isDeleting}
                 >
@@ -236,8 +236,8 @@ export const AnalysisItem = ({
             ) : !analysis.is_deleted && analysis.analysis_status !== 'pending' ? (
               <Button
                 variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-gray-500 hover:text-red-500 hover:bg-red-50"
+                size="icon-sm"
+                className="text-gray-500 hover:text-red-500 hover:bg-red-50"
                 onClick={() => setShowDeleteConfirm(true)}
                 disabled={isDeleting}
               >

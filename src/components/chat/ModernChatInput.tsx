@@ -1,124 +1,106 @@
 
+import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, Paperclip, Square, X } from "lucide-react";
-import { useRef } from "react";
 import {
   PromptInput,
   PromptInputAction,
   PromptInputActions,
   PromptInputTextarea,
 } from "@/components/ui/prompt-input";
+import { ArrowUp, Paperclip, X } from "lucide-react";
 
-type ModernChatInputProps = {
+interface ModernChatInputProps {
   input: string;
   setInput: (value: string) => void;
   onSend: () => void;
   isLoading: boolean;
-  file: File | null;
+  file?: File | null;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFileRemove: () => void;
-};
+}
 
-export const ModernChatInput = ({ 
-  input, 
-  setInput, 
-  onSend, 
-  isLoading, 
-  file, 
-  onFileChange, 
-  onFileRemove 
+export const ModernChatInput = ({
+  input,
+  setInput,
+  onSend,
+  isLoading,
+  file,
+  onFileChange,
+  onFileRemove,
 }: ModernChatInputProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const triggerFileInput = () => {
+  const handleFileClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleSubmit = () => {
-    if (!isLoading && (input.trim() || file)) {
-      onSend();
-    }
-  };
-
   return (
-    <div className="sticky bottom-0 bg-gradient-to-t from-gray-50/95 via-white/90 to-transparent backdrop-blur-lg border-t border-gray-200/50 p-4 md:p-6 lg:p-8">
+    <div className="flex-shrink-0 p-4 md:p-6 bg-white/80 backdrop-blur-sm border-t border-gray-200/50">
       <div className="max-w-4xl mx-auto">
         <PromptInput
           value={input}
           onValueChange={setInput}
           isLoading={isLoading}
-          onSubmit={handleSubmit}
-          className="w-full shadow-lg border-2 border-gray-200/80 hover:border-blue-300 focus-within:border-blue-500 transition-all duration-200"
-          maxHeight={200}
+          onSubmit={onSend}
+          className="w-full shadow-lg border-gray-200/50"
         >
-          {/* File Attachment Display */}
           {file && (
-            <div className="flex flex-wrap gap-2 pb-3 px-2">
-              <div className="bg-blue-50 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm border border-blue-200">
-                <div className="p-1 bg-blue-100 rounded-lg">
-                  <Paperclip className="h-4 w-4 text-blue-600" />
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="font-medium text-gray-800 truncate max-w-[200px] md:max-w-[300px]">
-                    {file.name}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {(file.size / 1024).toFixed(1)} KB
-                  </span>
-                </div>
-                <button
+            <div className="flex flex-wrap gap-2 pb-3">
+              <div className="bg-blue-50 border border-blue-200 flex items-center gap-2 rounded-lg px-3 py-2 text-sm">
+                <Paperclip className="h-4 w-4 text-blue-600" />
+                <span className="max-w-[200px] truncate text-blue-800 font-medium">{file.name}</span>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
                   onClick={onFileRemove}
-                  className="p-1 hover:bg-red-100 rounded-full transition-colors duration-200 ml-2"
+                  className="h-6 w-6 text-blue-600 hover:bg-blue-100"
                 >
-                  <X className="h-4 w-4 text-red-500" />
-                </button>
+                  <X className="h-3 w-3" />
+                </Button>
               </div>
             </div>
           )}
 
           <PromptInputTextarea 
-            placeholder="Ask about legal documents, contracts, compliance..."
-            className="text-base md:text-lg py-3 px-4 min-h-[60px] leading-relaxed"
+            placeholder="Ask me anything about your documents, legal questions, or upload a new file for analysis..." 
+            className="text-base leading-relaxed placeholder:text-gray-500"
           />
 
-          <PromptInputActions className="flex items-center justify-between gap-3 pt-3 px-2">
-            <PromptInputAction tooltip="Attach files" side="top">
-              <label
-                htmlFor="file-upload"
-                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200"
+          <PromptInputActions className="flex items-center justify-between gap-2 pt-3">
+            <PromptInputAction tooltip="Attach files">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleFileClick}
+                className="h-10 w-10 rounded-full hover:bg-gray-100 text-gray-600"
               >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  onChange={onFileChange}
-                  className="hidden"
-                  id="file-upload"
-                  accept=".pdf,.doc,.docx,.txt"
-                />
-                <Paperclip className="h-5 w-5 text-gray-600" />
-              </label>
+                <Paperclip className="h-5 w-5" />
+              </Button>
             </PromptInputAction>
 
             <PromptInputAction
-              tooltip={isLoading ? "Stop generation" : "Send message"}
-              side="top"
+              tooltip={isLoading ? "AI is thinking..." : "Send message"}
             >
               <Button
                 variant="default"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg transition-all duration-300 disabled:opacity-50"
-                onClick={handleSubmit}
+                className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg"
+                onClick={onSend}
                 disabled={isLoading || (!input.trim() && !file)}
               >
-                {isLoading ? (
-                  <Square className="h-5 w-5 fill-current" />
-                ) : (
-                  <ArrowUp className="h-5 w-5" />
-                )}
+                <ArrowUp className="h-5 w-5" />
               </Button>
             </PromptInputAction>
           </PromptInputActions>
         </PromptInput>
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={onFileChange}
+          accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.gif,.bmp,.webp"
+          className="hidden"
+        />
       </div>
     </div>
   );

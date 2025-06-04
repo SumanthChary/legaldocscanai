@@ -2,14 +2,14 @@
 const GROQCLOUD_API_KEY = Deno.env.get("GROQCLOUD_API_KEY") || "";
 
 /**
- * GroqCloud API client for enhanced document analysis
+ * Ultra-fast GroqCloud API client optimized for speed
  */
 export async function callGroqCloudAPI(text: string, promptPrefix: string, model = "llama-3.3-70b-versatile"): Promise<string> {
-  console.log(`Calling GroqCloud API with model: ${model}, text length: ${text.length}`);
+  console.log(`⚡ Lightning GroqCloud call: ${model}, text: ${text.length} chars`);
   
   if (!GROQCLOUD_API_KEY) {
-    console.error("GROQCLOUD_API_KEY environment variable is not set");
-    throw new Error("GroqCloud API configuration is missing. Please contact support.");
+    console.error("❌ GROQCLOUD_API_KEY missing");
+    throw new Error("GroqCloud API configuration missing. Please contact support.");
   }
   
   try {
@@ -24,32 +24,24 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
         messages: [
           {
             role: "system",
-            content: `You are a professional legal document analyst. Provide comprehensive analysis in clean, professional format. 
-            
-            STRICT FORMATTING RULES:
-            - NEVER use hash symbols (#) for headings
-            - NEVER use asterisks (*) for emphasis or lists
-            - Use simple bullet points with dash (-)
-            - Use clear section breaks with line spacing
-            - Write in professional business language
-            - Use proper paragraphs and sentence structure
-            - No markdown formatting whatsoever
-            
-            Structure your analysis with clear sections like:
-            EXECUTIVE SUMMARY
-            KEY FINDINGS
-            RECOMMENDATIONS
-            RISK ASSESSMENT
-            
-            Use professional language suitable for legal professionals.`
+            content: `You are a lightning-fast professional document analyst. Provide comprehensive analysis in clean format. 
+
+STRICT RULES:
+- NO hash symbols (#) for headings
+- NO asterisks (*) for emphasis
+- Use dash (-) for bullet points
+- Use clear section breaks
+- Professional business language
+- Quick comprehensive analysis
+- Focus on key insights`
           },
           {
             role: "user",
-            content: `${promptPrefix}\n\nDocument Content:\n${text}\n\nProvide detailed professional analysis following the strict formatting rules. No hash symbols, no asterisks, no markdown. Use clear headings and professional structure.`
+            content: `${promptPrefix}\n\nDocument Content:\n${text}\n\nProvide fast comprehensive analysis. No formatting symbols.`
           }
         ],
         temperature: 0.1,
-        max_tokens: 8192,
+        max_tokens: 4096, // Optimized for speed
         top_p: 0.9,
         stream: false
       })
@@ -57,17 +49,12 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("GroqCloud API error response:", errorText);
+      console.error("❌ GroqCloud API error:", errorText);
       
-      if (response.status === 401) {
-        throw new Error("Authentication failed with GroqCloud API. Please check your API key.");
-      } else if (response.status === 429) {
-        throw new Error("Rate limit exceeded. Please try again in a moment.");
-      } else if (response.status === 503) {
-        throw new Error("GroqCloud service temporarily unavailable. Please try again.");
-      } else {
-        throw new Error(`GroqCloud API error: ${response.status} ${response.statusText}`);
+      if (response.status === 429) {
+        throw new Error("Rate limit exceeded. Retrying...");
       }
+      throw new Error(`GroqCloud API error: ${response.status}`);
     }
 
     const result = await response.json();
@@ -75,40 +62,36 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
     if (result.choices && result.choices[0]?.message?.content) {
       let content = result.choices[0].message.content.trim();
       
-      // Aggressively clean unwanted symbols and formatting
+      // Ultra-fast cleaning
       content = content
-        .replace(/#{1,6}\s*/g, '') // Remove all markdown headers
-        .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1') // Remove all bold/italic
-        .replace(/\*\s/g, '- ') // Convert asterisk lists to dashes
-        .replace(/^\s*[\*\+]\s*/gm, '- ') // Convert markdown lists to dash lists
-        .replace(/\n{3,}/g, '\n\n') // Clean excessive line breaks
-        .replace(/(\*\*|__)/g, '') // Remove any remaining emphasis markers
-        .replace(/`([^`]+)`/g, '$1') // Remove backticks
+        .replace(/#{1,6}\s*/g, '')
+        .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
+        .replace(/\*\s/g, '- ')
+        .replace(/^\s*[\*\+]\s*/gm, '- ')
+        .replace(/(\*\*|__)/g, '')
+        .replace(/`([^`]+)`/g, '$1')
         .trim();
       
-      console.log(`GroqCloud analysis completed successfully: ${content.length} characters`);
+      console.log(`✅ GroqCloud analysis completed: ${content.length} characters`);
       return content;
     } else {
-      console.error("Unexpected GroqCloud response format:", JSON.stringify(result, null, 2));
-      throw new Error("Invalid response format from GroqCloud API");
+      console.error("❌ Invalid GroqCloud response:", JSON.stringify(result, null, 2));
+      throw new Error("Invalid response from GroqCloud API");
     }
   } catch (error) {
-    console.error("Error calling GroqCloud API:", error);
-    if (error.message.includes('fetch')) {
-      throw new Error("Network error connecting to GroqCloud. Please check your internet connection and try again.");
-    }
+    console.error("💥 GroqCloud API error:", error);
     throw error;
   }
 }
 
 /**
- * Vision-enabled analysis for documents with images
+ * Lightning-fast vision analysis for images and PDFs
  */
 export async function analyzeWithVision(imageData: string, text: string): Promise<string> {
-  console.log("Starting vision analysis with GroqCloud");
+  console.log("🖼️ Starting lightning vision analysis");
   
   if (!GROQCLOUD_API_KEY) {
-    throw new Error("GroqCloud API configuration is missing for vision analysis.");
+    throw new Error("GroqCloud API key missing for vision analysis");
   }
   
   try {
@@ -123,24 +106,20 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
         messages: [
           {
             role: "system",
-            content: `You are a professional legal document analyst with vision capabilities. 
-            
-            STRICT FORMATTING RULES:
-            - NEVER use hash symbols (#) for headings
-            - NEVER use asterisks (*) for emphasis or lists
-            - Use simple bullet points with dash (-)
-            - Use clear section breaks with line spacing
-            - Write in professional business language
-            - No markdown formatting whatsoever
-            
-            Analyze both text and visual content comprehensively.`
+            content: `Lightning-fast professional document analyst with vision.
+
+RULES:
+- NO formatting symbols
+- Professional analysis
+- Extract ALL text and visual content
+- Quick comprehensive insights`
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Analyze this document comprehensively. Extract and analyze all text content from images, charts, tables, and diagrams. Combined with the extracted text: ${text}\n\nProvide detailed professional analysis following strict formatting rules. No symbols, no markdown.`
+                text: `Rapidly analyze this document. Extract ALL text, analyze charts/images/tables. Combined with text: ${text}\n\nProvide lightning-fast comprehensive analysis.`
               },
               {
                 type: "image_url",
@@ -152,52 +131,41 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
           }
         ],
         temperature: 0.1,
-        max_tokens: 8192
+        max_tokens: 4096
       })
     });
 
     if (!response.ok) {
-      console.error(`Vision analysis failed: ${response.status} ${response.statusText}`);
       throw new Error(`Vision analysis failed: ${response.status}`);
     }
 
     const result = await response.json();
     let content = result.choices[0].message.content.trim();
     
-    // Clean formatting aggressively
+    // Lightning cleaning
     content = content
       .replace(/#{1,6}\s*/g, '')
       .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
       .replace(/\*\s/g, '- ')
-      .replace(/^\s*[\*\+]\s*/gm, '- ')
       .replace(/(\*\*|__)/g, '')
-      .replace(/`([^`]+)`/g, '$1')
       .trim();
     
-    console.log("Vision analysis completed successfully");
+    console.log("✅ Lightning vision analysis complete");
     return content;
   } catch (error) {
-    console.error("Vision analysis error:", error);
-    throw new Error("Vision analysis failed. Falling back to text-only analysis.");
+    console.error("💥 Vision analysis error:", error);
+    throw new Error("Vision analysis failed");
   }
 }
 
 /**
- * Get best model for document type
+ * Get optimal model for speed
  */
 export function getBestModel(documentType: string, hasImages: boolean): string {
   if (hasImages) {
     return "llama-3.2-90b-vision-preview";
   }
   
-  switch (documentType) {
-    case 'legal':
-      return "llama-3.3-70b-versatile";
-    case 'business':
-      return "llama-3.1-70b-versatile";
-    case 'technical':
-      return "llama-3.3-70b-versatile";
-    default:
-      return "llama-3.3-70b-versatile";
-  }
+  // Always use fastest high-quality model
+  return "llama-3.3-70b-versatile";
 }

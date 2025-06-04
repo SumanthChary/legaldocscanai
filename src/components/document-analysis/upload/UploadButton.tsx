@@ -8,26 +8,23 @@ type UploadButtonProps = {
   disabled: boolean;
 };
 
-export const UploadButton = ({ 
-  handleUpload, 
-  isUploading, 
-  disabled 
-}: UploadButtonProps) => {
+export const UploadButton = ({ handleUpload, isUploading, disabled }: UploadButtonProps) => {
   return (
-    <Button
+    <Button 
       onClick={handleUpload}
       disabled={disabled || isUploading}
-      className="w-full sm:w-auto flex items-center gap-2"
+      size="lg"
+      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg"
     >
       {isUploading ? (
         <>
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Uploading...
+          <Loader2 className="h-5 w-5 animate-spin" />
+          Lightning Analysis in Progress...
         </>
       ) : (
         <>
-          <Upload className="h-4 w-4" />
-          Upload Document
+          <Upload className="h-5 w-5" />
+          Start Lightning Analysis
         </>
       )}
     </Button>

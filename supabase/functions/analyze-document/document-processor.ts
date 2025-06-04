@@ -14,9 +14,9 @@ export async function processDocument(
   let analysisRecord = null;
   
   try {
-    console.log(`📄 Processing document: ${file.name} (${file.size} bytes)`);
+    console.log(`⚡ LIGHTNING processing: ${file.name} (${file.size} bytes)`);
     
-    // Create initial analysis record without file_size
+    // Create analysis record immediately
     const { data, error: insertError } = await supabaseClient
       .from('document_analyses')
       .insert({
@@ -29,22 +29,22 @@ export async function processDocument(
       .single();
 
     if (insertError) {
-      console.error('Database insert error:', insertError);
+      console.error('❌ Database insert error:', insertError);
       throw new Error(`Failed to create analysis record: ${insertError.message}`);
     }
 
     analysisRecord = data;
-    console.log(`✅ Analysis record created with ID: ${analysisRecord.id}`);
+    console.log(`✅ Analysis record created: ${analysisRecord.id}`);
 
-    // Extract text content and file buffer for vision analysis
+    // Extract content super fast
     const textContent = await file.text();
     const fileBuffer = await file.arrayBuffer();
-    console.log(`📝 Extracted ${textContent.length} characters from file`);
+    console.log(`⚡ Extracted ${textContent.length} characters`);
 
-    // Use GroqCloud for enhanced analysis
+    // Lightning GroqCloud analysis
     const summary = await processWithGroqCloud(textContent, file.name, fileBuffer);
     
-    // Store in knowledge base for chat
+    // Store in knowledge base instantly
     const knowledgeBase = ChatKnowledgeBase.getInstance();
     knowledgeBase.storeDocument(userId, analysisRecord.id, {
       id: analysisRecord.id,
@@ -54,7 +54,7 @@ export async function processDocument(
       created_at: analysisRecord.created_at
     });
     
-    // Update with successful results
+    // Update with results
     const { error: updateError } = await supabaseClient
       .from('document_analyses')
       .update({
@@ -65,20 +65,20 @@ export async function processDocument(
       .eq('id', analysisRecord.id);
 
     if (updateError) {
-      console.error('Failed to update analysis:', updateError);
+      console.error('❌ Failed to update analysis:', updateError);
       throw new Error(`Failed to save analysis: ${updateError.message}`);
     }
 
-    console.log(`🎉 GroqCloud analysis completed successfully for document: ${file.name}`);
+    console.log(`🚀 LIGHTNING analysis completed for: ${file.name}`);
     
     return {
       success: true,
       analysis_id: analysisRecord.id,
-      message: 'Document analysis completed successfully with advanced AI'
+      message: 'Lightning-fast document analysis completed!'
     };
 
   } catch (error) {
-    console.error('💥 Document processing error:', error);
+    console.error('💥 Processing error:', error);
     
     let errorMessage = 'Document analysis failed';
     let analysisStatus = 'failed';
@@ -102,7 +102,7 @@ export async function processDocument(
           })
           .eq('id', analysisRecord.id);
       } catch (updateError) {
-        console.error('Failed to update error status:', updateError);
+        console.error('❌ Failed to update error status:', updateError);
       }
     }
 
