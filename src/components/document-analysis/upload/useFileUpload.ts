@@ -24,7 +24,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
     
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      console.log("Selected file:", selectedFile.name, selectedFile.type, selectedFile.size);
+      console.log("📁 Selected file:", selectedFile.name, selectedFile.type, selectedFile.size);
       
       if (selectedFile.size > MAX_FILE_SIZE) {
         setUploadError(`File size exceeds limit (${(MAX_FILE_SIZE / 1024 / 1024).toFixed(0)}MB)`);
@@ -45,6 +45,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
   const clearFile = () => {
     setFile(null);
     setUploadError(null);
+    setUploadProgress(0);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -68,17 +69,18 @@ export const useFileUpload = (onSuccess?: () => void) => {
         return;
       }
 
-      console.log("Uploading file:", file.name);
+      console.log("🚀 Starting upload for file:", file.name);
       
       const formData = new FormData();
       formData.append('file', file);
       
+      // Simulate progress for better UX
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
-          const newProgress = prev + Math.random() * 10;
-          return newProgress > 90 ? 90 : newProgress;
+          const newProgress = prev + Math.random() * 15;
+          return newProgress > 85 ? 85 : newProgress;
         });
-      }, 500);
+      }, 300);
 
       try {
         const response = await supabase.functions.invoke('analyze-document', {
@@ -89,10 +91,10 @@ export const useFileUpload = (onSuccess?: () => void) => {
         });
         
         clearInterval(progressInterval);
-        console.log("Upload response:", response);
+        console.log("📋 Upload response:", response);
 
         if (response.error) {
-          console.error("Upload error from API:", response.error);
+          console.error("❌ Upload error from API:", response.error);
           setUploadError(response.error.message || "Upload failed");
           setUploadProgress(0);
           throw new Error(response.error.message || "Upload failed");
@@ -101,25 +103,34 @@ export const useFileUpload = (onSuccess?: () => void) => {
         setUploadProgress(100);
         
         toast({
-          title: "Document uploaded successfully",
-          description: "AI analysis has started...",
+          title: "✅ Document uploaded successfully",
+          description: `${file.name} is being analyzed by AI. You'll see results shortly.`,
         });
         
         if (onSuccess) {
+          // Give a moment for the progress bar to complete
           setTimeout(() => {
             onSuccess();
-          }, 2000); // Increased delay to ensure processing starts
+            clearFile();
+          }, 1500);
+        } else {
+          // Clear after showing completion
+          setTimeout(() => {
+            clearFile();
+          }, 2000);
         }
         
-        clearFile();
       } catch (invokeError: any) {
-        console.error("Function invoke error:", invokeError);
+        clearInterval(progressInterval);
+        console.error("❌ Function invoke error:", invokeError);
         setUploadError(invokeError.message || "Error calling analyze-document function");
+        setUploadProgress(0);
         throw invokeError;
       }
     } catch (error: any) {
-      console.error("Upload error:", error);
+      console.error("❌ Upload error:", error);
       setUploadError(error.message || "An unexpected error occurred");
+      setUploadProgress(0);
       toast({
         title: "Upload failed",
         description: error.message || "An unexpected error occurred",
@@ -138,7 +149,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const droppedFile = e.dataTransfer.files[0];
-      console.log("Dropped file:", droppedFile.name, droppedFile.type, droppedFile.size);
+      console.log("📁 Dropped file:", droppedFile.name, droppedFile.type, droppedFile.size);
       
       if (droppedFile.size > MAX_FILE_SIZE) {
         setUploadError(`File size exceeds limit (${(MAX_FILE_SIZE / 1024 / 1024).toFixed(0)}MB)`);

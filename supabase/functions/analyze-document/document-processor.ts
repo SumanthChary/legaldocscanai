@@ -14,17 +14,16 @@ export async function processDocument(
   let analysisRecord = null;
   
   try {
-    console.log(`Processing document with GroqCloud: ${file.name} (${file.size} bytes)`);
+    console.log(`📄 Processing document: ${file.name} (${file.size} bytes)`);
     
-    // Create initial analysis record
+    // Create initial analysis record without file_size
     const { data, error: insertError } = await supabaseClient
       .from('document_analyses')
       .insert({
         user_id: userId,
         original_name: file.name,
-        file_size: file.size,
-        file_type: file.type,
-        analysis_status: 'processing'
+        document_path: `documents/${userId}/${file.name}`,
+        analysis_status: 'pending'
       })
       .select()
       .single();
@@ -35,12 +34,12 @@ export async function processDocument(
     }
 
     analysisRecord = data;
-    console.log(`Analysis record created with ID: ${analysisRecord.id}`);
+    console.log(`✅ Analysis record created with ID: ${analysisRecord.id}`);
 
     // Extract text content and file buffer for vision analysis
     const textContent = await file.text();
     const fileBuffer = await file.arrayBuffer();
-    console.log(`Extracted ${textContent.length} characters from file`);
+    console.log(`📝 Extracted ${textContent.length} characters from file`);
 
     // Use GroqCloud for enhanced analysis
     const summary = await processWithGroqCloud(textContent, file.name, fileBuffer);
@@ -61,7 +60,6 @@ export async function processDocument(
       .update({
         summary: summary,
         analysis_status: 'completed',
-        completed_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
       .eq('id', analysisRecord.id);
@@ -71,7 +69,7 @@ export async function processDocument(
       throw new Error(`Failed to save analysis: ${updateError.message}`);
     }
 
-    console.log(`GroqCloud analysis completed successfully for document: ${file.name}`);
+    console.log(`🎉 GroqCloud analysis completed successfully for document: ${file.name}`);
     
     return {
       success: true,
@@ -80,7 +78,7 @@ export async function processDocument(
     };
 
   } catch (error) {
-    console.error('Document processing error:', error);
+    console.error('💥 Document processing error:', error);
     
     let errorMessage = 'Document analysis failed';
     let analysisStatus = 'failed';
@@ -100,7 +98,6 @@ export async function processDocument(
           .from('document_analyses')
           .update({
             analysis_status: analysisStatus,
-            error_message: errorMessage,
             updated_at: new Date().toISOString()
           })
           .eq('id', analysisRecord.id);

@@ -1,6 +1,7 @@
+
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { FileText, AlertTriangle, ChevronDown, RefreshCw } from "lucide-react";
+import { FileText, AlertTriangle, ChevronDown, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
@@ -30,6 +31,7 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
         .order('created_at', { ascending: false });
 
       if (error) {
+        console.error("Fetch documents error:", error);
         toast({
           title: "Error fetching documents",
           description: error.message,
@@ -38,6 +40,7 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
         return;
       }
 
+      console.log("📄 Fetched documents:", docs?.length || 0);
       setDocuments(docs || []);
     } catch (err) {
       console.error("Failed to fetch documents:", err);
@@ -56,6 +59,7 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
         .single();
 
       if (error) {
+        console.error("Fetch profile error:", error);
         toast({
           title: "Error fetching profile",
           description: error.message,
@@ -79,9 +83,9 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
     fetchDocuments();
     fetchProfile();
 
-    // Set up real-time subscription for document updates
+    // Set up real-time subscription with more specific filtering
     const channel = supabase
-      .channel('document_updates')
+      .channel(`document_updates_${userId}`)
       .on(
         'postgres_changes',
         {
@@ -91,31 +95,29 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
           filter: `user_id=eq.${userId}`
         },
         (payload) => {
-          console.log("Real-time update received:", payload);
+          console.log("🔄 Real-time document update:", payload);
+          // Immediate refresh when status changes
           fetchDocuments();
         }
       )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'profiles',
-          filter: `id=eq.${userId}`
-        },
-        (payload) => {
-          console.log("Profile update received:", payload);
-          fetchProfile();
-        }
-      )
       .subscribe((status) => {
-        console.log("Subscription status:", status);
+        console.log("📡 Subscription status:", status);
       });
+
+    // Auto-refresh every 5 seconds for pending documents
+    const interval = setInterval(() => {
+      const hasPendingDocs = documents.some(doc => doc.analysis_status === 'pending');
+      if (hasPendingDocs) {
+        console.log("🔄 Auto-refreshing for pending documents");
+        fetchDocuments();
+      }
+    }, 5000);
 
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(interval);
     };
-  }, [userId]);
+  }, [userId, documents]);
 
   const toggleSummary = (docId: string) => {
     setExpandedDocs(prev => 
@@ -128,20 +130,20 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          Completed
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+          ✅ Completed
         </span>;
       case 'pending':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-          <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-          Processing
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+          Processing...
         </span>;
       case 'failed':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-          Failed
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+          ❌ Failed
         </span>;
       default:
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
           {status}
         </span>;
     }
@@ -196,18 +198,18 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
       </div>
 
       {userProfile && (
-        <Card className="p-4 sm:p-6">
-          <h3 className="text-lg font-semibold mb-4">Document Usage</h3>
+        <Card className="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Document Usage</h3>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Documents Used</span>
-              <span className="font-medium">{userProfile.document_count} / {userProfile.document_limit}</span>
+              <span className="font-medium">Documents Used</span>
+              <span className="font-bold text-blue-600">{userProfile.document_count} / {userProfile.document_limit}</span>
             </div>
             <Progress 
               value={(userProfile.document_count / userProfile.document_limit) * 100} 
-              className="h-2"
+              className="h-3"
             />
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-xs text-gray-600 mt-2">
               {userProfile.document_count >= userProfile.document_limit 
                 ? "You've reached your document limit. Consider upgrading your plan for more." 
                 : `You can analyze ${userProfile.document_limit - userProfile.document_count} more document${userProfile.document_limit - userProfile.document_count !== 1 ? 's' : ''}.`
@@ -217,39 +219,39 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {documents.map((doc) => (
           <InView key={doc.id}>
-            <Card className="p-4 hover:shadow-lg transition-shadow">
+            <Card className="p-6 hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
               <div className="flex flex-col space-y-4">
                 <div className="flex items-start space-x-4">
-                  <div className="p-2 bg-blue-100 rounded-lg shrink-0">
-                    <FileText className="h-6 w-6 text-blue-600" />
+                  <div className="p-3 bg-blue-100 rounded-xl shrink-0">
+                    <FileText className="h-7 w-7 text-blue-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-semibold text-gray-900 truncate mb-1">
                       {doc.original_name}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 mb-3">
                       {new Date(doc.created_at).toLocaleDateString()} 
                       {' • '}
                       {new Date(doc.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </p>
-                    <div className="mt-2">
+                    <div className="mb-3">
                       {getStatusBadge(doc.analysis_status)}
                     </div>
                   </div>
                 </div>
 
                 {doc.analysis_status === 'completed' && doc.summary && (
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="w-full text-left flex justify-between items-center p-2 hover:bg-gray-50"
+                      className="w-full text-left flex justify-between items-center p-3 hover:bg-gray-50 border border-gray-200 rounded-lg"
                       onClick={() => toggleSummary(doc.id)}
                     >
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-700">
                         {expandedDocs.includes(doc.id) ? "Hide AI Summary" : "Show AI Summary"}
                       </span>
                       <ChevronDown 
@@ -259,27 +261,28 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
                       />
                     </Button>
                     {expandedDocs.includes(doc.id) && (
-                      <div className="text-sm text-gray-600 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                        {doc.summary}
+                      <div className="text-sm text-gray-700 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200 leading-relaxed">
+                        <div className="whitespace-pre-wrap">{doc.summary}</div>
                       </div>
                     )}
                   </div>
                 )}
 
                 {doc.analysis_status === 'pending' && (
-                  <div className="text-sm text-yellow-600 p-3 bg-yellow-50 rounded-lg">
+                  <div className="text-sm text-blue-700 p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="flex items-center">
-                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      <span>AI is analyzing your document...</span>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <span className="font-medium">AI is analyzing your document...</span>
                     </div>
+                    <p className="text-xs text-blue-600 mt-1">This may take a few moments</p>
                   </div>
                 )}
 
                 {doc.analysis_status === 'failed' && (
-                  <div className="text-sm text-red-600 p-3 bg-red-50 rounded-lg">
+                  <div className="text-sm text-red-700 p-4 bg-red-50 rounded-lg border border-red-200">
                     <div className="flex items-center">
                       <AlertTriangle className="h-4 w-4 mr-2" />
-                      <span>Analysis failed. Please try uploading again.</span>
+                      <span className="font-medium">Analysis failed. Please try uploading again.</span>
                     </div>
                   </div>
                 )}
@@ -290,11 +293,13 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
       </div>
 
       {documents.length === 0 && (
-        <Card className="p-4 sm:p-8 text-center">
-          <AlertTriangle className="mx-auto h-12 w-12 text-yellow-500 mb-4" />
-          <h3 className="text-lg font-medium">No documents found</h3>
-          <p className="text-sm text-gray-500 mt-2">
-            Upload your first document to get started with the analysis
+        <Card className="p-8 text-center bg-gradient-to-br from-gray-50 to-blue-50 border border-gray-200">
+          <div className="p-4 bg-blue-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+            <FileText className="h-8 w-8 text-blue-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No documents found</h3>
+          <p className="text-sm text-gray-600">
+            Upload your first document to get started with AI analysis
           </p>
         </Card>
       )}
