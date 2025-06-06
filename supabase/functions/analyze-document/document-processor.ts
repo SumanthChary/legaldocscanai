@@ -1,7 +1,7 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
-import { processWithGroqCloud } from "./enhanced-groq-processor.ts";
+import { processUltraFast } from "./ultra-fast-processor.ts";
 import { ChatKnowledgeBase } from "./chat-knowledge-base.ts";
 import { DocumentAnalysisError } from "./enhanced-error-handling.ts";
 
@@ -12,9 +12,10 @@ export async function processDocument(
   file: File
 ): Promise<{ success: boolean; analysis_id: string; message: string }> {
   let analysisRecord = null;
+  const startTime = Date.now();
   
   try {
-    console.log(`⚡ LIGHTNING processing: ${file.name} (${file.size} bytes)`);
+    console.log(`🚀 ULTRA-FAST processing: ${file.name} (${file.size} bytes)`);
     
     // Create analysis record immediately
     const { data, error: insertError } = await supabaseClient
@@ -23,7 +24,7 @@ export async function processDocument(
         user_id: userId,
         original_name: file.name,
         document_path: `documents/${userId}/${file.name}`,
-        analysis_status: 'pending'
+        analysis_status: 'processing'
       })
       .select()
       .single();
@@ -36,13 +37,16 @@ export async function processDocument(
     analysisRecord = data;
     console.log(`✅ Analysis record created: ${analysisRecord.id}`);
 
-    // Extract content super fast
+    // Extract content lightning fast
     const textContent = await file.text();
     const fileBuffer = await file.arrayBuffer();
-    console.log(`⚡ Extracted ${textContent.length} characters`);
+    console.log(`⚡ Extracted ${textContent.length} characters in ${Date.now() - startTime}ms`);
 
-    // Lightning GroqCloud analysis
-    const summary = await processWithGroqCloud(textContent, file.name, fileBuffer);
+    // ULTRA-FAST processing with optimal API selection
+    const summary = await processUltraFast(textContent, file.name, fileBuffer);
+    
+    const processingTime = Date.now() - startTime;
+    console.log(`🚀 Total processing time: ${processingTime}ms`);
     
     // Store in knowledge base instantly
     const knowledgeBase = ChatKnowledgeBase.getInstance();
@@ -69,12 +73,12 @@ export async function processDocument(
       throw new Error(`Failed to save analysis: ${updateError.message}`);
     }
 
-    console.log(`🚀 LIGHTNING analysis completed for: ${file.name}`);
+    console.log(`🎉 ULTRA-FAST analysis completed in ${processingTime}ms for: ${file.name}`);
     
     return {
       success: true,
       analysis_id: analysisRecord.id,
-      message: 'Lightning-fast document analysis completed!'
+      message: `Ultra-fast analysis completed in ${Math.round(processingTime/1000)}s!`
     };
 
   } catch (error) {

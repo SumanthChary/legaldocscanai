@@ -1,10 +1,9 @@
-
 import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-const ALLOWED_FILE_TYPES = ['.pdf', '.doc', '.docx', '.txt'];
+const ALLOWED_FILE_TYPES = ['.pdf', '.doc', '.docx', '.txt', '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp'];
 
 export const useFileUpload = (onSuccess?: () => void) => {
   const [file, setFile] = useState<File | null>(null);
@@ -69,18 +68,20 @@ export const useFileUpload = (onSuccess?: () => void) => {
         return;
       }
 
-      console.log("🚀 Starting upload for file:", file.name);
+      console.log("🚀 Starting ULTRA-FAST upload for file:", file.name);
       
       const formData = new FormData();
       formData.append('file', file);
       
-      // Simulate progress for better UX
+      // Ultra-fast progress simulation
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
-          const newProgress = prev + Math.random() * 15;
-          return newProgress > 85 ? 85 : newProgress;
+          const newProgress = prev + Math.random() * 20;
+          return newProgress > 90 ? 90 : newProgress;
         });
-      }, 300);
+      }, 200);
+
+      const startTime = Date.now();
 
       try {
         const response = await supabase.functions.invoke('analyze-document', {
@@ -91,7 +92,8 @@ export const useFileUpload = (onSuccess?: () => void) => {
         });
         
         clearInterval(progressInterval);
-        console.log("📋 Upload response:", response);
+        const processingTime = Date.now() - startTime;
+        console.log(`📋 ULTRA-FAST upload response in ${processingTime}ms:`, response);
 
         if (response.error) {
           console.error("❌ Upload error from API:", response.error);
@@ -103,21 +105,19 @@ export const useFileUpload = (onSuccess?: () => void) => {
         setUploadProgress(100);
         
         toast({
-          title: "✅ Document uploaded successfully",
-          description: `${file.name} is being analyzed by AI. You'll see results shortly.`,
+          title: "🚀 ULTRA-FAST Analysis Complete!",
+          description: `${file.name} analyzed in ${Math.round(processingTime/1000)}s using advanced AI!`,
         });
         
         if (onSuccess) {
-          // Give a moment for the progress bar to complete
           setTimeout(() => {
             onSuccess();
             clearFile();
-          }, 1500);
+          }, 1000);
         } else {
-          // Clear after showing completion
           setTimeout(() => {
             clearFile();
-          }, 2000);
+          }, 1500);
         }
         
       } catch (invokeError: any) {

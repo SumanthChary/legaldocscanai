@@ -2,10 +2,10 @@
 const GROQCLOUD_API_KEY = Deno.env.get("GROQCLOUD_API_KEY") || "";
 
 /**
- * Ultra-fast GroqCloud API client optimized for speed
+ * ULTRA-FAST GroqCloud API client - optimized for 5-15 second responses
  */
 export async function callGroqCloudAPI(text: string, promptPrefix: string, model = "llama-3.3-70b-versatile"): Promise<string> {
-  console.log(`⚡ Lightning GroqCloud call: ${model}, text: ${text.length} chars`);
+  console.log(`⚡ ULTRA-FAST GroqCloud call: ${model}, text: ${text.length} chars`);
   
   if (!GROQCLOUD_API_KEY) {
     console.error("❌ GROQCLOUD_API_KEY missing");
@@ -24,24 +24,23 @@ export async function callGroqCloudAPI(text: string, promptPrefix: string, model
         messages: [
           {
             role: "system",
-            content: `You are a lightning-fast professional document analyst. Provide comprehensive analysis in clean format. 
+            content: `You are an ULTRA-FAST professional document analyst. Provide immediate comprehensive analysis.
 
-STRICT RULES:
-- NO hash symbols (#) for headings
-- NO asterisks (*) for emphasis
-- Use dash (-) for bullet points
-- Use clear section breaks
-- Professional business language
-- Quick comprehensive analysis
+SPEED REQUIREMENTS:
+- Respond in under 10 seconds
+- Extract ALL critical information
+- Professional format without symbols
+- Use bullet points with dashes (-)
+- Be thorough but concise
 - Focus on key insights`
           },
           {
             role: "user",
-            content: `${promptPrefix}\n\nDocument Content:\n${text}\n\nProvide fast comprehensive analysis. No formatting symbols.`
+            content: `${promptPrefix}\n\nDocument Content:\n${text}\n\nProvide IMMEDIATE comprehensive analysis. Speed is critical.`
           }
         ],
         temperature: 0.1,
-        max_tokens: 4096, // Optimized for speed
+        max_tokens: 3000, // Optimized for speed vs quality
         top_p: 0.9,
         stream: false
       })
@@ -62,7 +61,7 @@ STRICT RULES:
     if (result.choices && result.choices[0]?.message?.content) {
       let content = result.choices[0].message.content.trim();
       
-      // Ultra-fast cleaning
+      // Lightning-fast cleaning
       content = content
         .replace(/#{1,6}\s*/g, '')
         .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
@@ -72,7 +71,7 @@ STRICT RULES:
         .replace(/`([^`]+)`/g, '$1')
         .trim();
       
-      console.log(`✅ GroqCloud analysis completed: ${content.length} characters`);
+      console.log(`✅ ULTRA-FAST GroqCloud analysis: ${content.length} characters`);
       return content;
     } else {
       console.error("❌ Invalid GroqCloud response:", JSON.stringify(result, null, 2));
@@ -85,10 +84,10 @@ STRICT RULES:
 }
 
 /**
- * Lightning-fast vision analysis for images and PDFs
+ * ULTRA-FAST vision analysis for images and PDFs
  */
 export async function analyzeWithVision(imageData: string, text: string): Promise<string> {
-  console.log("🖼️ Starting lightning vision analysis");
+  console.log("🖼️ Starting ULTRA-FAST vision analysis");
   
   if (!GROQCLOUD_API_KEY) {
     throw new Error("GroqCloud API key missing for vision analysis");
@@ -106,20 +105,22 @@ export async function analyzeWithVision(imageData: string, text: string): Promis
         messages: [
           {
             role: "system",
-            content: `Lightning-fast professional document analyst with vision.
+            content: `ULTRA-FAST professional document analyst with vision capabilities.
 
-RULES:
-- NO formatting symbols
-- Professional analysis
+SPEED REQUIREMENTS:
+- Respond in under 15 seconds
 - Extract ALL text and visual content
-- Quick comprehensive insights`
+- Analyze charts, images, tables
+- Professional insights
+- No formatting symbols
+- Be comprehensive but fast`
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Rapidly analyze this document. Extract ALL text, analyze charts/images/tables. Combined with text: ${text}\n\nProvide lightning-fast comprehensive analysis.`
+                text: `URGENT: Analyze this document completely. Extract ALL text, analyze visual elements, charts, tables. Combined with text: ${text}\n\nProvide IMMEDIATE comprehensive analysis.`
               },
               {
                 type: "image_url",
@@ -131,7 +132,7 @@ RULES:
           }
         ],
         temperature: 0.1,
-        max_tokens: 4096
+        max_tokens: 3000
       })
     });
 
@@ -150,7 +151,7 @@ RULES:
       .replace(/(\*\*|__)/g, '')
       .trim();
     
-    console.log("✅ Lightning vision analysis complete");
+    console.log("✅ ULTRA-FAST vision analysis complete");
     return content;
   } catch (error) {
     console.error("💥 Vision analysis error:", error);

@@ -2,10 +2,10 @@
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") || "";
 
 /**
- * Makes the actual API call to Gemini, with proper error handling and enhanced configuration
+ * ULTRA-FAST Gemini API client optimized for text documents
  */
-export async function callGeminiAPI(text: string, promptPrefix: string, temperature = 0.2): Promise<string> {
-  console.log(`Calling Gemini API with text length: ${text.length}, temperature: ${temperature}`);
+export async function callGeminiAPI(text: string, promptPrefix: string, temperature = 0.1): Promise<string> {
+  console.log(`📝 ULTRA-FAST Gemini call: text length: ${text.length}, temperature: ${temperature}`);
   
   if (!GEMINI_API_KEY) {
     throw new Error("GEMINI_API_KEY environment variable is not set");
@@ -24,22 +24,21 @@ export async function callGeminiAPI(text: string, promptPrefix: string, temperat
             text: `${promptPrefix}
             
             ${text}
-            """
             
-            IMPORTANT INSTRUCTIONS:
-            - Provide a comprehensive, detailed analysis
-            - Use clear structure with headers and bullet points
-            - Include ALL important information from the document
-            - Prioritize by importance and relevance
-            - Maintain professional, analytical tone
-            - Be thorough but well-organized
-            - Focus on actionable insights and key takeaways`
+            ULTRA-FAST ANALYSIS REQUIREMENTS:
+            - Respond in under 10 seconds
+            - Provide comprehensive, detailed analysis
+            - Extract ALL important information
+            - Use clear structure with bullet points
+            - Professional, analytical tone
+            - Focus on actionable insights
+            - Be thorough but concise`
           }]
         }],
         generationConfig: {
           temperature: temperature,
-          maxOutputTokens: 8192, // Increased for more comprehensive summaries
-          topP: 0.8, // Slightly reduced for more focused responses
+          maxOutputTokens: 3000, // Optimized for speed
+          topP: 0.8,
           topK: 40,
           candidateCount: 1,
           stopSequences: []
@@ -72,9 +71,8 @@ export async function callGeminiAPI(text: string, promptPrefix: string, temperat
     }
 
     const result = await response.json();
-    console.log("Gemini API response received, checking format...");
+    console.log("Gemini API response received, processing...");
     
-    // Extract the content from Gemini response
     if (
       result.candidates && 
       result.candidates[0]?.content?.parts && 
@@ -82,28 +80,25 @@ export async function callGeminiAPI(text: string, promptPrefix: string, temperat
     ) {
       const summary = result.candidates[0].content.parts[0].text.trim();
       
-      // Validate that we got a substantial response
-      if (summary.length < 100) {
-        console.warn("Received suspiciously short summary:", summary);
-        throw new Error("Generated summary is too short, indicating potential processing issues");
+      if (summary.length < 50) {
+        console.warn("Received short summary:", summary);
+        throw new Error("Generated summary is too short");
       }
       
-      console.log(`Successfully generated comprehensive summary: ${summary.length} characters`);
+      console.log(`✅ ULTRA-FAST Gemini analysis: ${summary.length} characters`);
       return summary;
     } else {
       console.error("Unexpected Gemini response format:", JSON.stringify(result, null, 2));
       
-      // Check for safety filter blocking
       if (result.candidates && result.candidates[0]?.finishReason === 'SAFETY') {
         throw new Error("Content was blocked by safety filters. Please try with a different document.");
       }
       
-      throw new Error("Invalid response format from Gemini API - no content generated");
+      throw new Error("Invalid response format from Gemini API");
     }
   } catch (error) {
     console.error("Error calling Gemini API:", error);
     
-    // Provide more specific error messages
     if (error.message?.includes('QUOTA_EXCEEDED')) {
       throw new Error("API quota exceeded. Please try again later or contact support.");
     } else if (error.message?.includes('INVALID_API_KEY')) {
