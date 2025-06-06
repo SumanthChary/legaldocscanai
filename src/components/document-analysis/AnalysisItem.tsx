@@ -1,7 +1,8 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FileText, Loader2, ExternalLink, Trash2, RefreshCw } from "lucide-react";
+import { FileText } from "lucide-react";
 import { StatusIcon } from "./StatusIcon";
+import { AnalysisContent } from "./components/AnalysisContent";
+import { AnalysisActions } from "./components/AnalysisActions";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,25 +54,20 @@ export const AnalysisItem = ({
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      // Fetch latest data for this analysis
       const { data, error } = await supabase
         .from('document_analyses')
         .select('*')
         .eq('id', analysis.id)
         .single();
       
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
       
       toast({
         title: "Analysis refreshed",
         description: "Latest analysis data has been loaded",
       });
       
-      if (onRefresh) {
-        onRefresh();
-      }
+      if (onRefresh) onRefresh();
     } catch (error) {
       console.error("Error refreshing analysis:", error);
       toast({
@@ -206,100 +202,30 @@ export const AnalysisItem = ({
             {analysis.is_deleted && (
               <p className="text-xs text-red-500 mt-1">Moved to trash</p>
             )}
-            <div className="mt-2">
-              {analysis.analysis_status === 'pending' && !analysis.is_deleted ? (
-                <div className="flex items-center space-x-2 text-yellow-600 bg-yellow-50 px-3 py-2 rounded-md">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <p className="text-sm">Lightning AI analysis in progress...</p>
-                </div>
-              ) : analysis.analysis_status === 'failed' ? (
-                <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">
-                  Analysis failed. Please try uploading again.
-                </div>
-              ) : !analysis.is_deleted ? (
-                <div>
-                  <div className="text-sm text-gray-700 bg-gray-50 p-3 rounded-md mb-2">
-                    <p className="font-medium text-primary mb-1">Lightning AI Summary:</p>
-                    {hasSummary ? (
-                      <p className="line-clamp-3">{analysis.summary}</p>
-                    ) : (
-                      <div className="text-red-600">
-                        <p>⚠️ No summary available</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleRefresh}
-                          disabled={isRefreshing}
-                          className="mt-2 text-xs"
-                        >
-                          {isRefreshing ? (
-                            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                          ) : (
-                            <RefreshCw className="h-3 w-3 mr-1" />
-                          )}
-                          Refresh
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                  {canShowSummary && (
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="text-xs" 
-                      onClick={viewSummary}
-                    >
-                      <ExternalLink className="h-3 w-3 mr-1" />
-                      View Full Analysis
-                    </Button>
-                  )}
-                </div>
-              ) : null}
-            </div>
+            
+            <AnalysisContent
+              analysis={analysis}
+              isRestoring={isRestoring}
+              isRefreshing={isRefreshing}
+              showRestore={showRestore}
+              onRestore={handleRestore}
+              onDelete={() => setShowDeleteConfirm(true)}
+              onRefresh={handleRefresh}
+              onViewSummary={viewSummary}
+            />
           </div>
         </div>
+        
         <div className="flex flex-col items-end space-y-2">
           {!analysis.is_deleted && <StatusIcon status={analysis.analysis_status} />}
           
-          <div className="flex gap-2">
-            {showRestore && analysis.is_deleted ? (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRestore}
-                  disabled={isRestoring}
-                  className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                >
-                  {isRestoring ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    "Restore"
-                  )}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                  onClick={() => setShowDeleteConfirm(true)}
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </>
-            ) : !analysis.is_deleted && analysis.analysis_status !== 'pending' ? (
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="text-gray-500 hover:text-red-500 hover:bg-red-50"
-                onClick={() => setShowDeleteConfirm(true)}
-                disabled={isDeleting}
-              >
-                <Trash2 className="h-4 w-4" />
-                <span className="sr-only">Move to trash</span>
-              </Button>
-            ) : null}
-          </div>
+          <AnalysisActions
+            isDeleted={analysis.is_deleted}
+            isRestoring={isRestoring}
+            showRestore={showRestore}
+            onRestore={handleRestore}
+            onDelete={() => setShowDeleteConfirm(true)}
+          />
         </div>
       </div>
 
