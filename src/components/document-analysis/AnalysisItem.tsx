@@ -1,7 +1,6 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Loader2, ExternalLink, Trash2 } from "lucide-react";
+import { FileText, Loader2, ExternalLink, Trash2, RefreshCw } from "lucide-react";
 import { StatusIcon } from "./StatusIcon";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -30,22 +29,59 @@ type AnalysisItemProps = {
   onDeleted: (id: string) => void;
   showRestore?: boolean;
   onPermanentDelete?: (id: string) => void;
+  onRefresh?: () => void;
 };
 
 export const AnalysisItem = ({ 
   analysis, 
   onDeleted, 
   showRestore = false, 
-  onPermanentDelete 
+  onPermanentDelete,
+  onRefresh
 }: AnalysisItemProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
   const viewSummary = () => {
     navigate(`/document/${analysis.id}/summary`);
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      // Fetch latest data for this analysis
+      const { data, error } = await supabase
+        .from('document_analyses')
+        .select('*')
+        .eq('id', analysis.id)
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast({
+        title: "Analysis refreshed",
+        description: "Latest analysis data has been loaded",
+      });
+      
+      if (onRefresh) {
+        onRefresh();
+      }
+    } catch (error) {
+      console.error("Error refreshing analysis:", error);
+      toast({
+        title: "Error refreshing analysis",
+        description: error.message || "Failed to refresh analysis data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const handleSoftDelete = async () => {
@@ -151,7 +187,9 @@ export const AnalysisItem = ({
     }
   };
 
-  const canShowSummary = analysis.analysis_status === 'completed' && analysis.summary && !analysis.is_deleted;
+  const canShowSummary = analysis.analysis_status === 'completed' && !analysis.is_deleted;
+  const hasSummary = analysis.summary && analysis.summary.trim().length > 0 && 
+                     analysis.summary !== 'null' && analysis.summary !== 'undefined';
 
   return (
     <Card className="p-4">
@@ -182,10 +220,26 @@ export const AnalysisItem = ({
                 <div>
                   <div className="text-sm text-gray-700 bg-gray-50 p-3 rounded-md mb-2">
                     <p className="font-medium text-primary mb-1">Lightning AI Summary:</p>
-                    {analysis.summary ? (
+                    {hasSummary ? (
                       <p className="line-clamp-3">{analysis.summary}</p>
                     ) : (
-                      <p className="text-gray-500">No summary available</p>
+                      <div className="text-red-600">
+                        <p>⚠️ No summary available</p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleRefresh}
+                          disabled={isRefreshing}
+                          className="mt-2 text-xs"
+                        >
+                          {isRefreshing ? (
+                            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                          ) : (
+                            <RefreshCw className="h-3 w-3 mr-1" />
+                          )}
+                          Refresh
+                        </Button>
+                      </div>
                     )}
                   </div>
                   {canShowSummary && (
