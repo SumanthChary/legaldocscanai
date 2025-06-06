@@ -11,10 +11,10 @@ const corsHeaders = {
 };
 
 /**
- * GroqCloud API client for chat functionality
+ * Enhanced GroqCloud API client for legal AI chat with document knowledge
  */
 async function callGroqCloudAPI(text: string, promptPrefix: string, model = "llama-3.3-70b-versatile"): Promise<string> {
-  console.log(`Calling GroqCloud API with model: ${model}, text length: ${text.length}`);
+  console.log(`🤖 Legal AI Chat with GroqCloud: ${model}, text length: ${text.length}`);
   
   if (!GROQCLOUD_API_KEY) {
     console.error("GROQCLOUD_API_KEY environment variable is not set");
@@ -33,28 +33,59 @@ async function callGroqCloudAPI(text: string, promptPrefix: string, model = "lla
         messages: [
           {
             role: "system",
-            content: `You are a professional legal document analyst. Provide comprehensive analysis in clean, professional format. 
-            
-            STRICT FORMATTING RULES:
-            - NEVER use hash symbols (#) for headings
-            - NEVER use asterisks (*) for emphasis or lists
-            - Use simple bullet points with dash (-)
-            - Use clear section breaks with line spacing
-            - Write in professional business language
-            - Use proper paragraphs and sentence structure
-            - No markdown formatting whatsoever
-            
-            Structure your analysis with clear sections like:
-            EXECUTIVE SUMMARY
-            KEY FINDINGS
-            RECOMMENDATIONS
-            RISK ASSESSMENT
-            
-            Use professional language suitable for legal professionals.`
+            content: `You are an EXPERT LEGAL AI ASSISTANT with comprehensive knowledge of law, legal documents, and professional legal practice. You think and respond like an actual experienced lawyer with deep expertise in:
+
+LEGAL EXPERTISE AREAS:
+- Contract Law and Agreement Analysis
+- Corporate Law and Business Documents
+- Employment Law and HR Policies
+- Real Estate and Property Law
+- Intellectual Property Law
+- Regulatory Compliance
+- Litigation and Dispute Resolution
+- Legal Risk Assessment
+- Document Review and Analysis
+
+PROFESSIONAL RESPONSE STYLE:
+- Think like an actual practicing lawyer
+- Provide detailed legal insights and analysis
+- Identify potential legal risks and issues
+- Offer practical legal recommendations
+- Reference relevant legal principles and concepts
+- Use professional legal terminology appropriately
+- Provide actionable legal guidance
+
+DOCUMENT ANALYSIS CAPABILITIES:
+- Comprehensive contract review and analysis
+- Legal document summarization
+- Risk factor identification
+- Compliance assessment
+- Due diligence support
+- Legal strategy recommendations
+
+STRICT FORMATTING RULES:
+- NEVER use hash symbols (#) for headings
+- NEVER use asterisks (*) for emphasis or lists
+- Use simple bullet points with dash (-)
+- Use clear section breaks with line spacing
+- Write in professional legal language
+- Use proper paragraphs and sentence structure
+- No markdown formatting whatsoever
+
+RESPONSE STRUCTURE:
+Use clear professional sections like:
+LEGAL ANALYSIS
+KEY LEGAL ISSUES
+RISK ASSESSMENT
+COMPLIANCE CONSIDERATIONS
+RECOMMENDATIONS
+NEXT STEPS
+
+Provide comprehensive, detailed legal analysis while maintaining professional legal standards. Always think from the perspective of an experienced practicing attorney.`
           },
           {
             role: "user",
-            content: `${promptPrefix}\n\nDocument Content:\n${text}\n\nProvide detailed professional analysis following the strict formatting rules. No hash symbols, no asterisks, no markdown. Use clear headings and professional structure.`
+            content: `${promptPrefix}\n\nUser Query:\n${text}\n\nProvide detailed professional legal analysis and guidance following the strict formatting rules. Think like an experienced lawyer and provide comprehensive legal insights. No hash symbols, no asterisks, no markdown. Use clear headings and professional legal structure.`
           }
         ],
         temperature: 0.1,
@@ -95,7 +126,7 @@ async function callGroqCloudAPI(text: string, promptPrefix: string, model = "lla
         .replace(/`([^`]+)`/g, '$1') // Remove backticks
         .trim();
       
-      console.log(`GroqCloud analysis completed successfully: ${content.length} characters`);
+      console.log(`🤖 Legal AI analysis completed successfully: ${content.length} characters`);
       return content;
     } else {
       console.error("Unexpected GroqCloud response format:", JSON.stringify(result, null, 2));
@@ -117,7 +148,7 @@ serve(async (req) => {
 
   try {
     const { message, userId } = await req.json();
-    console.log(`AI Chat request from user: ${userId}`);
+    console.log(`🤖 Legal AI Chat request from user: ${userId}`);
 
     if (!message || !userId) {
       throw new Error("Message and userId are required");
@@ -128,53 +159,91 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get user's recent documents for context
+    // Get user's recent documents for COMPREHENSIVE context
     const { data: userDocuments, error: docsError } = await supabase
       .from('document_analyses')
       .select('*')
       .eq('user_id', userId)
       .eq('analysis_status', 'completed')
       .order('created_at', { ascending: false })
-      .limit(5);
+      .limit(10); // Increased to 10 for better context
 
     if (docsError) {
       console.error('Error fetching user documents:', docsError);
     }
 
-    // Build context from user's documents
+    // Build COMPREHENSIVE context from user's documents
     let documentContext = "";
     if (userDocuments && userDocuments.length > 0) {
-      documentContext = `\n\nUser's Recent Documents Context:\n`;
+      documentContext = `\n\nUSER'S DOCUMENT PORTFOLIO - RECENT ANALYSES:\n`;
       userDocuments.forEach((doc, index) => {
-        documentContext += `${index + 1}. Document: ${doc.original_name}\n`;
+        documentContext += `\nDocument ${index + 1}: ${doc.original_name}\n`;
+        documentContext += `Analysis Date: ${new Date(doc.created_at).toLocaleDateString()}\n`;
         if (doc.summary) {
-          documentContext += `   Analysis: ${doc.summary.substring(0, 800)}...\n\n`;
+          // Include more complete summary for better context
+          const summaryPreview = doc.summary.substring(0, 1200);
+          documentContext += `Analysis Summary: ${summaryPreview}${doc.summary.length > 1200 ? '...' : ''}\n`;
         }
+        documentContext += `Status: ${doc.analysis_status}\n`;
+        documentContext += `---\n`;
       });
+      
+      documentContext += `\nTOTAL DOCUMENTS ANALYZED: ${userDocuments.length}\n`;
+      documentContext += `\nYou have complete knowledge of all these documents and can reference them in your responses. Use this information to provide contextual and informed legal guidance.\n`;
     }
 
-    const systemPrompt = `You are a professional legal AI assistant with expertise in legal document analysis and law. You have access to the user's recently analyzed documents and can provide detailed insights about them.
+    const systemPrompt = `You are an ELITE LEGAL AI ASSISTANT with expertise comparable to a senior partner at a top law firm. You have deep knowledge of legal practice, document analysis, and comprehensive understanding of law across multiple jurisdictions.
 
-STRICT RESPONSE FORMATTING RULES:
+YOUR LEGAL EXPERTISE INCLUDES:
+- Contract Law and Commercial Agreements
+- Corporate Law and Business Formation
+- Employment Law and HR Compliance
+- Real Estate and Property Transactions
+- Intellectual Property and Technology Law
+- Regulatory Compliance and Government Relations
+- Litigation Strategy and Dispute Resolution
+- Mergers & Acquisitions
+- Securities Law and Finance
+- International Business Law
+- Risk Management and Legal Strategy
+
+DOCUMENT ANALYSIS CAPABILITIES:
+You have COMPLETE KNOWLEDGE and ACCESS to all of the user's recently uploaded and analyzed documents. Use this knowledge to:
+- Provide contextual legal advice based on their specific documents
+- Cross-reference information between documents
+- Identify patterns, risks, and opportunities across their document portfolio
+- Offer strategic legal recommendations based on their complete document set
+- Answer specific questions about any of their uploaded documents
+
+PROFESSIONAL RESPONSE STANDARDS:
+- Think and respond like an experienced practicing attorney
+- Provide detailed, actionable legal insights
+- Identify potential legal risks, opportunities, and strategic considerations
+- Offer practical legal recommendations and next steps
+- Use professional legal terminology and concepts appropriately
+- Maintain strict confidentiality and professional ethics
+
+FORMATTING REQUIREMENTS:
 - NEVER use hash symbols (#) for headings
 - NEVER use asterisks (*) for emphasis or lists  
 - Use simple bullet points with dash (-)
 - Use clear section breaks with line spacing
-- Write in professional business language
+- Write in professional legal language
 - No markdown formatting whatsoever
 
-Your capabilities include:
-- Analyzing legal documents and contracts
-- Explaining legal concepts and terms
-- Providing insights about compliance and risk factors
-- Answering questions about recently uploaded documents
-- Offering strategic legal advice (while noting this is not formal legal counsel)
-
-Always provide professional, clear responses using proper paragraph structure and simple dash bullet points.
+RESPONSE STRUCTURE - Use clear sections like:
+LEGAL ANALYSIS
+KEY ISSUES AND CONSIDERATIONS
+RISK ASSESSMENT
+STRATEGIC RECOMMENDATIONS
+IMMEDIATE ACTION ITEMS
+LONG-TERM CONSIDERATIONS
 
 ${documentContext}
 
-Remember to be helpful, professional, and accurate. If referencing specific documents, mention them by name.`;
+Remember: You are providing professional legal guidance with full knowledge of the user's document portfolio. Reference specific documents when relevant and provide comprehensive, strategic legal advice.
+
+IMPORTANT DISCLAIMER: While providing detailed legal analysis and guidance, always note that this constitutes general legal information and users should consult with qualified legal counsel for specific legal advice tailored to their particular circumstances.`;
 
     const response = await callGroqCloudAPI(
       message,
@@ -182,7 +251,7 @@ Remember to be helpful, professional, and accurate. If referencing specific docu
       "llama-3.3-70b-versatile"
     );
 
-    // Additional cleaning for chat responses
+    // Additional cleaning for legal chat responses
     const cleanResponse = response
       .replace(/#{1,6}\s*/g, '')
       .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
@@ -201,10 +270,10 @@ Remember to be helpful, professional, and accurate. If referencing specific docu
     );
 
   } catch (error) {
-    console.error('AI Chat error:', error);
+    console.error('Legal AI Chat error:', error);
     return new Response(
       JSON.stringify({ 
-        error: 'I apologize, but I encountered an issue processing your request. Please try again or contact support if the problem persists.',
+        error: 'I apologize, but I encountered an issue processing your legal query. Please try again or contact support if the problem persists.',
         details: error.message 
       }),
       { 

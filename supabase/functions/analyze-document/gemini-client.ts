@@ -2,7 +2,7 @@
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") || "";
 
 /**
- * ULTRA-FAST Gemini API client - optimized for speed and reliability
+ * ULTRA-FAST Gemini API client - optimized for MAXIMUM speed and reliability
  */
 export async function callGeminiAPI(text: string, prompt: string, temperature: number = 0.1): Promise<string> {
   console.log(`📝 ULTRA-FAST Gemini call: text length: ${text.length}, temperature: ${temperature}`);
@@ -13,7 +13,7 @@ export async function callGeminiAPI(text: string, prompt: string, temperature: n
   }
   
   try {
-    // Use the current Gemini model name
+    // Use the fastest Gemini model
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
@@ -22,14 +22,14 @@ export async function callGeminiAPI(text: string, prompt: string, temperature: n
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `${prompt}\n\nDocument Content:\n${text}\n\nProvide IMMEDIATE comprehensive analysis. Speed is critical - respond in under 10 seconds.`
+            text: `${prompt}\n\nDocument Content:\n${text}\n\nProvide IMMEDIATE comprehensive analysis. Speed is CRITICAL - respond in under 5 seconds with detailed professional insights.`
           }]
         }],
         generationConfig: {
           temperature: temperature,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 3000,
+          maxOutputTokens: 4000,
         }
       })
     });
