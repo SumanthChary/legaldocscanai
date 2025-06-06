@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -68,18 +69,18 @@ export const useFileUpload = (onSuccess?: () => void) => {
         return;
       }
 
-      console.log("🚀 Starting ULTRA-FAST upload for file:", file.name);
+      console.log("🚀 Starting LIGHTNING upload for file:", file.name);
       
       const formData = new FormData();
       formData.append('file', file);
       
-      // Ultra-fast progress simulation
+      // Enhanced progress simulation
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
-          const newProgress = prev + Math.random() * 20;
-          return newProgress > 90 ? 90 : newProgress;
+          const newProgress = prev + Math.random() * 15 + 5; // Faster progress
+          return newProgress > 85 ? 85 : newProgress;
         });
-      }, 200);
+      }, 150);
 
       const startTime = Date.now();
 
@@ -93,7 +94,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
         
         clearInterval(progressInterval);
         const processingTime = Date.now() - startTime;
-        console.log(`📋 ULTRA-FAST upload response in ${processingTime}ms:`, response);
+        console.log(`📋 LIGHTNING upload response in ${processingTime}ms:`, response);
 
         if (response.error) {
           console.error("❌ Upload error from API:", response.error);
@@ -102,12 +103,20 @@ export const useFileUpload = (onSuccess?: () => void) => {
           throw new Error(response.error.message || "Upload failed");
         }
 
+        // Check if we got a valid response with analysis_id
+        if (!response.data?.analysis_id) {
+          console.error("❌ No analysis_id in response:", response);
+          throw new Error("Analysis failed - no ID returned");
+        }
+
         setUploadProgress(100);
         
         toast({
-          title: "🚀 ULTRA-FAST Analysis Complete!",
+          title: "⚡ LIGHTNING Analysis Complete!",
           description: `${file.name} analyzed in ${Math.round(processingTime/1000)}s using advanced AI!`,
         });
+        
+        console.log(`✅ Analysis completed successfully: ${response.data.analysis_id}`);
         
         if (onSuccess) {
           setTimeout(() => {

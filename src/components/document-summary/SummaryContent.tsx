@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Download, AlertTriangle, Info, ChevronDown, ChevronUp, Copy, CheckCircle, FileText, Shield } from "lucide-react";
+import { Download, AlertTriangle, Info, ChevronDown, ChevronUp, Copy, CheckCircle, FileText, Shield, Zap } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -16,8 +16,31 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
-  if (analysisStatus !== 'completed' || !summary) {
+  // Debug logging
+  console.log("SummaryContent props:", { analysisStatus, summaryLength: summary?.length, originalName });
+
+  if (analysisStatus !== 'completed') {
+    console.log("Analysis not completed, status:", analysisStatus);
     return null;
+  }
+
+  if (!summary || summary.trim().length === 0) {
+    console.log("No summary available, summary:", summary);
+    return (
+      <div className="space-y-6">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="p-2 bg-yellow-100 rounded-xl">
+              <AlertTriangle className="h-5 w-5 text-yellow-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-yellow-800">Analysis Incomplete</h3>
+              <p className="text-yellow-700">The analysis completed but no summary was generated. Please try uploading again.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const handleDownload = () => {
@@ -93,14 +116,14 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-0 p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl">
-              <FileText className="h-5 w-5 text-white" />
+            <div className="p-2 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl">
+              <Zap className="h-5 w-5 text-white" />
             </div>
             <div>
               <h2 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                Lightning AI Analysis Results
+                ⚡ Lightning AI Analysis Results
               </h2>
-              <p className="text-gray-600">Professional document analysis powered by GroqCloud AI</p>
+              <p className="text-gray-600">Professional document analysis completed in seconds!</p>
             </div>
           </div>
           <div className="flex gap-2 items-center">
@@ -130,7 +153,7 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
           <div className={`p-6 rounded-xl border text-gray-700 whitespace-pre-line ${
             isFallbackMessage 
               ? 'border-yellow-200 bg-yellow-50' 
-              : 'border-blue-100 bg-gradient-to-br from-blue-50/50 to-purple-50/50'
+              : 'border-green-100 bg-gradient-to-br from-green-50/50 to-blue-50/50'
           }`}>
             {formattedSummary}
             
@@ -162,15 +185,15 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
         )}
         
         {!isFallbackMessage && (
-          <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+          <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
             <div className="flex items-start gap-3">
-              <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-blue-800">
-                <p className="font-semibold mb-1">Lightning Professional AI Analysis Complete</p>
+              <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-green-800">
+                <p className="font-semibold mb-1">⚡ Lightning Professional AI Analysis Complete</p>
                 <p>
-                  This comprehensive analysis was generated using GroqCloud's advanced AI technology optimized for speed and accuracy. 
-                  Perfect for {fileType} files and all document types. 
-                  Results are professionally formatted and ready for business use.
+                  This comprehensive analysis was generated using our ultra-fast AI technology with GroqCloud and Gemini APIs. 
+                  Optimized for {fileType} files and all document types. 
+                  Results are professionally formatted and ready for immediate business use.
                 </p>
               </div>
             </div>
@@ -182,17 +205,24 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
 };
 
 function formatSummary(text: string): string {
-  const hasStructure = /#+\s|^\d+\.\s|\n\s*[-•*]\s|\n\s*\d+\.\s/m.test(text);
+  // Clean up any formatting artifacts first
+  let cleaned = text
+    .replace(/^\s*---\s*$/gm, '') // Remove standalone --- lines
+    .replace(/^#+\s*/gm, '') // Remove markdown headers
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1') // Remove bold/italic
+    .trim();
+
+  const hasStructure = /^\d+\.\s|\n\s*[-•*]\s|\n\s*\d+\.\s/m.test(cleaned);
   
   if (hasStructure) {
-    return text
-      .replace(/\n#+\s/g, '\n\n$&')
+    return cleaned
+      .replace(/\n{3,}/g, '\n\n')
       .replace(/(\n\s*[-•*]\s.*?)(\n[^-•*\s])/g, '$1\n$2')
       .replace(/(\n\s*\d+\.\s.*?)(\n[^\d\s])/g, '$1\n$2');
   }
   
-  return text
+  return cleaned
     .replace(/\n{3,}/g, '\n\n')
-    .replace(/([.!?])\s+/g, '$1\n\n')
+    .replace(/([.!?])\s+([A-Z])/g, '$1\n\n$2')
     .replace(/\n{3,}/g, '\n\n');
 }
