@@ -1,5 +1,6 @@
+
 import { Card } from "@/components/ui/card";
-import { FileText } from "lucide-react";
+import { FileText, Loader2 } from "lucide-react";
 import { StatusIcon } from "./StatusIcon";
 import { AnalysisContent } from "./components/AnalysisContent";
 import { AnalysisActions } from "./components/AnalysisActions";
