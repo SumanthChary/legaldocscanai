@@ -7,7 +7,7 @@ import { AnalysisActions } from "./components/AnalysisActions";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,7 +69,7 @@ export const AnalysisItem = ({
       });
       
       if (onRefresh) onRefresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error refreshing analysis:", error);
       toast({
         title: "Error refreshing analysis",
@@ -81,7 +81,7 @@ export const AnalysisItem = ({
     }
   };
 
-  const handleSoftDelete = async () => {
+  const handleMoveToTrash = async () => {
     try {
       setIsDeleting(true);
       
@@ -103,7 +103,7 @@ export const AnalysisItem = ({
       });
       
       onDeleted(analysis.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error moving document to trash:", error);
       toast({
         title: "Error moving document to trash",
@@ -136,8 +136,10 @@ export const AnalysisItem = ({
       
       if (onPermanentDelete) {
         onPermanentDelete(analysis.id);
+      } else {
+        onDeleted(analysis.id);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error permanently deleting document:", error);
       toast({
         title: "Error deleting document",
@@ -172,7 +174,7 @@ export const AnalysisItem = ({
       });
       
       onDeleted(analysis.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error restoring document:", error);
       toast({
         title: "Error restoring document",
@@ -184,9 +186,11 @@ export const AnalysisItem = ({
     }
   };
 
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
+  };
+
   const canShowSummary = analysis.analysis_status === 'completed' && !analysis.is_deleted;
-  const hasSummary = analysis.summary && analysis.summary.trim().length > 0 && 
-                     analysis.summary !== 'null' && analysis.summary !== 'undefined';
 
   return (
     <Card className="p-4">
@@ -201,7 +205,7 @@ export const AnalysisItem = ({
               {new Date(analysis.created_at).toLocaleDateString()} {new Date(analysis.created_at).toLocaleTimeString()}
             </p>
             {analysis.is_deleted && (
-              <p className="text-xs text-red-500 mt-1">Moved to trash</p>
+              <p className="text-xs text-red-500 mt-1">In trash</p>
             )}
             
             <AnalysisContent
@@ -210,7 +214,7 @@ export const AnalysisItem = ({
               isRefreshing={isRefreshing}
               showRestore={showRestore}
               onRestore={handleRestore}
-              onDelete={() => setShowDeleteConfirm(true)}
+              onDelete={handleDeleteClick}
               onRefresh={handleRefresh}
               onViewSummary={viewSummary}
             />
@@ -223,9 +227,11 @@ export const AnalysisItem = ({
           <AnalysisActions
             isDeleted={analysis.is_deleted}
             isRestoring={isRestoring}
+            isRefreshing={isRefreshing}
             showRestore={showRestore}
             onRestore={handleRestore}
-            onDelete={() => setShowDeleteConfirm(true)}
+            onDelete={handleDeleteClick}
+            onRefresh={onRefresh ? handleRefresh : undefined}
           />
         </div>
       </div>
@@ -246,7 +252,7 @@ export const AnalysisItem = ({
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction 
-              onClick={showRestore && analysis.is_deleted ? handlePermanentDelete : handleSoftDelete}
+              onClick={showRestore && analysis.is_deleted ? handlePermanentDelete : handleMoveToTrash}
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
