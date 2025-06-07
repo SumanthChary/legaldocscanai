@@ -39,37 +39,37 @@ export const SummaryHeader = ({
 
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <div className={`p-2 rounded-xl ${isEmergencyProcessing ? 'bg-yellow-500' : 'bg-gradient-to-r from-green-600 to-blue-600'}`}>
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-4 mb-4 sm:mb-6">
+        <div className="flex items-start space-x-2 sm:space-x-3 flex-1 min-w-0">
+          <div className={`p-1.5 sm:p-2 rounded-lg sm:rounded-xl flex-shrink-0 ${isEmergencyProcessing ? 'bg-yellow-500' : 'bg-gradient-to-r from-green-600 to-blue-600'}`}>
             {isEmergencyProcessing ? (
-              <AlertTriangle className="h-5 w-5 text-white" />
+              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             ) : (
-              <Zap className="h-5 w-5 text-white" />
+              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             )}
           </div>
-          <div>
-            <h2 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-base sm:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent break-words">
               {isEmergencyProcessing ? "⚠️ Emergency Analysis Results" : "⚡ Lightning AI Analysis Results"}
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-xs sm:text-sm">
               {isEmergencyProcessing ? "Document processed in emergency mode" : "Professional document analysis completed in seconds!"}
             </p>
           </div>
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center w-full sm:w-auto">
           <StatusBadge status={analysisStatus} />
           <SummaryActions summary={summary} originalName={originalName} />
         </div>
       </div>
 
       {!isEmergencyProcessing && (
-        <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
-          <div className="flex items-start gap-3">
-            <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-green-800">
+        <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+          <div className="flex items-start gap-2 sm:gap-3">
+            <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mt-0.5 flex-shrink-0" />
+            <div className="text-xs sm:text-sm text-green-800 min-w-0">
               <p className="font-semibold mb-1">⚡ Lightning Professional AI Analysis Complete</p>
-              <p>
+              <p className="break-words">
                 This comprehensive analysis was generated using our ultra-fast AI technology with GroqCloud and Gemini APIs. 
                 Optimized for {fileType} files and all document types. 
                 Results are professionally formatted and ready for immediate business use.
@@ -80,12 +80,12 @@ export const SummaryHeader = ({
       )}
 
       {isEmergencyProcessing && (
-        <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-          <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-yellow-800">
+        <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+          <div className="flex items-start gap-2 sm:gap-3">
+            <Info className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+            <div className="text-xs sm:text-sm text-yellow-800 min-w-0">
               <p className="font-semibold mb-1">Emergency Processing Mode</p>
-              <p>
+              <p className="break-words">
                 Your document was processed using emergency mode to ensure you receive immediate results. 
                 For enhanced AI analysis, you can try re-uploading the document.
               </p>

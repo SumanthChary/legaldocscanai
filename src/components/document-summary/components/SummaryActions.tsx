@@ -53,24 +53,24 @@ export const SummaryActions = ({ summary, originalName }: SummaryActionsProps) =
   }, [summary, toast]);
 
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex gap-2 items-center flex-wrap">
       <Button 
         variant="outline" 
         size="sm" 
-        className="flex items-center gap-2 hover:bg-blue-50 border-blue-200"
+        className="flex items-center gap-1 sm:gap-2 hover:bg-blue-50 border-blue-200 text-xs sm:text-sm px-2 sm:px-3"
         onClick={handleCopy}
       >
-        {copied ? <CheckCircle className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
-        {copied ? "Copied" : "Copy"}
+        {copied ? <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" /> : <Copy className="h-3 w-3 sm:h-4 sm:w-4" />}
+        <span className="hidden xs:inline">{copied ? "Copied" : "Copy"}</span>
       </Button>
       <Button 
         variant="outline" 
         size="sm" 
-        className="flex items-center gap-2 hover:bg-purple-50 border-purple-200"
+        className="flex items-center gap-1 sm:gap-2 hover:bg-purple-50 border-purple-200 text-xs sm:text-sm px-2 sm:px-3"
         onClick={handleDownload}
       >
-        <Download className="h-4 w-4" />
-        Download
+        <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+        <span className="hidden xs:inline">Download</span>
       </Button>
     </div>
   );

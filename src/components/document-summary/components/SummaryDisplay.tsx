@@ -15,8 +15,8 @@ export const SummaryDisplay = ({ summary, isEmergencyProcessing }: SummaryDispla
 
   return (
     <>
-      <div className={`relative ${isExpanded ? '' : 'max-h-80 overflow-hidden'}`}>
-        <div className={`p-6 rounded-xl border text-gray-700 whitespace-pre-line ${
+      <div className={`relative ${isExpanded ? '' : 'max-h-60 sm:max-h-80 overflow-hidden'}`}>
+        <div className={`p-3 sm:p-6 rounded-lg sm:rounded-xl border text-gray-700 whitespace-pre-line text-sm sm:text-base ${
           isEmergencyProcessing 
             ? 'border-yellow-200 bg-yellow-50' 
             : 'border-green-100 bg-gradient-to-br from-green-50/50 to-blue-50/50'
@@ -24,7 +24,7 @@ export const SummaryDisplay = ({ summary, isEmergencyProcessing }: SummaryDispla
           {formattedSummary}
           
           {!isExpanded && summary.length > 500 && (
-            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent rounded-b-xl"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-20 bg-gradient-to-t from-white to-transparent rounded-b-lg sm:rounded-b-xl"></div>
           )}
         </div>
       </div>
@@ -34,17 +34,19 @@ export const SummaryDisplay = ({ summary, isEmergencyProcessing }: SummaryDispla
           variant="ghost"
           size="sm"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="mt-4 w-full flex items-center justify-center hover:bg-blue-50"
+          className="mt-3 sm:mt-4 w-full flex items-center justify-center hover:bg-blue-50 text-xs sm:text-sm"
         >
           {isExpanded ? (
             <>
-              <ChevronUp className="h-4 w-4 mr-2" />
-              Show Less
+              <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Show Less</span>
+              <span className="sm:hidden">Less</span>
             </>
           ) : (
             <>
-              <ChevronDown className="h-4 w-4 mr-2" />
-              Show Full Analysis
+              <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Show Full Analysis</span>
+              <span className="sm:hidden">Show Full</span>
             </>
           )}
         </Button>
