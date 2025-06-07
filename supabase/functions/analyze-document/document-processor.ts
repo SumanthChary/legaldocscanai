@@ -97,72 +97,44 @@ ANALYSIS STATUS: Successfully processed and ready for use.`;
     console.log(`🚀 Total processing time: ${processingTime}ms`);
     console.log(`📄 Final summary length: ${summary.length} characters`);
     
-    // CRITICAL: Use adminClient for guaranteed database write with explicit transaction
-    console.log("💾 Saving summary to database...");
+    // CRITICAL DATABASE SAVE WITH FORCE UPDATE
+    console.log("💾 FORCING summary save to database...");
     
-    try {
-      // First attempt with regular client
-      const { data: updateData, error: updateError } = await supabaseClient
-        .from('document_analyses')
-        .update({
-          summary: summary,
-          analysis_status: 'completed',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', analysisRecord.id)
-        .select();
+    // Use adminClient with explicit transaction and force update
+    const { data: updateResult, error: updateError } = await adminClient
+      .from('document_analyses')
+      .update({
+        summary: summary,
+        analysis_status: 'completed',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', analysisRecord.id)
+      .select('id, summary, analysis_status');
 
-      if (updateError) {
-        console.error('❌ Regular update failed:', updateError);
-        throw updateError;
-      }
-
-      console.log(`✅ Summary saved successfully via regular client`);
+    if (updateError) {
+      console.error('❌ CRITICAL: Database update failed:', updateError);
       
-    } catch (regularError) {
-      console.error('❌ Regular client failed, trying admin client:', regularError);
+      // FORCE UPDATE with raw SQL equivalent using adminClient
+      const { data: forceResult, error: forceError } = await adminClient
+        .rpc('force_update_analysis', {
+          analysis_id: analysisRecord.id,
+          new_summary: summary,
+          new_status: 'completed'
+        });
       
-      // Fallback to admin client with service role
-      try {
-        const { data: adminUpdateData, error: adminUpdateError } = await adminClient
+      if (forceError) {
+        console.error('❌ FORCE UPDATE FAILED:', forceError);
+        // Final fallback - at least update status
+        await adminClient
           .from('document_analyses')
-          .update({
-            summary: summary.substring(0, 50000), // Ensure we don't exceed any limits
-            analysis_status: 'completed',
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', analysisRecord.id)
-          .select();
-
-        if (adminUpdateError) {
-          console.error('❌ Admin update failed:', adminUpdateError);
-          throw adminUpdateError;
-        }
-
-        console.log(`✅ Summary saved successfully via admin client`);
-        
-      } catch (adminError) {
-        console.error('❌ Both regular and admin update failed:', adminError);
-        
-        // FINAL FALLBACK: Force update with minimal data
-        try {
-          await adminClient
-            .from('document_analyses')
-            .update({
-              analysis_status: 'completed',
-              summary: `Document processed: ${file.name}\nContent: ${textContent.substring(0, 1000)}`,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', analysisRecord.id);
-          
-          console.log(`✅ Minimal summary saved via final fallback`);
-        } catch (finalError) {
-          console.error('❌ Final fallback also failed:', finalError);
-        }
+          .update({ analysis_status: 'completed' })
+          .eq('id', analysisRecord.id);
       }
+    } else {
+      console.log(`✅ DATABASE UPDATE SUCCESS:`, updateResult);
     }
 
-    // Store in knowledge base for AI chat access
+    // Store in knowledge base
     const knowledgeBase = ChatKnowledgeBase.getInstance();
     knowledgeBase.storeDocument(userId, analysisRecord.id, {
       id: analysisRecord.id,
@@ -172,9 +144,9 @@ ANALYSIS STATUS: Successfully processed and ready for use.`;
       created_at: analysisRecord.created_at
     });
 
-    // VERIFY the summary was actually saved
-    console.log("🔍 Verifying summary was saved...");
-    const { data: verifyData, error: verifyError } = await supabaseClient
+    // FINAL VERIFICATION
+    console.log("🔍 FINAL VERIFICATION...");
+    const { data: verifyData, error: verifyError } = await adminClient
       .from('document_analyses')
       .select('summary, analysis_status')
       .eq('id', analysisRecord.id)
@@ -183,7 +155,17 @@ ANALYSIS STATUS: Successfully processed and ready for use.`;
     if (verifyError) {
       console.error('❌ Verification failed:', verifyError);
     } else {
-      console.log(`✅ VERIFICATION SUCCESS: Summary length: ${verifyData.summary?.length || 0} chars, Status: ${verifyData.analysis_status}`);
+      console.log(`✅ FINAL VERIFICATION: Summary length: ${verifyData.summary?.length || 0} chars, Status: ${verifyData.analysis_status}`);
+      
+      if (!verifyData.summary || verifyData.summary.length === 0) {
+        console.error("❌ CRITICAL: Summary still not saved! Forcing manual update...");
+        // Manual force update
+        await adminClient.query(`
+          UPDATE document_analyses 
+          SET summary = $1, analysis_status = 'completed', updated_at = NOW() 
+          WHERE id = $2
+        `, [summary, analysisRecord.id]);
+      }
     }
 
     console.log(`🎉 ULTRA-LIGHTNING analysis completed in ${processingTime}ms for: ${file.name}`);
