@@ -178,7 +178,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      force_update_analysis: {
+        Args: { analysis_id: string; new_summary: string; new_status: string }
+        Returns: undefined
+      }
     }
     Enums: {
       subscription_tier:
