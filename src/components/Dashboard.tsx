@@ -12,7 +12,7 @@ import { DonationDialog } from "./dashboard/DonationDialog";
 export const Dashboard = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<any>(null);
-  const [showUpgradeBanner, setShowUpgradeBanner] = useState(true);
+  const [showUpgradeBanner, setShowUpgradeBanner] = useState(false);
   const [showDonationDialog, setShowDonationDialog] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("documents");
@@ -39,6 +39,12 @@ export const Dashboard = () => {
       
       if (!error && data) {
         setUserProfile(data);
+        
+        // Only show upgrade banner if user has limited documents (less than 500)
+        // This means users with unlimited access won't see the upgrade banner
+        const hasLimitedAccess = data.document_limit < 500;
+        const isNearLimit = data.document_count >= (data.document_limit * 0.8);
+        setShowUpgradeBanner(hasLimitedAccess && isNearLimit);
       }
     };
 
@@ -80,11 +86,14 @@ export const Dashboard = () => {
 
   if (!session) return null;
 
-  const userName = userProfile?.full_name || session?.user?.email?.split('@')[0] || 'User';
+  const userName = userProfile?.full_name || userProfile?.username || session?.user?.email?.split('@')[0] || 'User';
+  
+  // Check if user has unlimited access
+  const hasUnlimitedAccess = userProfile?.document_limit >= 999999;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {showUpgradeBanner && (
+      {showUpgradeBanner && !hasUnlimitedAccess && (
         <div className="mb-8">
           <UpgradeBanner
             buttonText="Upgrade Now"
@@ -92,6 +101,17 @@ export const Dashboard = () => {
             onClose={() => setShowUpgradeBanner(false)}
             onClick={() => navigate("/pricing")}
           />
+        </div>
+      )}
+
+      {hasUnlimitedAccess && (
+        <div className="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-purple-900 mb-1">🚀 Unlimited Access Active</h3>
+              <p className="text-purple-700">You have unlimited document analysis capabilities</p>
+            </div>
+          </div>
         </div>
       )}
 

@@ -37,16 +37,26 @@ export const PricingButton = ({ plan, className }: PricingButtonProps) => {
       return;
     }
 
-    // For the free plan, check if the user is eligible
-    if (isFree) {
-      // Check if the user already has document limits from a free trial
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("document_limit")
-        .eq("id", session.user.id)
-        .single();
+    // Check user's current plan status
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("document_limit, document_count")
+      .eq("id", session.user.id)
+      .single();
 
-      if (!profileError && profile && profile.document_limit > 3) {
+    if (!profileError && profile) {
+      // Check if user already has unlimited access
+      if (profile.document_limit >= 999999) {
+        toast({
+          title: "You already have unlimited access",
+          description: "Your account has premium capabilities",
+        });
+        navigate("/dashboard");
+        return;
+      }
+
+      // For the free plan, check if the user is eligible
+      if (isFree && profile.document_limit > 3) {
         // User already has more than the default free plan limit
         toast({
           title: "You already have an active plan",
