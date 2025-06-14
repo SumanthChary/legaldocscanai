@@ -63,7 +63,7 @@ export const ModernChatInput = ({
 
           <PromptInputTextarea 
             placeholder="Ask about legal documents, contracts, compliance..." 
-            className="text-sm sm:text-base leading-relaxed placeholder:text-gray-500 min-h-[40px] sm:min-h-[44px]"
+            className="text-sm sm:text-base leading-relaxed placeholder:text-gray-500 min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
           />
 
           <PromptInputActions className="flex items-center justify-between gap-2 pt-2 sm:pt-3">
