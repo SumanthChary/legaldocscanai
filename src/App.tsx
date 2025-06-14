@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 // Import pages directly instead of lazy loading
 import Landing from "./pages/Landing";
@@ -36,41 +37,43 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <PayPalScriptProvider 
-      options={{ 
-        clientId: "ASwEnGxUl0eURMQkZ7lolWGxgRznZ9lx-h55cblFMiJj0qYOzluIe5BFBdeGYhwyabLRHZZvBPAJJBv6",
-        currency: "USD",
-        intent: "capture",
-        components: "buttons"
-      }}
-    >
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/index" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/features" element={<Features />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/document-analysis" element={<DocumentAnalysis />} />
-              <Route path="/document-summary/:id" element={<DocumentSummary />} />
-              <Route path="/document/:id/summary" element={<DocumentSummary />} />
-              <Route path="/payment" element={<Payment />} />
-              <Route path="/documentation" element={<Documentation />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/chat" element={<ChatPage />} />
-            </Routes>
-            <ChatWidget />
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </PayPalScriptProvider>
+    <ThemeProvider>
+      <PayPalScriptProvider 
+        options={{ 
+          clientId: "ASwEnGxUl0eURMQkZ7lolWGxgRznZ9lx-h55cblFMiJj0qYOzluIe5BFBdeGYhwyabLRHZZvBPAJJBv6",
+          currency: "USD",
+          intent: "capture",
+          components: "buttons"
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/index" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/features" element={<Features />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/document-analysis" element={<DocumentAnalysis />} />
+                <Route path="/document-summary/:id" element={<DocumentSummary />} />
+                <Route path="/document/:id/summary" element={<DocumentSummary />} />
+                <Route path="/payment" element={<Payment />} />
+                <Route path="/documentation" element={<Documentation />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/chat" element={<ChatPage />} />
+              </Routes>
+              <ChatWidget />
+            </BrowserRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </PayPalScriptProvider>
+    </ThemeProvider>
   );
 }
 
