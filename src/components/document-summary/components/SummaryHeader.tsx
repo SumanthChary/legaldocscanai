@@ -41,13 +41,11 @@ export const SummaryHeader = ({
     <>
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4 mb-4 sm:mb-6">
         <div className="flex items-start space-x-2 sm:space-x-3 flex-1 min-w-0">
-          <div className={`p-1.5 sm:p-2 rounded-lg sm:rounded-xl flex-shrink-0 ${isEmergencyProcessing ? 'bg-yellow-500' : 'bg-gradient-to-r from-blue-600 to-purple-600'}`}>
-            {isEmergencyProcessing ? (
-              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-            ) : (
-              <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-            )}
-          </div>
+          <img 
+            src="/lovable-uploads/d6ebe86c-0ed9-45ec-b3c9-e8ba54148009.png" 
+            alt="Legal Analysis" 
+            className="h-8 w-8 sm:h-10 sm:w-10 object-contain rounded-lg flex-shrink-0"
+          />
           <div className="min-w-0 flex-1">
             <h2 className="text-base sm:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent break-words">
               {isEmergencyProcessing ? "⚠️ Emergency Analysis Results" : "AI Analysis Results"}
