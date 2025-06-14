@@ -8,17 +8,18 @@ interface PricingHeaderProps {
 
 export const PricingHeader = ({ onRedeemClick }: PricingHeaderProps) => {
   return (
-    <div className="text-center mb-12">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">
+    <div className="text-center mb-8 md:mb-12">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4 px-4">
         Start with 3 Free Documents
       </h1>
-      <p className="text-xl text-gray-600">
+      <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4 mb-4 md:mb-6">
         Try our document analyzer for free, then choose the plan that's right for you
       </p>
       <Button 
         onClick={onRedeemClick}
         variant="outline"
-        className="mt-4 flex items-center mx-auto"
+        size="lg"
+        className="flex items-center mx-auto text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
       >
         <Ticket className="mr-2 h-4 w-4" />
         Redeem a Promotion Code

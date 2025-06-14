@@ -79,7 +79,7 @@ export const PricingButton = ({ plan, className }: PricingButtonProps) => {
 
   return (
     <Button
-      className={`w-full ${className}`}
+      className={`w-full text-sm md:text-base py-2 md:py-3 ${className}`}
       variant={isFree ? "outline" : "default"}
       size="lg"
       onClick={handleGetStarted}
