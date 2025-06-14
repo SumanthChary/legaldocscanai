@@ -22,12 +22,12 @@ const buttonVariants = cva(
         pricing: "relative bg-accent text-accent-foreground hover:bg-accent/90 overflow-hidden",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-8 rounded-lg px-3 text-xs",
-        lg: "h-12 rounded-lg px-6 text-base",
-        icon: "h-10 w-10",
-        "icon-sm": "h-8 w-8",
-        "icon-lg": "h-12 w-12",
+        default: "h-8 px-3 py-1.5 text-xs sm:h-9 sm:px-4 sm:py-2 sm:text-sm md:h-10 md:px-4 md:py-2 md:text-sm",
+        sm: "h-7 px-2 py-1 text-xs sm:h-8 sm:px-3 sm:text-xs md:h-8 md:rounded-lg md:px-3 md:text-xs",
+        lg: "h-9 px-4 py-2 text-sm sm:h-10 sm:px-5 sm:py-2.5 sm:text-base md:h-12 md:px-6 md:text-base lg:rounded-lg",
+        icon: "h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10",
+        "icon-sm": "h-7 w-7 sm:h-8 sm:w-8",
+        "icon-lg": "h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12",
       },
     },
     defaultVariants: {

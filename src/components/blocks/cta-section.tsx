@@ -8,7 +8,7 @@ export const CTASection = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="bg-gradient-to-br from-primary via-primary to-primary/90 text-white py-12 md:py-16 lg:py-24">
+    <div className="bg-gradient-to-br from-primary via-primary to-primary/90 text-white py-8 md:py-12 lg:py-16 xl:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <InView
           variants={{
@@ -17,20 +17,20 @@ export const CTASection = () => {
           }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-6">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4 lg:mb-6">
             Ready to Transform Your Legal Document Workflow?
           </h2>
-          <p className="text-base md:text-xl mb-6 md:mb-8 opacity-90 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 md:mb-6 lg:mb-8 opacity-90 max-w-2xl mx-auto">
             Join thousands of legal professionals who trust our AI-powered solution
           </p>
           <Button
             variant="secondary"
             size="lg"
-            className="text-sm md:text-lg px-6 md:px-8 py-3 md:py-4 h-auto bg-white text-primary hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="bg-white text-primary hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl"
             onClick={() => navigate("/dashboard")}
           >
             Start Free Trial
-            <Users className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+            <Users className="ml-1.5 h-3.5 w-3.5 md:ml-2 md:h-4 md:w-4" />
           </Button>
         </InView>
       </div>
