@@ -2,9 +2,10 @@
 import { corsHeaders } from "./cors.ts";
 
 export async function checkDocumentLimits(supabaseClient: any, userId: string) {
+  // Get user profile to check email and limits
   const { data: profile, error: profileError } = await supabaseClient
     .from('profiles')
-    .select('document_count, document_limit')
+    .select('document_count, document_limit, email')
     .eq('id', userId)
     .single();
   
@@ -19,6 +20,13 @@ export async function checkDocumentLimits(supabaseClient: any, userId: string) {
     };
   }
   
+  // Special handling for enjoywithpandu@gmail.com - unlimited access
+  if (profile.email === 'enjoywithpandu@gmail.com') {
+    console.log("Unlimited access granted for enjoywithpandu@gmail.com");
+    return { success: true };
+  }
+  
+  // For all other users, check their actual limits
   if (profile.document_count >= profile.document_limit) {
     return {
       success: false,

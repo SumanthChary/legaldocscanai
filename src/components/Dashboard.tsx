@@ -40,8 +40,13 @@ export const Dashboard = () => {
       if (!error && data) {
         setUserProfile(data);
         
-        // Only show upgrade banner if user has limited documents (less than 500)
-        // This means users with unlimited access won't see the upgrade banner
+        // Special handling for enjoywithpandu@gmail.com - always unlimited, never show upgrade banner
+        if (data.email === 'enjoywithpandu@gmail.com') {
+          setShowUpgradeBanner(false);
+          return;
+        }
+        
+        // For other users, only show upgrade banner if they have limited documents and are near limit
         const hasLimitedAccess = data.document_limit < 500;
         const isNearLimit = data.document_count >= (data.document_limit * 0.8);
         setShowUpgradeBanner(hasLimitedAccess && isNearLimit);
@@ -88,8 +93,8 @@ export const Dashboard = () => {
 
   const userName = userProfile?.full_name || userProfile?.username || session?.user?.email?.split('@')[0] || 'User';
   
-  // Check if user has unlimited access
-  const hasUnlimitedAccess = userProfile?.document_limit >= 999999;
+  // Check if user has unlimited access (either by email or document limit)
+  const hasUnlimitedAccess = userProfile?.email === 'enjoywithpandu@gmail.com' || userProfile?.document_limit >= 999999;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -109,7 +114,11 @@ export const Dashboard = () => {
           <div className="flex items-center justify-center">
             <div className="text-center">
               <h3 className="text-lg font-semibold text-purple-900 mb-1">🚀 Unlimited Access Active</h3>
-              <p className="text-purple-700">You have unlimited document analysis capabilities</p>
+              <p className="text-purple-700">
+                {userProfile?.email === 'enjoywithpandu@gmail.com' 
+                  ? 'Admin account with unlimited document analysis capabilities' 
+                  : 'You have unlimited document analysis capabilities'}
+              </p>
             </div>
           </div>
         </div>

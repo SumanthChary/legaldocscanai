@@ -40,12 +40,22 @@ export const PricingButton = ({ plan, className }: PricingButtonProps) => {
     // Check user's current plan status
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("document_limit, document_count")
+      .select("document_limit, document_count, email")
       .eq("id", session.user.id)
       .single();
 
     if (!profileError && profile) {
-      // Check if user already has unlimited access
+      // Special handling for enjoywithpandu@gmail.com - always has unlimited access
+      if (profile.email === 'enjoywithpandu@gmail.com') {
+        toast({
+          title: "Admin Account Detected",
+          description: "You already have unlimited access to all features",
+        });
+        navigate("/dashboard");
+        return;
+      }
+
+      // Check if user already has unlimited access (through payment)
       if (profile.document_limit >= 999999) {
         toast({
           title: "You already have unlimited access",
