@@ -1,4 +1,3 @@
-
 import { extractAndValidateText } from "./text-processing.ts";
 import { smartChunking } from "./text-chunking.ts";
 import { callGroqCloudAPI, analyzeWithVision, getBestModel } from "./groqcloud-client.ts";
@@ -131,30 +130,28 @@ async function processMultipleChunksGroq(
 }
 
 function formatProfessionalSummary(summary: string, fileName: string, documentType: string, analysisType: string): string {
-  const timestamp = new Date().toLocaleDateString();
-  
-  // Clean the summary aggressively
+  // Clean the summary extensively to make it more attractive
   const cleanSummary = summary
     .replace(/#{1,6}\s*/g, '')
     .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
     .replace(/^\s*[\*\-\+]\s*/gm, '• ')
+    .replace(/DOCUMENT ANALYSIS REPORT.*?\n/g, '')
+    .replace(/File:.*?\n/g, '')
+    .replace(/Analysis Date:.*?\n/g, '')
+    .replace(/Document Type:.*?\n/g, '')
+    .replace(/Analysis Method:.*?\n/g, '')
     .trim();
   
-  const header = `DOCUMENT ANALYSIS REPORT
-File: ${fileName}
-Analysis Date: ${timestamp}
-Document Type: ${documentType.charAt(0).toUpperCase() + documentType.slice(1)}
-Analysis Method: ${analysisType}
+  // Create an attractive, professional header
+  const header = `📋 COMPREHENSIVE DOCUMENT ANALYSIS
 
----
+🎯 KEY INSIGHTS & HIGHLIGHTS:
 
 `;
   
   const footer = `
 
----
-
-⚡ Lightning Analysis Complete | LegalBriefAI Advanced AI | ${timestamp}`;
+✨ Perfect Summary`;
   
   return header + cleanSummary + footer;
 }
