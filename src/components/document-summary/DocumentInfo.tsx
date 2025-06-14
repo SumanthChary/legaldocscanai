@@ -1,5 +1,5 @@
 
-import { FileText, Clock, Sparkles } from "lucide-react";
+import { Clock, Sparkles } from "lucide-react";
 
 interface DocumentInfoProps {
   originalName: string;
@@ -18,7 +18,11 @@ export const DocumentInfo = ({ originalName, createdAt }: DocumentInfoProps) => 
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-lg sm:rounded-xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
         <div className="relative p-2 sm:p-4 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-lg sm:rounded-xl shadow-xl">
           <div className="relative">
-            <FileText className="h-5 w-5 sm:h-8 sm:w-8 text-white" />
+            <img 
+              src="/lovable-uploads/7f95be53-41a5-4240-a013-baf9b02078d3.png" 
+              alt="LegalBriefAI" 
+              className="h-5 w-5 sm:h-8 sm:w-8 object-contain brightness-0 invert"
+            />
             <Sparkles className="h-2 w-2 sm:h-3 sm:w-3 text-yellow-300 absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 animate-pulse" />
           </div>
         </div>
