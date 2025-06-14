@@ -1,12 +1,12 @@
 
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { PayPalButtons } from "@paypal/react-paypal-js";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { supabase } from "@/integrations/supabase/client";
 import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { CreditCard, Shield, CheckCircle } from "lucide-react";
+import { CreditCard, Shield, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
 
 type SubscriptionTier = Database["public"]["Enums"]["subscription_tier"];
@@ -24,15 +24,73 @@ const Payment = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const { plan } = (location.state as LocationState) || {};
 
+  // Check authentication status
   useEffect(() => {
-    if (!plan) {
+    const checkUser = async () => {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error) {
+          console.error("Auth error:", error);
+          toast({
+            title: "Authentication Required",
+            description: "Please sign in to continue with payment.",
+            variant: "destructive",
+          });
+          navigate("/auth");
+          return;
+        }
+        
+        if (!user) {
+          toast({
+            title: "Authentication Required",
+            description: "Please sign in to continue with payment.",
+            variant: "destructive",
+          });
+          navigate("/auth");
+          return;
+        }
+        
+        setUser(user);
+      } catch (error) {
+        console.error("Unexpected error checking user:", error);
+        navigate("/auth");
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
+
+    checkUser();
+  }, [navigate, toast]);
+
+  useEffect(() => {
+    if (!plan && !checkingAuth) {
+      toast({
+        title: "No Plan Selected",
+        description: "Please select a plan from the pricing page.",
+        variant: "destructive",
+      });
       navigate("/pricing");
     }
-  }, [plan, navigate]);
+  }, [plan, navigate, toast, checkingAuth]);
 
-  if (!plan) {
+  if (checkingAuth) {
+    return (
+      <PageLayout>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+            <p className="text-gray-600">Checking authentication...</p>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (!plan || !user) {
     return null;
   }
 
@@ -40,16 +98,18 @@ const Payment = () => {
 
   const handlePayPalApprove = async (data: any, actions: any) => {
     try {
-      const details = await actions.order.capture();
-      console.log("Transaction completed by", details.payer.name.given_name);
-      
       setLoading(true);
-      const user = (await supabase.auth.getUser()).data.user;
-      if (!user) throw new Error("No user found");
+      const details = await actions.order.capture();
+      console.log("PayPal transaction completed:", details);
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
 
       const planType = plan.name.toLowerCase().replace(/\s+/g, '_') as SubscriptionTier;
 
-      const { error } = await supabase.from("subscriptions").insert({
+      // Update subscription in database
+      const { error: subscriptionError } = await supabase.from("subscriptions").insert({
         user_id: user.id,
         plan_type: planType,
         status: "active",
@@ -59,17 +119,39 @@ const Payment = () => {
         ).toISOString(),
       });
 
-      if (error) throw error;
+      if (subscriptionError) {
+        console.error("Subscription error:", subscriptionError);
+        throw new Error("Failed to update subscription in database");
+      }
+
+      // Update user profile with higher document limit
+      const newLimit = planType === 'professional' ? 500 : planType === 'enterprise' ? 999999 : 25;
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ document_limit: newLimit })
+        .eq("id", user.id);
+
+      if (profileError) {
+        console.error("Profile update error:", profileError);
+        // Don't throw here as subscription was successful
+      }
 
       toast({
-        title: "Payment Successful",
+        title: "Payment Successful!",
         description: `You are now subscribed to the ${plan.name} plan!`,
+        duration: 5000,
       });
-      navigate("/dashboard");
+      
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
+      
     } catch (error: any) {
+      console.error("Payment processing error:", error);
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Payment Error",
+        description: error.message || "There was an error processing your payment. Please contact support.",
         variant: "destructive",
       });
     } finally {
@@ -81,9 +163,24 @@ const Payment = () => {
     console.error("PayPal error:", err);
     toast({
       title: "Payment Error",
-      description: "There was an error processing your payment. Please try again.",
+      description: "There was an error with PayPal. Please try again or contact support.",
       variant: "destructive",
     });
+  };
+
+  const handlePayPalCancel = () => {
+    toast({
+      title: "Payment Cancelled",
+      description: "You can always come back to complete your subscription.",
+    });
+  };
+
+  // PayPal configuration
+  const paypalOptions = {
+    clientId: "ASwEnGxUl0eURMQkZ7lolWGxgRznZ9lx-h55cblFMiJj0qYOzluIe5BFBdeGYhwyabLRHZZvBPAJJBv6",
+    currency: "USD",
+    intent: "capture" as const,
+    components: "buttons" as const,
   };
 
   return (
@@ -160,28 +257,58 @@ const Payment = () => {
                       <CreditCard className="h-5 w-5 mr-2 text-blue-600" />
                       PayPal - Secure & Instant
                     </h3>
-                    <PayPalButtons
-                      createOrder={(data, actions) => {
-                        return actions.order.create({
-                          intent: "CAPTURE",
-                          purchase_units: [
-                            {
-                              amount: {
-                                currency_code: "USD",
-                                value: amount,
+                    
+                    {loading && (
+                      <div className="text-center py-4">
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-blue-600" />
+                        <p className="text-sm text-gray-600 mt-2">Processing payment...</p>
+                      </div>
+                    )}
+                    
+                    <PayPalScriptProvider options={paypalOptions}>
+                      <PayPalButtons
+                        style={{ 
+                          layout: "horizontal", 
+                          color: "blue", 
+                          shape: "pill", 
+                          height: 50,
+                          tagline: false 
+                        }}
+                        disabled={loading}
+                        createOrder={(data, actions) => {
+                          return actions.order.create({
+                            intent: "CAPTURE",
+                            purchase_units: [
+                              {
+                                amount: {
+                                  currency_code: "USD",
+                                  value: amount,
+                                },
+                                payee: {
+                                  email_address: "enjoywithpandu@gmail.com"
+                                }
                               },
-                              payee: {
-                                email_address: "enjoywithpandu@gmail.com"
-                              }
-                            },
-                          ],
-                        });
-                      }}
-                      onApprove={handlePayPalApprove}
-                      onError={handlePayPalError}
-                      style={{ layout: "horizontal", color: "blue", shape: "pill" }}
-                      disabled={loading}
-                    />
+                            ],
+                          });
+                        }}
+                        onApprove={handlePayPalApprove}
+                        onError={handlePayPalError}
+                        onCancel={handlePayPalCancel}
+                      />
+                    </PayPalScriptProvider>
+                  </div>
+
+                  <div className="border border-gray-200 rounded-xl p-6 opacity-50">
+                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                      <CreditCard className="h-5 w-5 mr-2 text-gray-400" />
+                      Razorpay - Coming Soon
+                    </h3>
+                    <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
+                      <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
+                      <span className="text-sm text-yellow-800">
+                        Razorpay integration is coming soon! Use PayPal for now.
+                      </span>
+                    </div>
                   </div>
 
                   <div className="border border-gray-200 rounded-xl p-6 opacity-50">

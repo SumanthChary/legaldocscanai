@@ -1,10 +1,10 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Github, FileText, Shield, Users } from "lucide-react";
+import { Github, FileText, Shield, Users, AlertCircle, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -14,41 +14,152 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Session check error:", error);
+        }
+        if (session) {
+          // User is already logged in, redirect to dashboard
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        console.error("Unexpected error checking session:", error);
+      } finally {
+        setCheckingSession(false);
+      }
+    };
+
+    checkSession();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log("Auth state change:", event, session?.user?.email);
+        
+        if (event === 'SIGNED_IN' && session) {
+          toast({
+            title: "Success!",
+            description: "You have been signed in successfully.",
+            duration: 3000,
+          });
+          
+          // Small delay to ensure state is updated
+          setTimeout(() => {
+            navigate("/dashboard");
+          }, 500);
+        }
+        
+        if (event === 'SIGNED_UP') {
+          toast({
+            title: "Account Created!",
+            description: "Please check your email to verify your account.",
+            duration: 5000,
+          });
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [navigate, toast]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        // Get the current URL for redirect
+        const redirectUrl = `${window.location.origin}/dashboard`;
+        
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
+            emailRedirectTo: redirectUrl,
             data: {
-              username,
+              username: username || email.split('@')[0],
             },
           },
         });
-        if (error) throw error;
-        toast({
-          title: "Success!",
-          description: "Please check your email to verify your account.",
-        });
+        
+        if (error) {
+          if (error.message.includes("already registered")) {
+            toast({
+              title: "Account exists",
+              description: "This email is already registered. Try signing in instead.",
+              variant: "destructive",
+            });
+            setIsSignUp(false);
+          } else {
+            throw error;
+          }
+        } else if (data.user) {
+          toast({
+            title: "Success!",
+            description: "Account created! Please check your email to verify your account.",
+            duration: 5000,
+          });
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
-        navigate("/dashboard");
+        
+        if (error) {
+          if (error.message.includes("Invalid login credentials")) {
+            toast({
+              title: "Sign in failed",
+              description: "Invalid email or password. Please check your credentials and try again.",
+              variant: "destructive",
+            });
+          } else if (error.message.includes("Email not confirmed")) {
+            toast({
+              title: "Email not verified",
+              description: "Please check your email and click the verification link before signing in.",
+              variant: "destructive",
+            });
+          } else {
+            throw error;
+          }
+        } else if (data.user) {
+          // Success will be handled by onAuthStateChange
+          console.log("Sign in successful for:", data.user.email);
+        }
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -58,18 +169,36 @@ const Auth = () => {
 
   const handleGithubAuth = async () => {
     try {
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
+        options: {
+          redirectTo: redirectUrl,
+        },
       });
+      
       if (error) throw error;
     } catch (error: any) {
+      console.error("GitHub auth error:", error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to sign in with GitHub. Please try again.",
         variant: "destructive",
       });
     }
   };
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -134,7 +263,6 @@ const Auth = () => {
                   <Input
                     id="username"
                     type="text"
-                    required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
@@ -169,7 +297,8 @@ const Auth = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Enter your password"
+                  placeholder="Enter your password (min 6 characters)"
+                  minLength={6}
                 />
               </div>
               
@@ -178,7 +307,14 @@ const Auth = () => {
                 className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg transition-all duration-300" 
                 disabled={loading}
               >
-                {loading ? "Processing..." : isSignUp ? "Create Account" : "Sign In"}
+                {loading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Processing...
+                  </div>
+                ) : (
+                  isSignUp ? "Create Account" : "Sign In"
+                )}
               </Button>
             </form>
 
@@ -196,6 +332,7 @@ const Auth = () => {
               variant="outline"
               className="w-full h-12 border-gray-200 hover:bg-gray-50 transition-all duration-200"
               onClick={handleGithubAuth}
+              disabled={loading}
             >
               <Github className="mr-3 h-5 w-5" />
               GitHub
@@ -206,11 +343,17 @@ const Auth = () => {
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
+                disabled={loading}
               >
                 {isSignUp
                   ? "Already have an account? Sign in"
                   : "Need an account? Sign up"}
               </button>
+            </div>
+
+            {/* Debug info for development */}
+            <div className="text-xs text-gray-400 text-center">
+              <p>Having trouble? Contact support</p>
             </div>
           </Card>
         </div>

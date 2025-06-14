@@ -30,19 +30,25 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
 
+// PayPal configuration with proper error handling
+const paypalOptions = {
+  clientId: "ASwEnGxUl0eURMQkZ7lolWGxgRznZ9lx-h55cblFMiJj0qYOzluIe5BFBdeGYhwyabLRHZZvBPAJJBv6",
+  currency: "USD",
+  intent: "capture" as const,
+  components: "buttons" as const,
+  "disable-funding": "credit,card" as const, // Disable credit card options to focus on PayPal
+};
+
 function App() {
   return (
     <PayPalScriptProvider 
-      options={{ 
-        clientId: "ASwEnGxUl0eURMQkZ7lolWGxgRznZ9lx-h55cblFMiJj0qYOzluIe5BFBdeGYhwyabLRHZZvBPAJJBv6",
-        currency: "USD",
-        intent: "capture",
-        components: "buttons"
-      }}
+      options={paypalOptions}
+      deferLoading={false}
     >
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
