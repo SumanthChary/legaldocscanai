@@ -48,6 +48,7 @@ export const TrashSection = () => {
         });
         console.error("Error fetching trashed documents:", error);
       } else {
+        console.log("📄 Fetched trashed documents:", data?.length || 0);
         setTrashedDocuments(data || []);
       }
     } catch (err) {
@@ -99,6 +100,29 @@ export const TrashSection = () => {
 
   useEffect(() => {
     fetchTrashedDocuments();
+
+    // Set up real-time subscription for trash updates
+    const channel = supabase
+      .channel('trash_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'document_analyses'
+        },
+        (payload) => {
+          console.log("Trash real-time update received:", payload);
+          fetchTrashedDocuments();
+        }
+      )
+      .subscribe((status) => {
+        console.log("Trash subscription status:", status);
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleDocumentAction = (documentId: string) => {
@@ -180,6 +204,7 @@ export const TrashSection = () => {
             onDeleted={handleDocumentAction}
             showRestore={true}
             onPermanentDelete={handleDocumentAction}
+            onRefresh={fetchTrashedDocuments}
           />
         ))}
         

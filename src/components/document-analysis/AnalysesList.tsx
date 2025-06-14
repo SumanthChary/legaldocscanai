@@ -17,6 +17,7 @@ export const AnalysesList = () => {
             key={analysis.id} 
             analysis={analysis} 
             onDeleted={handleDocumentDeleted}
+            onRefresh={fetchAnalyses}
           />
         ))}
         {analyses.length === 0 && <EmptyState />}
