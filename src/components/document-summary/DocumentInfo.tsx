@@ -15,7 +15,6 @@ export const DocumentInfo = ({ originalName, createdAt }: DocumentInfoProps) => 
   return (
     <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6 w-full sm:w-auto">
       <div className="relative group flex-shrink-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
         <div className="relative">
           <img 
             src="/lovable-uploads/44ba520f-766e-487a-bd01-1b6f8e71d7ee.png" 
