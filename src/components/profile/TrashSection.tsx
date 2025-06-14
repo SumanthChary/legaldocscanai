@@ -131,23 +131,23 @@ export const TrashSection = () => {
 
   if (isLoading) {
     return (
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
+      <Card className="p-3 sm:p-4 lg:p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
           <div className="flex items-center">
-            <Skeleton className="h-6 w-6 mr-3" />
-            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
+            <Skeleton className="h-5 sm:h-6 w-24 sm:w-32" />
           </div>
-          <Skeleton className="h-9 w-24" />
+          <Skeleton className="h-8 sm:h-9 w-20 sm:w-24" />
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="p-4">
-              <div className="flex items-start space-x-4">
-                <Skeleton className="h-6 w-6" />
+            <Card key={i} className="p-3 sm:p-4">
+              <div className="flex items-start space-x-3 sm:space-x-4">
+                <Skeleton className="h-5 w-5 sm:h-6 sm:w-6" />
                 <div className="flex-1">
-                  <Skeleton className="h-5 w-3/4 mb-2" />
-                  <Skeleton className="h-4 w-1/2 mb-2" />
-                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-4 sm:h-5 w-3/4 mb-2" />
+                  <Skeleton className="h-3 sm:h-4 w-1/2 mb-2" />
+                  <Skeleton className="h-3 sm:h-4 w-1/4" />
                 </div>
               </div>
             </Card>
@@ -158,45 +158,46 @@ export const TrashSection = () => {
   }
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <Card className="p-3 sm:p-4 lg:p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
         <div className="flex items-center">
-          <div className="p-2 bg-gray-100 rounded-lg mr-3">
-            <Trash2 className="h-5 w-5 text-gray-600" />
+          <div className="p-1.5 sm:p-2 bg-gray-100 rounded-lg mr-2 sm:mr-3">
+            <Trash2 className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">Trash</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="text-base sm:text-lg font-semibold">Trash</h3>
+            <p className="text-xs sm:text-sm text-gray-500">
               {trashedDocuments.length} document{trashedDocuments.length !== 1 ? 's' : ''} in trash
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <Button 
             variant="outline" 
             size="sm" 
             onClick={refreshTrash}
             disabled={isRefreshing}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 flex-1 sm:flex-initial text-xs sm:text-sm"
           >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            <RefreshCw className={`h-3 w-3 sm:h-4 sm:w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span className="hidden xs:inline">Refresh</span>
           </Button>
           {trashedDocuments.length > 0 && (
             <Button 
               variant="destructive" 
               size="sm" 
               onClick={clearAllTrash}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1 sm:gap-2 flex-1 sm:flex-initial text-xs sm:text-sm"
             >
-              <Archive className="h-4 w-4" />
-              Clear All
+              <Archive className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Clear All</span>
+              <span className="xs:hidden">Clear</span>
             </Button>
           )}
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {trashedDocuments.map((doc) => (
           <AnalysisItem 
             key={doc.id} 
@@ -209,10 +210,10 @@ export const TrashSection = () => {
         ))}
         
         {trashedDocuments.length === 0 && (
-          <div className="text-center py-8">
-            <Trash2 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Trash is empty</h3>
-            <p className="text-sm text-gray-500">
+          <div className="text-center py-6 sm:py-8">
+            <Trash2 className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mb-3 sm:mb-4" />
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-1 sm:mb-2">Trash is empty</h3>
+            <p className="text-xs sm:text-sm text-gray-500 px-4">
               Deleted documents will appear here and can be restored or permanently deleted.
             </p>
           </div>
