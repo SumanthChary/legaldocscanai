@@ -63,18 +63,18 @@ export const Footer = () => {
 
   return (
     <footer className="border-t bg-background">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <div className="container mx-auto px-3 py-6 sm:px-4 sm:py-8 md:py-12">
+        <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Stay Connected</h3>
-            <p className="mb-4 text-sm text-muted-foreground">
+            <h3 className="mb-2 sm:mb-3 md:mb-4 text-base sm:text-lg font-semibold">Stay Connected</h3>
+            <p className="mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm text-muted-foreground">
               Get updates on new features and releases
             </p>
             <form onSubmit={handleSubscribe} className="relative">
               <Input
                 type="email"
                 placeholder="Enter your email"
-                className="pr-12"
+                className="pr-12 h-8 sm:h-9 md:h-10 text-xs sm:text-sm"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -82,18 +82,18 @@ export const Footer = () => {
               />
               <Button
                 size="icon"
-                className="absolute right-1 top-1 h-8 w-8"
+                className="absolute right-1 top-1 h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"
                 disabled={isLoading}
                 type="submit"
               >
-                <Send className={`h-4 w-4 ${isLoading ? 'animate-pulse' : ''}`} />
+                <Send className={`h-3 w-3 sm:h-4 sm:w-4 ${isLoading ? 'animate-pulse' : ''}`} />
               </Button>
             </form>
           </div>
           
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Quick Links</h3>
-            <nav className="space-y-2 text-sm">
+            <h3 className="mb-2 sm:mb-3 md:mb-4 text-base sm:text-lg font-semibold">Quick Links</h3>
+            <nav className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               <a href="/" className="block text-muted-foreground hover:text-primary">
                 Home
               </a>
@@ -105,46 +105,46 @@ export const Footer = () => {
               </a>
               <Button 
                 variant="ghost" 
-                className="w-full justify-start p-0 h-auto font-normal text-sm text-muted-foreground hover:text-primary"
+                className="w-full justify-start p-0 h-auto font-normal text-xs sm:text-sm text-muted-foreground hover:text-primary"
                 onClick={scrollToFAQs}
               >
-                <HelpCircle className="h-4 w-4 mr-2" />
+                <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 FAQs
               </Button>
             </nav>
           </div>
           
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Contact</h3>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p>sumanthchary.business@gmail.com</p>
+            <h3 className="mb-2 sm:mb-3 md:mb-4 text-base sm:text-lg font-semibold">Contact</h3>
+            <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
+              <p className="break-all sm:break-normal">sumanthchary.business@gmail.com</p>
               <p>+91 8125228079</p>
             </div>
           </div>
           
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
-            <div className="flex space-x-4">
-              <Button variant="ghost" size="icon" asChild>
+            <h3 className="mb-2 sm:mb-3 md:mb-4 text-base sm:text-lg font-semibold">Follow Us</h3>
+            <div className="flex space-x-2 sm:space-x-4">
+              <Button variant="ghost" size="icon" asChild className="h-8 w-8 sm:h-9 sm:w-9">
                 <a href="https://x.com/SumanthChary07" target="_blank" rel="noopener noreferrer">
-                  <Twitter className="h-4 w-4" />
+                  <Twitter className="h-3 w-3 sm:h-4 sm:w-4" />
                 </a>
               </Button>
-              <Button variant="ghost" size="icon" asChild>
+              <Button variant="ghost" size="icon" asChild className="h-8 w-8 sm:h-9 sm:w-9">
                 <a href="https://www.instagram.com/sumanth_chary07" target="_blank" rel="noopener noreferrer">
-                  <Instagram className="h-4 w-4" />
+                  <Instagram className="h-3 w-3 sm:h-4 sm:w-4" />
                 </a>
               </Button>
-              <Button variant="ghost" size="icon" asChild>
+              <Button variant="ghost" size="icon" asChild className="h-8 w-8 sm:h-9 sm:w-9">
                 <a href="https://www.linkedin.com/in/sumanthchary" target="_blank" rel="noopener noreferrer">
-                  <Linkedin className="h-4 w-4" />
+                  <Linkedin className="h-3 w-3 sm:h-4 sm:w-4" />
                 </a>
               </Button>
             </div>
           </div>
         </div>
         
-        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
+        <div className="mt-4 sm:mt-6 md:mt-8 border-t pt-4 sm:pt-6 md:pt-8 text-center text-xs sm:text-sm text-muted-foreground">
           <p>© 2024 LegalAI. All rights reserved.</p>
         </div>
       </div>
