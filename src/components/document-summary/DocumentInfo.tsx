@@ -16,15 +16,13 @@ export const DocumentInfo = ({ originalName, createdAt }: DocumentInfoProps) => 
     <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6 w-full sm:w-auto">
       <div className="relative group flex-shrink-0">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <div className="relative p-2 sm:p-4 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl shadow-xl">
-          <div className="relative">
-            <img 
-              src="/lovable-uploads/656e03f2-40f9-4c6e-860c-cc0d36b3295d.png" 
-              alt="LegalBriefAI" 
-              className="h-5 w-5 sm:h-8 sm:w-8 object-contain rounded-lg"
-            />
-            <Sparkles className="h-2 w-2 sm:h-3 sm:w-3 text-yellow-300 absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 animate-pulse" />
-          </div>
+        <div className="relative">
+          <img 
+            src="/lovable-uploads/44ba520f-766e-487a-bd01-1b6f8e71d7ee.png" 
+            alt="LegalBriefAI" 
+            className="h-8 w-8 sm:h-12 sm:w-12 object-contain rounded-lg"
+          />
+          <Sparkles className="h-2 w-2 sm:h-3 sm:w-3 text-yellow-300 absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 animate-pulse" />
         </div>
       </div>
       <div className="flex-1 min-w-0">
