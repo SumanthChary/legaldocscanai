@@ -8,9 +8,9 @@ export const BrandLogo = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur-sm opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
         <div className="relative">
           <img 
-            src="/lovable-uploads/7f95be53-41a5-4240-a013-baf9b02078d3.png" 
+            src="/lovable-uploads/033ae172-090d-4798-8206-fd0753c225bb.png" 
             alt="LegalBriefAI" 
-            className="h-8 w-8 object-contain"
+            className="h-8 w-8 object-contain rounded-lg"
           />
         </div>
       </div>
