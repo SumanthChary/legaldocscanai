@@ -15,13 +15,13 @@ export const DocumentInfo = ({ originalName, createdAt }: DocumentInfoProps) => 
   return (
     <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6 w-full sm:w-auto">
       <div className="relative group flex-shrink-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-lg sm:rounded-xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <div className="relative p-2 sm:p-4 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-lg sm:rounded-xl shadow-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl blur-sm opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="relative p-2 sm:p-4 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl shadow-xl">
           <div className="relative">
             <img 
-              src="/lovable-uploads/7f95be53-41a5-4240-a013-baf9b02078d3.png" 
+              src="/lovable-uploads/656e03f2-40f9-4c6e-860c-cc0d36b3295d.png" 
               alt="LegalBriefAI" 
-              className="h-5 w-5 sm:h-8 sm:w-8 object-contain brightness-0 invert"
+              className="h-5 w-5 sm:h-8 sm:w-8 object-contain rounded-lg"
             />
             <Sparkles className="h-2 w-2 sm:h-3 sm:w-3 text-yellow-300 absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 animate-pulse" />
           </div>
