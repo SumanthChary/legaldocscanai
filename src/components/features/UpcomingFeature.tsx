@@ -31,35 +31,47 @@ export const UpcomingFeature = ({
     "beta": "Beta Access"
   };
 
+  const iconColors = {
+    "available": "text-green-600",
+    "coming-soon": "text-amber-600", 
+    "beta": "text-blue-600"
+  };
+
+  const backgroundColors = {
+    "available": "bg-green-50",
+    "coming-soon": "bg-amber-50",
+    "beta": "bg-blue-50"
+  };
+
   return (
     <div className={isPreview ? "hover:shadow-md transition-shadow" : ""}>
-      <div className="flex justify-between items-start">
-        <div className="flex gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Icon className="h-5 w-5 text-primary" />
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4">
+        <div className="flex gap-3 flex-1 min-w-0">
+          <div className={`p-3 ${backgroundColors[status]} rounded-xl flex-shrink-0`}>
+            <Icon className={`h-6 w-6 ${iconColors[status]}`} />
           </div>
-          <div>
-            <h3 className="text-base font-semibold">{title}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{description}</p>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1">{title}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
           </div>
         </div>
-        <span className={`text-xs font-medium px-2 py-1 rounded-full ${statusColors[status]}`}>
+        <span className={`text-xs font-medium px-3 py-1 rounded-full ${statusColors[status]} whitespace-nowrap flex-shrink-0`}>
           {statusLabels[status]}
         </span>
       </div>
 
       {isPreview ? (
-        <p className="text-sm text-muted-foreground mt-4">
-          More details available in our beta program or for enterprise customers.
+        <p className="text-sm text-muted-foreground mt-4 px-2">
+          More details in our beta program or for enterprise customers.
         </p>
       ) : (
         <>
-          <h4 className="text-sm font-medium mb-2 mt-4">How It Works:</h4>
-          <ul className="space-y-2">
+          <h4 className="text-sm font-medium mb-3 mt-4 px-2">How It Works:</h4>
+          <ul className="space-y-2 px-2">
             {infoList.map((info, index) => (
               <li key={index} className="flex items-start text-sm">
                 <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 shrink-0" />
-                <span>{info}</span>
+                <span className="text-gray-700">{info}</span>
               </li>
             ))}
           </ul>
