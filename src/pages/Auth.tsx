@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -58,7 +57,7 @@ const Auth = () => {
           }, 500);
         }
         
-        if (event === 'SIGNED_UP') {
+        if (event === 'USER_UPDATED') {
           toast({
             title: "Account Created!",
             description: "Please check your email to verify your account.",
