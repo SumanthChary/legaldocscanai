@@ -1,4 +1,3 @@
-
 import { FileText, Pen } from "lucide-react";
 
 export function ESignaturesHeroSection() {
@@ -23,7 +22,11 @@ export function ESignaturesHeroSection() {
           </div>
         </div>
         <div className="flex-1 flex justify-center">
-          <img src="/lovable-uploads/photo-1473091534298-04dcbce3278c.png" alt="Stylus signing on tablet" className="max-h-72 md:max-h-96 w-auto rounded-xl shadow-lg ring-2 ring-white ring-offset-4 ring-offset-purple-100 object-cover animate-fade-in"/>
+          <img
+            src="/lovable-uploads/a7e13ef3-e179-4732-982f-a6f8dcfb9600.png"
+            alt="Stylus signing on tablet"
+            className="max-h-72 md:max-h-96 w-auto rounded-xl shadow-lg ring-2 ring-white ring-offset-4 ring-offset-purple-100 object-cover animate-fade-in"
+          />
         </div>
       </div>
     </section>
