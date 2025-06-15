@@ -4,9 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Loader2, FileText, Check, Pen, Upload } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, FileSignature } from "lucide-react";
+import { ESignaturesHeroSection } from "./ESignaturesHeroSection";
 
+// ESignature types
 type SignatureRequest = {
   id: string;
   document_name: string;
@@ -28,6 +30,7 @@ export default function ESignatures() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user || null));
     fetchRequests();
+    // eslint-disable-next-line
   }, []);
 
   const fetchRequests = async () => {
@@ -110,61 +113,115 @@ export default function ESignatures() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-12">
-      <Card className="p-8 mb-8">
-        <div className="flex items-center mb-6 gap-2">
-          <FileSignature className="text-purple-600" />
-          <h2 className="text-xl font-bold">Create E-Signature Request</h2>
+    <div className="max-w-4xl mx-auto pb-10 animate-fade-in">
+      {/* Modern SaaS hero section */}
+      <ESignaturesHeroSection />
+
+      {/* Upload Area and Form */}
+      <section className="flex flex-col md:flex-row gap-8 mb-12 items-stretch animate-fade-in">
+        <Card className="flex-1 rounded-xl shadow-lg p-8 md:p-10 bg-white/70 backdrop-blur-md border border-purple-100">
+          <div className="flex items-center gap-2 mb-6">
+            <Upload className="text-purple-700 w-6 h-6" />
+            <h2 className="font-bold text-lg md:text-2xl text-purple-900 tracking-tight">
+              New E-Signature Request
+            </h2>
+          </div>
+          <form onSubmit={handleUpload} className="space-y-6">
+            <Input
+              type="file"
+              accept="application/pdf"
+              required
+              onChange={e => setFile(e.target.files?.[0] || null)}
+              disabled={uploading}
+              className="file:font-semibold file:bg-purple-50 file:text-purple-700 file:border-0 file:rounded file:px-3 file:py-1 file:mr-4"
+            />
+            <div>
+              <label className="text-sm font-medium text-purple-800 block mb-1">Signer Email</label>
+              <Input
+                type="email"
+                placeholder="name@example.com"
+                required
+                value={signerEmail}
+                onChange={e => setSignerEmail(e.target.value)}
+                disabled={uploading}
+                className="bg-purple-50 border-purple-200 text-purple-900 placeholder-purple-400"
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={uploading}
+              className="w-full bg-gradient-to-tr from-purple-600 to-blue-400 hover:from-purple-700 hover:to-blue-500 text-white font-bold py-2 rounded-lg shadow-lg transition-all hover:scale-105 focus:ring-2 focus:ring-purple-300 focus:ring-offset-2"
+            >
+              {uploading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="animate-spin" />
+                  Creating...
+                </span>
+              ) : (
+                <>
+                  <Pen className="mr-2" /> Create Signature Request
+                </>
+              )}
+            </Button>
+          </form>
+        </Card>
+        {/* Cute image for positivity (hidden on mobile) */}
+        <div className="hidden md:flex flex-1 items-center justify-center">
+          <img
+            src="/lovable-uploads/photo-1581091226825-a6a2a5aee158.png"
+            alt="Smiling person using e-signature"
+            className="rounded-xl shadow-lg max-w-xs md:max-w-sm ring-2 ring-purple-200"
+            style={{ objectFit: "cover" }}
+          />
         </div>
-        <form onSubmit={handleUpload} className="space-y-4">
-          <Input
-            type="file"
-            accept="application/pdf"
-            required
-            onChange={e => setFile(e.target.files?.[0] || null)}
-            disabled={uploading}
-          />
-          <Input
-            type="email"
-            placeholder="Signer email"
-            required
-            value={signerEmail}
-            onChange={e => setSignerEmail(e.target.value)}
-            disabled={uploading}
-          />
-          <Button type="submit" disabled={uploading}>
-            {uploading ? (
-              <span className="flex items-center">
-                <Loader2 className="animate-spin mr-2 w-4 h-4" />
-                Creating...
-              </span>
-            ) : (
-              "Create"
-            )}
-          </Button>
-        </form>
-      </Card>
-      <Card className="p-8">
-        <div className="mb-4 flex items-center gap-2">
-          <FileSignature className="text-purple-600" />
-          <h3 className="font-semibold text-lg">My Signature Requests</h3>
+      </section>
+
+      {/* Requests List */}
+      <section className="animate-fade-in">
+        <div className="flex items-center gap-2 mb-6 pl-1">
+          <FileText className="text-blue-500 w-5 h-5" />
+          <h3 className="text-lg md:text-xl font-semibold text-purple-800">My Signature Requests</h3>
         </div>
         {loading ? (
-          <div className="py-8 text-center flex justify-center"><Loader2 className="animate-spin" /></div>
+          <div className="py-8 text-center flex justify-center rounded">
+            <Loader2 className="animate-spin text-purple-700" />
+          </div>
         ) : (
-          <div className="divide-y">
+          <div className="grid gap-4 sm:grid-cols-2">
             {requests.map(r => (
-              <div key={r.id} className="py-4 flex justify-between">
-                <span className="font-medium">{r.document_name}</span>
-                <span className="text-xs rounded px-2 py-1 bg-gray-100 text-gray-600">
-                  {r.status}
-                </span>
+              <div key={r.id} className="bg-gradient-to-br from-purple-50 to-white border border-purple-100 p-5 rounded-lg flex flex-col gap-3 shadow hover:shadow-md transition shadow-purple-100/30">
+                <div className="flex items-center gap-2 mb-1">
+                  <FileText className="text-purple-700 w-4 h-4" />
+                  <span className="font-semibold text-purple-900 truncate">{r.document_name}</span>
+                </div>
+                <div className="flex flex-row gap-4 items-end justify-between">
+                  <span className={`text-xs rounded-full px-3 py-1 font-bold capitalize transition 
+                    ${r.status === "pending" ? "bg-purple-100 text-purple-800"
+                      : r.status === "completed" ? "bg-green-100 text-green-800"
+                      : r.status === "in_progress" ? "bg-blue-100 text-blue-800"
+                      : "bg-gray-100 text-gray-500"}`}>
+                    {r.status}
+                  </span>
+                  {r.status === "completed" ? (
+                    <Check className="w-5 h-5 text-green-500 animate-pulse" title="Completed" />
+                  ) : (
+                    <Pen className="w-5 h-5 text-purple-400" title="Awaiting signature" />
+                  )}
+                </div>
+                <div className="text-xs text-gray-400 mt-3">
+                  Created: {new Date(r.created_at).toLocaleString()}
+                </div>
               </div>
             ))}
-            {requests.length === 0 && <div className="text-gray-500 py-8 text-center">No requests yet.</div>}
+            {requests.length === 0 && (
+              <div className="col-span-full text-purple-400 text-center py-14 font-semibold text-lg rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 shadow">
+                No requests yet.<br />
+                <span className="text-base font-normal block mt-2 text-purple-300">Create your first e-signature request above!</span>
+              </div>
+            )}
           </div>
         )}
-      </Card>
+      </section>
     </div>
   );
 }
