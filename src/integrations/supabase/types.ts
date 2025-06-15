@@ -140,6 +140,147 @@ export type Database = {
         }
         Relationships: []
       }
+      signature_fields: {
+        Row: {
+          assigned_signer_email: string
+          field_type: string
+          id: string
+          position: Json
+          request_id: string
+          required: boolean
+        }
+        Insert: {
+          assigned_signer_email: string
+          field_type: string
+          id?: string
+          position: Json
+          request_id: string
+          required?: boolean
+        }
+        Update: {
+          assigned_signer_email?: string
+          field_type?: string
+          id?: string
+          position?: Json
+          request_id?: string
+          required?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signature_fields_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "signature_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      signature_requests: {
+        Row: {
+          created_at: string
+          document_name: string
+          document_path: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_name: string
+          document_path: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_name?: string
+          document_path?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      signatures: {
+        Row: {
+          field_id: string
+          id: string
+          ip_address: string | null
+          signature_image: string
+          signed_at: string
+          signer_email: string
+          user_agent: string | null
+        }
+        Insert: {
+          field_id: string
+          id?: string
+          ip_address?: string | null
+          signature_image: string
+          signed_at?: string
+          signer_email: string
+          user_agent?: string | null
+        }
+        Update: {
+          field_id?: string
+          id?: string
+          ip_address?: string | null
+          signature_image?: string
+          signed_at?: string
+          signer_email?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signatures_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "signature_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      signing_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          field_id: string
+          id: string
+          session_token: string
+          signed: boolean
+          signer_email: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          field_id: string
+          id?: string
+          session_token: string
+          signed?: boolean
+          signer_email: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          field_id?: string
+          id?: string
+          session_token?: string
+          signed?: boolean
+          signer_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signing_sessions_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "signature_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           created_at: string

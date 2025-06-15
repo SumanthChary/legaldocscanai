@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -24,6 +23,7 @@ import BlogPost from "./pages/BlogPost";
 import Documentation from "./pages/Documentation";
 import ChatPage from "./pages/ChatPage";
 import { Dashboard } from "@/components/dashboard";
+import ESignatures from "./pages/ESignatures";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,6 +71,7 @@ function App() {
               <Route path="/documentation" element={<Documentation />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/chat" element={<ChatPage />} />
+              <Route path="/esignatures" element={<ESignatures />} />
             </Routes>
             <ChatWidget />
           </BrowserRouter>
