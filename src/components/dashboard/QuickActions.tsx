@@ -1,5 +1,4 @@
-
-import { Book, FileText, HelpCircle } from "lucide-react";
+import { Book, FileText, HelpCircle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -23,6 +22,12 @@ export const QuickActions = ({ onTabChange }: QuickActionsProps) => {
       icon: FileText,
       action: () => navigate("/document-analysis"),
       color: "text-blue-500"
+    },
+    {
+      title: "E-Signatures",
+      icon: Check,
+      action: () => navigate("/esignatures"),
+      color: "text-purple-500"
     },
     {
       title: "View Documents",

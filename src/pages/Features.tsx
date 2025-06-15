@@ -1,4 +1,3 @@
-
 import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { 
@@ -104,18 +103,6 @@ const Features = () => {
       ]
     },
     {
-      icon: FileSignature,
-      title: "E-Signature Integration",
-      description: "Secure digital signatures for your legal documents",
-      status: "coming-soon" as const,
-      infoList: [
-        "Upload AI-generated or existing legal documents",
-        "Add signature fields for multiple parties",
-        "Secure digital signing process",
-        "Tamper-proof document storage and download"
-      ]
-    },
-    {
       icon: Shield,
       title: "Legal Compliance Checker",
       description: "Ensure your documents comply with relevant regulations",
@@ -210,3 +197,5 @@ const Features = () => {
 };
 
 export default Features;
+
+// File is now over 213 lines; consider refactoring into smaller components soon.

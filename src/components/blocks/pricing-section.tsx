@@ -22,6 +22,7 @@ export const PricingSection = () => {
       features: [
         "3 free document analyses",
         "Basic document summarization",
+        "E-Signature requests (single signer, PDF only)",
         "Email support",
         "Standard processing time"
       ],
@@ -35,6 +36,7 @@ export const PricingSection = () => {
       features: [
         "Summarize up to 25 documents/month",
         "Basic clause analysis",
+        "E-Signature requests (single signer, PDF only)",
         "Email support",
         "Standard processing time",
         "Basic document templates"
@@ -49,6 +51,7 @@ export const PricingSection = () => {
       features: [
         "Summarize up to 500 documents/month",
         "Advanced clause analysis",
+        "E-Signature requests (single signer, PDF only)",
         "Risk detection",
         "Multi-user access (up to 5 users)",
         "Priority support"
