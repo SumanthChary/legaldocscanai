@@ -1,11 +1,11 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Loader2, FileText, Check, Pen, Upload, ArrowLeft } from "lucide-react";
+import { Loader2, FileText, Check, Pen, Upload, ArrowLeft, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { ESignaturesHeroSection } from "./ESignaturesHeroSection";
 
@@ -17,6 +17,110 @@ type SignatureRequest = {
   status: string;
   created_at: string;
 };
+
+// Custom File Input Component
+function FancyFileInput({
+  file,
+  setFile,
+  uploading,
+}: {
+  file: File | null;
+  setFile: (f: File | null) => void;
+  uploading: boolean;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Drag and drop logic
+  const [isDragActive, setIsDragActive] = useState(false);
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setIsDragActive(false);
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile && droppedFile.type === "application/pdf") {
+      setFile(droppedFile);
+    }
+  }
+
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setIsDragActive(true);
+  }
+
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setIsDragActive(false);
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile && selectedFile.type === "application/pdf") {
+      setFile(selectedFile);
+    } else {
+      setFile(null);
+    }
+  }
+
+  return (
+    <div
+      className={`relative flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-white border-2 ${
+        isDragActive
+          ? "border-blue-500 bg-blue-50"
+          : "border-purple-200 hover:border-purple-400"
+      } rounded-xl transition-all duration-200 shadow-lg px-4 py-9 cursor-pointer w-full group`}
+      onClick={() => !uploading && fileInputRef.current?.click()}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      aria-disabled={uploading}
+      tabIndex={0}
+      style={{ minHeight: 115, outline: "none" }}
+      role="button"
+    >
+      <input
+        type="file"
+        accept="application/pdf"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        disabled={uploading}
+        className="hidden"
+        tabIndex={-1}
+      />
+      {!file ? (
+        <div className="flex flex-col items-center gap-2 pointer-events-none select-none">
+          <Upload className="w-7 h-7 text-purple-600 mb-2 animate-fade-in" />
+          <span className="text-purple-900 font-semibold">
+            Drag PDF here or
+            <span className="underline ml-1">Choose file</span>
+          </span>
+          <span className="text-xs text-purple-400">
+            PDF only &mdash; Max 10MB
+          </span>
+        </div>
+      ) : (
+        <div className="flex w-full items-center gap-3 px-2 pointer-events-none">
+          <FileText className="w-6 h-6 text-blue-500 animate-fade-in shrink-0" />
+          <div className="flex-1 truncate text-base text-purple-900 font-medium animate-fade-in">{file.name}</div>
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            className="ml-2 !pointer-events-auto hover:bg-red-50 hover:text-red-500 transition-colors"
+            onClick={e => {
+              e.stopPropagation();
+              setFile(null);
+              fileInputRef.current!.value = "";
+            }}
+            tabIndex={0}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+      <div className="absolute inset-0 pointer-events-none rounded-xl ring-2 ring-transparent group-hover:ring-purple-300 transition" />
+    </div>
+  );
+}
 
 export default function ESignatures() {
   const { toast } = useToast();
@@ -121,7 +225,7 @@ export default function ESignatures() {
         <Button
           variant="ghost"
           size="sm"
-          className="rounded-full border border-purple-100 bg-white/60 hover:bg-purple-50 hover:shadow-lg shadow md:ml-1 transition-all gap-1"
+          className="rounded-full border border-purple-100 bg-white/70 hover:bg-purple-50 hover:shadow-lg shadow-md md:ml-1 transition-all gap-1"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="w-5 h-5 text-purple-700" />
@@ -129,15 +233,42 @@ export default function ESignatures() {
         </Button>
       </div>
 
-      {/* Modern SaaS hero section */}
-      <ESignaturesHeroSection />
+      {/* Modern SaaS hero section (img swapped to user image #1) */}
+      <section className="relative bg-gradient-to-br from-[#E9DFFF] via-[#F1F5F9] to-white rounded-2xl overflow-hidden shadow-lg mb-12 animate-fade-in">
+        <div className="flex flex-col md:flex-row items-center px-8 py-12 md:py-20 gap-8 md:gap-16">
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="text-3xl md:text-5xl font-extrabold font-playfair text-purple-900 leading-tight mb-4 drop-shadow">
+              E-Signature Requests
+            </h1>
+            <p className="text-base md:text-lg font-medium text-purple-700 mb-4 max-w-lg mx-auto md:mx-0">
+              Effortlessly send, sign, and manage important documents in a beautiful, secure environment made with love.
+            </p>
+            <div className="flex gap-4 justify-center md:justify-start mt-6">
+              <span className="inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-purple-800 font-semibold text-sm shadow hover:bg-purple-200 transition">
+                <Pen className="w-4 h-4" />
+                100% Digital & Safe
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-blue-800 font-semibold text-sm shadow hover:bg-blue-200 transition">
+                <FileText className="w-4 h-4" /> PDF Only
+              </span>
+            </div>
+          </div>
+          <div className="flex-1 flex justify-center">
+            <img 
+              src="/lovable-uploads/9c906cef-9ad2-4426-b5a4-5a91a6dde116.png"
+              alt="Signing on tablet"
+              className="max-h-72 md:max-h-96 w-auto rounded-xl shadow-lg ring-2 ring-white ring-offset-4 ring-offset-purple-100 object-cover animate-fade-in"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* Upload Area and Form */}
       <section className="flex flex-col-reverse lg:flex-row gap-8 mb-12 items-stretch animate-fade-in">
-        {/* Cute image for positivity (visible above upload form on mobile) */}
+        {/* User image #2 displays on left (on mobile above form) */}
         <div className="w-full lg:w-1/2 flex items-center justify-center mb-6 lg:mb-0">
           <img
-            src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=600&q=80"
+            src="/lovable-uploads/87ef7b87-6da4-45d5-922b-7851221679c0.png"
             alt="Smiling person using e-signature"
             className="rounded-2xl shadow-lg max-w-xs md:max-w-sm ring-2 ring-purple-200 object-cover w-full transition-transform duration-300 hover:scale-105"
             style={{ aspectRatio: "4/3" }}
@@ -151,14 +282,7 @@ export default function ESignatures() {
             </h2>
           </div>
           <form onSubmit={handleUpload} className="space-y-6">
-            <Input
-              type="file"
-              accept="application/pdf"
-              required
-              onChange={e => setFile(e.target.files?.[0] || null)}
-              disabled={uploading}
-              className="file:font-semibold file:bg-purple-50 file:text-purple-700 file:border-0 file:rounded file:px-3 file:py-1 file:mr-4 bg-purple-25"
-            />
+            <FancyFileInput file={file} setFile={setFile} uploading={uploading} />
             <div>
               <label className="text-sm font-medium text-purple-800 block mb-1">Signer Email</label>
               <Input
@@ -224,11 +348,11 @@ export default function ESignatures() {
                     {r.status}
                   </span>
                   {r.status === "completed" ? (
-                    <span title="Completed">
+                    <span>
                       <Check className="w-5 h-5 text-green-500 animate-pulse" />
                     </span>
                   ) : (
-                    <span title="Awaiting signature">
+                    <span>
                       <Pen className="w-5 h-5 text-purple-400" />
                     </span>
                   )}
