@@ -1,10 +1,11 @@
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Loader2, FileText, Check, Pen, Upload } from "lucide-react";
+import { Loader2, FileText, Check, Pen, Upload, ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { ESignaturesHeroSection } from "./ESignaturesHeroSection";
 
@@ -19,6 +20,7 @@ type SignatureRequest = {
 
 export default function ESignatures() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [requests, setRequests] = useState<SignatureRequest[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -113,13 +115,35 @@ export default function ESignatures() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto pb-10 animate-fade-in">
+    <div className="max-w-4xl mx-auto pb-10 px-2 md:px-6 animate-fade-in">
+      {/* Back button */}
+      <div className="flex items-center gap-2 py-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded-full border border-purple-100 bg-white/60 hover:bg-purple-50 hover:shadow-lg shadow md:ml-1 transition-all gap-1"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="w-5 h-5 text-purple-700" />
+          <span className="font-medium text-purple-900">Back</span>
+        </Button>
+      </div>
+
       {/* Modern SaaS hero section */}
       <ESignaturesHeroSection />
 
       {/* Upload Area and Form */}
-      <section className="flex flex-col md:flex-row gap-8 mb-12 items-stretch animate-fade-in">
-        <Card className="flex-1 rounded-xl shadow-lg p-8 md:p-10 bg-white/70 backdrop-blur-md border border-purple-100">
+      <section className="flex flex-col-reverse lg:flex-row gap-8 mb-12 items-stretch animate-fade-in">
+        {/* Cute image for positivity (visible above upload form on mobile) */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center mb-6 lg:mb-0">
+          <img
+            src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=600&q=80"
+            alt="Smiling person using e-signature"
+            className="rounded-2xl shadow-lg max-w-xs md:max-w-sm ring-2 ring-purple-200 object-cover w-full transition-transform duration-300 hover:scale-105"
+            style={{ aspectRatio: "4/3" }}
+          />
+        </div>
+        <Card className="flex-1 rounded-2xl shadow-xl p-6 md:p-10 bg-white/75 backdrop-blur-md border border-purple-100">
           <div className="flex items-center gap-2 mb-6">
             <Upload className="text-purple-700 w-6 h-6" />
             <h2 className="font-bold text-lg md:text-2xl text-purple-900 tracking-tight">
@@ -133,7 +157,7 @@ export default function ESignatures() {
               required
               onChange={e => setFile(e.target.files?.[0] || null)}
               disabled={uploading}
-              className="file:font-semibold file:bg-purple-50 file:text-purple-700 file:border-0 file:rounded file:px-3 file:py-1 file:mr-4"
+              className="file:font-semibold file:bg-purple-50 file:text-purple-700 file:border-0 file:rounded file:px-3 file:py-1 file:mr-4 bg-purple-25"
             />
             <div>
               <label className="text-sm font-medium text-purple-800 block mb-1">Signer Email</label>
@@ -165,31 +189,28 @@ export default function ESignatures() {
             </Button>
           </form>
         </Card>
-        {/* Cute image for positivity (hidden on mobile) */}
-        <div className="hidden md:flex flex-1 items-center justify-center">
-          <img
-            src="/lovable-uploads/photo-1581091226825-a6a2a5aee158.png"
-            alt="Smiling person using e-signature"
-            className="rounded-xl shadow-lg max-w-xs md:max-w-sm ring-2 ring-purple-200"
-            style={{ objectFit: "cover" }}
-          />
-        </div>
       </section>
 
       {/* Requests List */}
       <section className="animate-fade-in">
         <div className="flex items-center gap-2 mb-6 pl-1">
           <FileText className="text-blue-500 w-5 h-5" />
-          <h3 className="text-lg md:text-xl font-semibold text-purple-800">My Signature Requests</h3>
+          <h3 className="text-lg md:text-xl font-semibold text-purple-800">
+            My Signature Requests
+          </h3>
         </div>
         {loading ? (
           <div className="py-8 text-center flex justify-center rounded">
             <Loader2 className="animate-spin text-purple-700" />
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 md:gap-6 sm:grid-cols-2">
             {requests.map(r => (
-              <div key={r.id} className="bg-gradient-to-br from-purple-50 to-white border border-purple-100 p-5 rounded-lg flex flex-col gap-3 shadow hover:shadow-md transition shadow-purple-100/30">
+              <div
+                key={r.id}
+                className={"bg-gradient-to-br from-purple-50 to-white border border-purple-100 p-5 rounded-xl flex flex-col gap-3 shadow hover:shadow-lg transition shadow-purple-100/30 " +
+                  (r.status === "completed" ? "ring-2 ring-green-200" : "")}
+              >
                 <div className="flex items-center gap-2 mb-1">
                   <FileText className="text-purple-700 w-4 h-4" />
                   <span className="font-semibold text-purple-900 truncate">{r.document_name}</span>
