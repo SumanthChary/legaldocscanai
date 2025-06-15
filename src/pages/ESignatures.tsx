@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -53,7 +52,7 @@ export default function ESignatures() {
           variant="ghost"
           size="sm"
           className="rounded-full border border-purple-100 bg-white/70 hover:bg-purple-50 hover:shadow-lg shadow-md md:ml-1 transition-all gap-1"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/dashboard")}
         >
           <ArrowLeft className="w-5 h-5 text-purple-700" />
           <span className="font-medium text-purple-900">Back</span>
