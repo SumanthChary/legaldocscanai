@@ -203,9 +203,13 @@ export default function ESignatures() {
                     {r.status}
                   </span>
                   {r.status === "completed" ? (
-                    <Check className="w-5 h-5 text-green-500 animate-pulse" title="Completed" />
+                    <span title="Completed">
+                      <Check className="w-5 h-5 text-green-500 animate-pulse" />
+                    </span>
                   ) : (
-                    <Pen className="w-5 h-5 text-purple-400" title="Awaiting signature" />
+                    <span title="Awaiting signature">
+                      <Pen className="w-5 h-5 text-purple-400" />
+                    </span>
                   )}
                 </div>
                 <div className="text-xs text-gray-400 mt-3">
