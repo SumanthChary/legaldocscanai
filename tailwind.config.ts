@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -17,7 +18,8 @@ export default {
         container: "1280px",
       },
       fontFamily: {
-        sans: ["Inter var", "sans-serif"],
+        sans: ["Aeonik Pro", "system-ui", "-apple-system", "sans-serif"],
+        aeonik: ["Aeonik Pro", "system-ui", "-apple-system", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
