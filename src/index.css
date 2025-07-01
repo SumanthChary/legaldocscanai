@@ -1,5 +1,5 @@
 
-@import url("https://fonts.googleapis.com/css2?family=Aeonik+Pro:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -67,7 +67,12 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Aeonik Pro", system-ui, -apple-system, sans-serif;
+    font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  }
+  
+  /* Apply font to all elements */
+  h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, label {
+    font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
   }
 }
 

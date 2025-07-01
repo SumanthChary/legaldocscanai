@@ -18,8 +18,8 @@ export default {
         container: "1280px",
       },
       fontFamily: {
-        sans: ["Aeonik Pro", "system-ui", "-apple-system", "sans-serif"],
-        aeonik: ["Aeonik Pro", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["Space Grotesk", "system-ui", "-apple-system", "sans-serif"],
+        grotesk: ["Space Grotesk", "system-ui", "-apple-system", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
