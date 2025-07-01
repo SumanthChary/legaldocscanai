@@ -14,7 +14,7 @@ export const BrandLogo = () => {
           />
         </div>
       </div>
-      <span className="text-lg sm:text-xl font-bold font-grotesk bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+      <span className="text-lg sm:text-xl font-bold font-aeonik bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
         LegalBriefAI
       </span>
     </Link>

@@ -1,8 +1,56 @@
 
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Load Aeonik Grotesque fonts from Supabase storage */
+@font-face {
+  font-family: 'Aeonik';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-LightItalic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-RegularItalic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aeonik';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-BoldItalic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
 
 @layer base {
   :root {
@@ -67,12 +115,12 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    font-family: "Aeonik", system-ui, -apple-system, sans-serif;
   }
   
-  /* Apply font to all elements */
+  /* Apply Aeonik font to all elements */
   h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, label {
-    font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    font-family: "Aeonik", system-ui, -apple-system, sans-serif;
   }
 }
 

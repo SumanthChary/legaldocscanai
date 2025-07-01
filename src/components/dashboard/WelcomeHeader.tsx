@@ -40,11 +40,11 @@ export const WelcomeHeader = ({ session }: WelcomeHeaderProps) => {
           <div className="p-1.5 sm:p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
             <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-grotesk bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-aeonik bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
             Welcome back, {userName}
           </h1>
         </div>
-        <p className="text-xs sm:text-sm md:text-base text-gray-600 font-grotesk ml-8 sm:ml-11">
+        <p className="text-xs sm:text-sm md:text-base text-gray-600 font-aeonik ml-8 sm:ml-11">
           Here's what's happening with your documents today.
         </p>
       </div>
