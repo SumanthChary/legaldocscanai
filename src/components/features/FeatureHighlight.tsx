@@ -42,7 +42,7 @@ export const FeatureHighlight = ({
 
       <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 mb-12">
         {features.map((feature, index) => (
-          <Card key={index} className="h-full hover:shadow-lg transition-shadow duration-300">
+          <Card key={index} className="h-full border border-gray-200 hover:border-gray-300 transition-colors">
             <CardHeader className="pb-3">
               <UpcomingFeature 
                 icon={feature.icon}

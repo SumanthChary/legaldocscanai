@@ -4,7 +4,7 @@ export const getPricingPlans = (isAnnual: boolean) => [
     name: "Free",
     price: "0",
     period: "",
-    description: "Try it out first",
+    description: "7-day free trial with limits",
     features: [
       "3 free document analyses",
       "Basic document summarization",
@@ -14,7 +14,7 @@ export const getPricingPlans = (isAnnual: boolean) => [
     highlight: false
   },
   {
-    name: "Basic",
+    name: "Starter Plan",
     price: isAnnual ? "16" : "20",
     period: isAnnual ? "/month, billed annually" : "/month",
     description: "For Individual Users",
@@ -63,7 +63,7 @@ export const getPricingPlans = (isAnnual: boolean) => [
   },
   {
     name: "Pay-Per-Document",
-    price: "10",
+    price: "3",
     period: "/document",
     description: "Flexible for Low-Volume Users",
     features: [

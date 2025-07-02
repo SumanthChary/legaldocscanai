@@ -29,7 +29,7 @@ export const PreviewFeatures = ({
 
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-16">
         {features.map((feature, index) => (
-          <Card key={index} className="h-full hover:shadow-lg transition-shadow duration-300">
+          <Card key={index} className="h-full border border-gray-200 hover:border-gray-300 transition-colors">
             <CardContent className="pt-6">
               <UpcomingFeature 
                 icon={feature.icon}

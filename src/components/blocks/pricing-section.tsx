@@ -18,7 +18,7 @@ export const PricingSection = () => {
       name: "Free",
       price: "0",
       period: "",
-      description: "Try it out first",
+      description: "7-day free trial with limits",
       features: [
         "3 free document analyses",
         "Basic document summarization",
@@ -29,7 +29,7 @@ export const PricingSection = () => {
       highlight: false
     },
     {
-      name: "Basic",
+      name: "Starter Plan",
       price: isAnnual ? "16" : "20",
       period: isAnnual ? "/month, billed annually" : "/month",
       description: "For Individual Users",

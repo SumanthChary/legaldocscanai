@@ -92,38 +92,38 @@ const Features = () => {
   const highlightedUpcomingFeatures = [
     {
       icon: FileText,
-      title: "AI Contract Analyzer",
-      description: "Deep analysis of legal contracts with risk assessment",
+      title: "Enhanced Document Processing",
+      description: "Advanced analysis capabilities for legal documents",
       status: "beta" as const,
       infoList: [
-        "Upload contracts (PDF, DOCX, TXT)",
-        "AI scans and extracts key clauses and risks",
-        "Highlights missing terms and obligations",
-        "Provides easy-to-understand summaries"
+        "Improved document scanning",
+        "Enhanced clause detection",
+        "Better risk assessment",
+        "Streamlined workflow integration"
       ]
     },
     {
       icon: Shield,
-      title: "Legal Compliance Checker",
-      description: "Ensure your documents comply with relevant regulations",
+      title: "Compliance Management",
+      description: "Tools to help ensure regulatory compliance",
       status: "coming-soon" as const,
       infoList: [
-        "Upload legal documents for compliance review",
-        "AI checks against GDPR, CCPA, and other regulations",
-        "Flags violations and missing clauses",
-        "Provides remediation suggestions"
+        "Regulatory compliance checking",
+        "Policy alignment verification",
+        "Automated compliance reporting",
+        "Risk mitigation suggestions"
       ]
     },
     {
       icon: Component,
-      title: "Customizable Document Templates",
-      description: "Create legal documents with customizable templates",
+      title: "Document Automation",
+      description: "Streamlined document creation and management",
       status: "coming-soon" as const,
       infoList: [
-        "Access library of pre-made legal templates",
-        "Customize with your specific requirements",
-        "AI helps fill in appropriate clauses",
-        "Export documents in multiple formats"
+        "Template management system",
+        "Automated document generation",
+        "Custom workflow creation",
+        "Integration capabilities"
       ]
     }
   ];
@@ -131,22 +131,22 @@ const Features = () => {
   const previewFeatures = [
     {
       icon: Languages,
-      title: "Advanced Language Processing",
-      description: "Sophisticated language capabilities coming to our platform",
+      title: "Advanced Processing",
+      description: "Enhanced capabilities for document analysis",
       status: "coming-soon" as const,
       infoList: []
     },
     {
       icon: Clock,
-      title: "Visual Analytics Suite",
-      description: "Transform complex legal information into visual insights",
+      title: "Analytics Dashboard",
+      description: "Comprehensive insights and reporting tools",
       status: "coming-soon" as const,
       infoList: []
     },
     {
       icon: Users2,
-      title: "Enhanced Collaboration Tools",
-      description: "Next-generation team workflows for legal professionals",
+      title: "Team Collaboration",
+      description: "Enhanced workflow tools for teams",
       status: "coming-soon" as const,
       infoList: []
     }

@@ -44,11 +44,11 @@ export const UpcomingFeature = ({
   };
 
   return (
-    <div className={isPreview ? "hover:shadow-md transition-shadow" : ""}>
+    <div className={isPreview ? "hover:shadow-sm transition-shadow" : ""}>
       <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4">
         <div className="flex gap-3 flex-1 min-w-0">
-          <div className={`p-3 ${backgroundColors[status]} rounded-xl flex-shrink-0`}>
-            <Icon className={`h-6 w-6 ${iconColors[status]}`} />
+          <div className={`p-2 ${backgroundColors[status]} rounded-lg flex-shrink-0`}>
+            <Icon className={`h-5 w-5 ${iconColors[status]}`} />
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1">{title}</h3>
@@ -62,11 +62,11 @@ export const UpcomingFeature = ({
 
       {isPreview ? (
         <p className="text-sm text-muted-foreground mt-4 px-2">
-          More details in our beta program or for enterprise customers.
+          More details available for beta program participants.
         </p>
       ) : (
         <>
-          <h4 className="text-sm font-medium mb-3 mt-4 px-2">How It Works:</h4>
+          <h4 className="text-sm font-medium mb-3 mt-4 px-2">Key Benefits:</h4>
           <ul className="space-y-2 px-2">
             {infoList.map((info, index) => (
               <li key={index} className="flex items-start text-sm">
