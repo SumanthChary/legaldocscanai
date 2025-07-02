@@ -85,7 +85,6 @@ export function RequestDetails({ requestId, onClose }: RequestDetailsProps) {
 
   const handleLinkGenerated = (link: string) => {
     console.log("Signing link generated:", link);
-    // You could store this or show it in the UI
   };
 
   if (loading || !request) {
@@ -156,7 +155,7 @@ export function RequestDetails({ requestId, onClose }: RequestDetailsProps) {
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Signers</h3>
         {request.signature_fields.map((field) => {
-          const signature = field.signatures[0]; // Assuming one signature per field
+          const signature = field.signatures[0];
           const isSigned = !!signature;
 
           return (
@@ -181,6 +180,7 @@ export function RequestDetails({ requestId, onClose }: RequestDetailsProps) {
                     <SigningLinkGenerator
                       requestId={request.id}
                       signerEmail={field.assigned_signer_email}
+                      documentName={request.document_name}
                       onLinkGenerated={handleLinkGenerated}
                     />
                   </div>

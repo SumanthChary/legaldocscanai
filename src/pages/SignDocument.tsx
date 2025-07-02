@@ -46,6 +46,7 @@ export default function SignDocument() {
 
   const fetchSigningSession = async () => {
     try {
+      // Use service role or create a public RLS policy for this specific query
       const { data, error } = await supabase
         .from("signing_sessions")
         .select(`
@@ -66,6 +67,7 @@ export default function SignDocument() {
         .single();
 
       if (error) {
+        console.error("Error fetching signing session:", error);
         toast({
           title: "Invalid signing link",
           description: "This signing link is invalid or has expired.",
@@ -118,18 +120,19 @@ export default function SignDocument() {
 
     setSigning(true);
     try {
-      // Insert signature
+      // Insert signature - this needs to work for anonymous users
       const { error: signatureError } = await supabase
         .from("signatures")
         .insert({
           field_id: session.field_id,
           signer_email: session.signer_email,
           signature_image: signature,
-          ip_address: "unknown", // In a real app, you'd get this from the server
+          ip_address: "unknown",
           user_agent: navigator.userAgent,
         });
 
       if (signatureError) {
+        console.error("Signature error:", signatureError);
         throw signatureError;
       }
 
@@ -140,6 +143,7 @@ export default function SignDocument() {
         .eq("id", session.id);
 
       if (sessionError) {
+        console.error("Session update error:", sessionError);
         throw sessionError;
       }
 
@@ -150,6 +154,7 @@ export default function SignDocument() {
         .eq("id", session.signature_fields.signature_requests.id);
 
       if (requestError) {
+        console.error("Request update error:", requestError);
         throw requestError;
       }
 

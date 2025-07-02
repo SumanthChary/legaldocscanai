@@ -10,10 +10,11 @@ import { Copy, Send, Loader2 } from "lucide-react";
 type SigningLinkGeneratorProps = {
   requestId: string;
   signerEmail: string;
+  documentName: string;
   onLinkGenerated: (link: string) => void;
 };
 
-export function SigningLinkGenerator({ requestId, signerEmail, onLinkGenerated }: SigningLinkGeneratorProps) {
+export function SigningLinkGenerator({ requestId, signerEmail, documentName, onLinkGenerated }: SigningLinkGeneratorProps) {
   const { toast } = useToast();
   const [generating, setGenerating] = useState(false);
   const [sending, setSending] = useState(false);
@@ -31,6 +32,7 @@ export function SigningLinkGenerator({ requestId, signerEmail, onLinkGenerated }
         .single();
 
       if (fieldError || !field) {
+        console.error("Field error:", fieldError);
         throw new Error("Signature field not found");
       }
 
@@ -50,6 +52,7 @@ export function SigningLinkGenerator({ requestId, signerEmail, onLinkGenerated }
         });
 
       if (sessionError) {
+        console.error("Session error:", sessionError);
         throw sessionError;
       }
 
@@ -101,11 +104,12 @@ export function SigningLinkGenerator({ requestId, signerEmail, onLinkGenerated }
         body: {
           signerEmail,
           signingLink: link,
-          documentName: "Document", // You might want to pass this as a prop
+          documentName,
         },
       });
 
       if (error) {
+        console.error("Email error:", error);
         throw error;
       }
 
