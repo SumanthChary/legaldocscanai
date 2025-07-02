@@ -1,17 +1,12 @@
-
 import { Bot, Sparkles } from "lucide-react";
-
 export const ChatHeader = () => {
-  return (
-    <div className="mb-3 sm:mb-4 md:mb-6">
+  return <div className="mb-3 sm:mb-4 md:mb-6">
       <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
         <div className="relative flex-shrink-0">
           <div className="p-2 sm:p-2.5 md:p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg sm:rounded-xl shadow-lg">
             <Bot className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-white" />
           </div>
-          <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 p-0.5 sm:p-1 bg-yellow-400 rounded-full">
-            <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5 text-yellow-800" />
-          </div>
+          
         </div>
         <div className="flex-1 min-w-0">
           <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-700 bg-clip-text text-transparent leading-tight">
@@ -22,6 +17,5 @@ export const ChatHeader = () => {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
