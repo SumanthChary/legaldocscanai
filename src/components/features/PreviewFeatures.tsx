@@ -22,15 +22,15 @@ export const PreviewFeatures = ({
 }: PreviewFeaturesProps) => {
   return (
     <>
-      <div className="max-w-4xl mx-auto mb-8 text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-4">{title}</h2>
-        <p className="text-base sm:text-lg text-muted-foreground">{description}</p>
+      <div className="max-w-4xl mx-auto mb-8 text-center px-4">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4">{title}</h2>
+        <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">{description}</p>
       </div>
 
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-16">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mb-16">
         {features.map((feature, index) => (
           <Card key={index} className="h-full border border-gray-200 hover:border-gray-300 transition-colors">
-            <CardContent className="pt-6">
+            <CardContent className="p-4 sm:p-6">
               <UpcomingFeature 
                 icon={feature.icon}
                 title={feature.title}
