@@ -1,5 +1,8 @@
 
-import { FileText, Check, Pen, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { FileText, Check, Pen, Loader2, Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { RequestDetails } from "./RequestDetails";
 
 type SignatureRequest = {
   id: string;
@@ -15,6 +18,17 @@ type SignatureRequestsListProps = {
 };
 
 export function SignatureRequestsList({ requests, loading }: SignatureRequestsListProps) {
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+
+  if (selectedRequestId) {
+    return (
+      <RequestDetails
+        requestId={selectedRequestId}
+        onClose={() => setSelectedRequestId(null)}
+      />
+    );
+  }
+
   return (
     <section className="animate-fade-in">
       <div className="flex items-center gap-2 mb-6 pl-1">
@@ -47,15 +61,22 @@ export function SignatureRequestsList({ requests, loading }: SignatureRequestsLi
                     : "bg-gray-100 text-gray-500"}`}>
                   {r.status}
                 </span>
-                {r.status === "completed" ? (
-                  <span>
-                    <Check className="w-5 h-5 text-green-500 animate-pulse" />
-                  </span>
-                ) : (
-                  <span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedRequestId(r.id)}
+                    className="text-purple-600 hover:text-purple-800"
+                  >
+                    <Eye className="w-4 h-4 mr-1" />
+                    View
+                  </Button>
+                  {r.status === "completed" ? (
+                    <Check className="w-5 h-5 text-green-500" />
+                  ) : (
                     <Pen className="w-5 h-5 text-purple-400" />
-                  </span>
-                )}
+                  )}
+                </div>
               </div>
               <div className="text-xs text-gray-400 mt-3">
                 Created: {new Date(r.created_at).toLocaleString()}
