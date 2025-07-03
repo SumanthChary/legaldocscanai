@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import ESignatures from "./pages/ESignatures";
 import DocumentAnalysis from "./pages/DocumentAnalysis";
 import UpcomingFeatures from "./pages/UpcomingFeatures";
+import { Dashboard } from "./components/dashboard/Dashboard";
 
 export const navItems = [
   {
@@ -14,6 +15,12 @@ export const navItems = [
     to: "/",
     icon: <HomeIcon className="h-4 w-4" />,
     page: <Index />,
+  },
+  {
+    title: "Dashboard",
+    to: "/dashboard",
+    icon: <HomeIcon className="h-4 w-4" />,
+    page: <Dashboard />,
   },
   {
     title: "Features",
