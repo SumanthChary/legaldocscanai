@@ -1,13 +1,13 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { ESignaturesHeroSection } from "./ESignaturesHeroSection";
 import { UploadForm } from "@/components/esignatures/UploadForm";
 import { SignatureRequestsList } from "@/components/esignatures/SignatureRequestsList";
 
-// ESignature types
 type SignatureRequest = {
   id: string;
   document_name: string;
@@ -17,35 +17,39 @@ type SignatureRequest = {
 };
 
 export default function ESignatures() {
-  const { toast } = useToast();
   const navigate = useNavigate();
   const [requests, setRequests] = useState<SignatureRequest[]>([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
 
-  // Fetch current user's requests
   useEffect(() => {
-    import("@/integrations/supabase/client").then(({ supabase }) =>
-      supabase.auth.getUser().then(({ data }) => setUser(data.user || null))
-    );
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
     fetchRequests();
-    // eslint-disable-next-line
   }, []);
 
   const fetchRequests = async () => {
     setLoading(true);
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { data, error } = await supabase
-      .from("signature_requests")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from("signature_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (!error && data) setRequests(data);
-    setLoading(false);
+      if (error) throw error;
+      setRequests(data || []);
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto pb-10 px-2 md:px-6 animate-fade-in">
+    <div className="max-w-6xl mx-auto pb-10 px-2 md:px-6 animate-fade-in">
       {/* Back button */}
       <div className="flex items-center gap-2 py-4">
         <Button
@@ -76,7 +80,11 @@ export default function ESignatures() {
       </section>
 
       {/* Requests List */}
-      <SignatureRequestsList requests={requests} loading={loading} />
+      <SignatureRequestsList 
+        requests={requests} 
+        loading={loading} 
+        onRefresh={fetchRequests}
+      />
     </div>
   );
 }

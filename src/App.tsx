@@ -24,6 +24,7 @@ import Documentation from "./pages/Documentation";
 import ChatPage from "./pages/ChatPage";
 import { Dashboard } from "@/components/dashboard";
 import ESignatures from "./pages/ESignatures";
+import SigningPage from "./pages/SigningPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -72,6 +73,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/esignatures" element={<ESignatures />} />
+              <Route path="/sign/:requestId" element={<SigningPage />} />
             </Routes>
             <ChatWidget />
           </BrowserRouter>
