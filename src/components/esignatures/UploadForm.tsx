@@ -32,80 +32,59 @@ export function UploadForm({ user, fetchRequests }: Props) {
 
     setUploading(true);
 
-    try {
-      // Create esignatures bucket if it doesn't exist
-      const { error: bucketError } = await supabase.storage.createBucket("esignatures", {
-        public: false,
-        allowedMimeTypes: ["application/pdf"],
-        fileSizeLimit: 10485760, // 10MB
-      });
+    // Upload PDF to Supabase Storage (bucket: 'esignatures')
+    const filename = `${user.id}/${Date.now()}_${file.name}`;
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("esignatures")
+      .upload(filename, file);
 
-      // Ignore error if bucket already exists
-      if (bucketError && !bucketError.message.includes("already exists")) {
-        console.error("Bucket creation error:", bucketError);
-      }
-
-      // Upload PDF to Supabase Storage (bucket: 'esignatures')
-      const filename = `${user.id}/${Date.now()}_${file.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("esignatures")
-        .upload(filename, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const document_path = uploadData?.path || filename;
-
-      // Insert signature_request
-      const { data: requestData, error: requestError } = await supabase
-        .from("signature_requests")
-        .insert({
-          user_id: user.id,
-          document_name: file.name,
-          document_path,
-          status: "pending"
-        })
-        .select()
-        .single();
-
-      if (requestError) {
-        throw requestError;
-      }
-
-      // Insert a single signature_field for now
-      const { error: fieldError } = await supabase
-        .from("signature_fields")
-        .insert({
-          request_id: requestData.id,
-          assigned_signer_email: signerEmail,
-          field_type: "signature",
-          position: JSON.stringify({ page: 1, x: 100, y: 200, width: 200, height: 60 }),
-          required: true,
-        });
-
-      if (fieldError) {
-        throw fieldError;
-      }
-
-      toast({ 
-        title: "Signature request created!",
-        description: "You can now generate a signing link for your document."
-      });
-      
-      setFile(null);
-      setSignerEmail("");
-      fetchRequests();
-    } catch (error: any) {
-      console.error("Upload error:", error);
-      toast({
-        title: "Upload failed",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
-      });
-    } finally {
+    if (uploadError) {
+      toast({ title: "File upload failed", description: uploadError.message, variant: "destructive" });
       setUploading(false);
+      return;
     }
+    const document_path = uploadData?.path || filename;
+
+    // Insert signature_request
+    const { data: requestData, error: requestError } = await supabase
+      .from("signature_requests")
+      .insert({
+        user_id: user.id,
+        document_name: file.name,
+        document_path,
+        status: "pending"
+      })
+      .select()
+      .single();
+
+    if (requestError) {
+      toast({ title: "Failed to create request", description: requestError.message, variant: "destructive" });
+      setUploading(false);
+      return;
+    }
+
+    // Insert a single signature_field for now
+    const { error: fieldError } = await supabase
+      .from("signature_fields")
+      .insert({
+        request_id: requestData.id,
+        assigned_signer_email: signerEmail,
+        field_type: "signature",
+        position: JSON.stringify({ page: 1, x: 100, y: 200, width: 200, height: 60 }),
+        required: true,
+      });
+
+    if (fieldError) {
+      toast({ title: "Failed to add signer", description: fieldError.message, variant: "destructive" });
+      setUploading(false);
+      return;
+    }
+
+    toast({ title: "Signature request created!" });
+    setFile(null);
+    setSignerEmail("");
+    fetchRequests();
+    setUploading(false);
   };
 
   return (
