@@ -22,15 +22,35 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     sourcemap: true,
+    target: 'esnext',
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
+          supabase: ['@supabase/supabase-js'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast'],
+          icons: ['lucide-react'],
+          charts: ['recharts'],
+          query: ['@tanstack/react-query'],
+          router: ['react-router-dom'],
+          paypal: ['@paypal/react-paypal-js'],
         },
       },
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom'],
-  }
+    include: [
+      'react', 
+      'react-dom', 
+      '@supabase/supabase-js',
+      '@tanstack/react-query',
+      'react-router-dom',
+      'lucide-react'
+    ],
+  },
+  esbuild: {
+    target: 'esnext',
+    platform: 'browser',
+  },
 }));
