@@ -1,6 +1,7 @@
+
 import { useEffect, useState, memo, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { FileText, AlertTriangle, ChevronDown, RefreshCw } from "lucide-react";
+import { FileText, AlertTriangle, ChevronDown, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";

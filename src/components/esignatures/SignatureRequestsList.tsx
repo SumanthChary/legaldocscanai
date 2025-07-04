@@ -55,7 +55,7 @@ export const SignatureRequestsList = memo(({ requests, loading, onRefresh }: Pro
   return (
     <section className="animate-fade-in">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-purple-900">Signature Requests</h2>
+        <h2 className="text-2xl font-bold text-purple-900 font-aeonik">Signature Requests</h2>
         <Button 
           variant="outline" 
           size="sm" 
@@ -79,7 +79,7 @@ export const SignatureRequestsList = memo(({ requests, loading, onRefresh }: Pro
           <div className="p-4 bg-purple-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
             <FileText className="h-8 w-8 text-purple-600" />
           </div>
-          <h3 className="text-lg font-semibold text-purple-800 mb-2">No signature requests</h3>
+          <h3 className="text-lg font-semibold text-purple-800 mb-2 font-aeonik">No signature requests</h3>
           <p className="text-purple-600">Create your first signature request above</p>
         </Card>
       ) : (
@@ -91,7 +91,7 @@ export const SignatureRequestsList = memo(({ requests, loading, onRefresh }: Pro
                   <FileText className="h-6 w-6 text-purple-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-purple-900 truncate mb-1">
+                  <h3 className="font-semibold text-purple-900 truncate mb-1 font-aeonik">
                     {request.document_name}
                   </h3>
                   <p className="text-sm text-purple-600 mb-2">
@@ -106,7 +106,11 @@ export const SignatureRequestsList = memo(({ requests, loading, onRefresh }: Pro
                   documentPath={request.document_path} 
                   documentName={request.document_name} 
                 />
-                <SignatureRequestActions requestId={request.id} onRefresh={onRefresh} />
+                <SignatureRequestActions 
+                  request={request}
+                  fields={[]}
+                  onUpdate={onRefresh} 
+                />
               </div>
             </Card>
           ))}

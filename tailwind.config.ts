@@ -18,8 +18,9 @@ export default {
         container: "1280px",
       },
       fontFamily: {
-        sans: ["Aeonik", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
-        aeonik: ["Aeonik", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+        sans: ["Aeonik Grotesque", "Aeonik", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+        aeonik: ["Aeonik Grotesque", "Aeonik", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+        "aeonik-grotesque": ["Aeonik Grotesque", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -91,7 +92,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         marquee: 'marquee var(--duration) linear infinite',
-        "skeleton-loading": "skeleton-loading 1.2s ease-in-out infinite",
+        "skeleton-loading": "skeleton-loading 1s ease-in-out infinite",
       },
     },
   },
