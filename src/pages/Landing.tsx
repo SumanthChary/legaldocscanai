@@ -1,3 +1,4 @@
+
 import { PageLayout } from "@/components/layout";
 import { HeroSection } from "@/components/blocks/hero-section";
 import { FeaturesSection } from "@/components/blocks/features-section";
@@ -7,6 +8,10 @@ import { TrustSection } from "@/components/blocks/trust-section";
 import { FAQSection } from "@/components/blocks/faq-section";
 import { CTASection } from "@/components/blocks/cta-section";
 import { PricingSection } from "@/components/blocks/pricing-section";
+import { HowItWorksSection } from "@/components/blocks/how-it-works-section";
+import { AboutAuthorSection } from "@/components/blocks/about-author-section";
+import { FeaturedSection } from "@/components/blocks/featured-section";
+import { PowerfulFeaturesSection } from "@/components/blocks/powerful-features-section";
 import { useEffect } from "react";
 
 const Landing = () => {
@@ -109,9 +114,12 @@ const Landing = () => {
     <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
       <PageLayout>
         <HeroSection benefits={benefits} />
+        <FeaturedSection />
+        <PowerfulFeaturesSection />
         <div className="bg-white/80 backdrop-blur-sm">
           <FeaturesSection />
         </div>
+        <HowItWorksSection />
         <TrustSection />
         <div className="bg-gradient-to-br from-gray-50 to-blue-50/50">
           <PricingSection />
@@ -126,6 +134,7 @@ const Landing = () => {
         <div className="bg-gradient-to-br from-slate-50 to-gray-100/50">
           <AboutSection />
         </div>
+        <AboutAuthorSection />
         <div className="bg-white/90 backdrop-blur-sm">
           <FAQSection faqs={faqs} />
         </div>

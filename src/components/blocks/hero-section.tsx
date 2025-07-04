@@ -1,6 +1,5 @@
-
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DemoVideo } from "./demo-video";
 import { InView } from "@/components/ui/in-view";
@@ -38,9 +37,9 @@ export const HeroSection = ({ benefits }: HeroProps) => {
             >
               <div className="space-y-3 md:space-y-4 lg:space-y-6">
                 {/* Premium badge */}
-                <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-2 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-200/50 backdrop-blur-sm">
-                  <Sparkles className="h-3 w-3 md:h-4 md:w-4 text-blue-600" />
-                  <span className="text-xs md:text-sm font-medium text-blue-700">AI-Powered Legal Intelligence</span>
+                <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-2 rounded-full bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200/50 backdrop-blur-sm">
+                  <Users className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
+                  <span className="text-xs md:text-sm font-medium text-green-700">2,500+ Active Users</span>
                 </div>
                 
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-transparent leading-tight">
