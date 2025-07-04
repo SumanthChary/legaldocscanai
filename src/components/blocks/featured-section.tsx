@@ -5,26 +5,32 @@ import { ExternalLink } from "lucide-react";
 export const FeaturedSection = () => {
   const features = [
     {
+      name: "X",
+      logo: "/lovable-uploads/1d7f8fdb-6ce9-4944-9649-6ee8c468c248.png",
+      url: "https://x.com/SumanthChary07/status/1935315366219235550",
+      description: "Featured on X"
+    },
+    {
       name: "Product Hunt",
-      logo: "/lovable-uploads/product-hunt-logo.png",
+      logo: "/lovable-uploads/b48c1cae-95cb-433b-9b42-3d6407f04e3c.png",
       url: "https://www.producthunt.com/posts/postproai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-legalbriefai",
       description: "Featured Product"
     },
     {
       name: "Tinylaunch",
-      logo: "/lovable-uploads/tinylaunch-logo.png", 
+      logo: "/lovable-uploads/496cd6d3-7d7c-444e-9989-9392a7c2da75.png", 
       url: "https://tinylaun.ch/launch/3631",
       description: "Launched on Tinylaunch"
     },
     {
       name: "Peerlist",
-      logo: "/lovable-uploads/peerlist-logo.png",
+      logo: "/lovable-uploads/dc7aeeeb-c284-4751-bdac-90a8fe0ec719.png",
       url: "https://peerlist.io/sumanthdev/project/legalbrief-ai",
       description: "Showcased Project"
     },
     {
       name: "Listing Cat",
-      logo: "/lovable-uploads/listingcat-logo.png",
+      logo: "/lovable-uploads/568e8f08-4177-420c-a6c1-7586783cd416.png",
       url: "https://www.listingcat.com/",
       description: "Directory Listing"
     }
@@ -60,10 +66,12 @@ export const FeaturedSection = () => {
                     rel="noopener noreferrer"
                     className="group flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-gray-50 transition-all duration-300 hover:scale-105"
                   >
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-purple-100 transition-colors">
-                      <span className="text-xs font-bold text-gray-600 group-hover:text-purple-600">
-                        {feature.name.slice(0, 2).toUpperCase()}
-                      </span>
+                    <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center group-hover:bg-purple-50 transition-colors shadow-sm border border-gray-100">
+                      <img 
+                        src={feature.logo} 
+                        alt={`${feature.name} logo`}
+                        className="w-8 h-8 object-contain"
+                      />
                     </div>
                     <span className="text-sm font-medium text-gray-700 group-hover:text-purple-600 transition-colors">
                       {feature.name}

@@ -1,7 +1,5 @@
-
 import { PageLayout } from "@/components/layout";
 import { HeroSection } from "@/components/blocks/hero-section";
-import { FeaturesSection } from "@/components/blocks/features-section";
 import { TestimonialsSection } from "@/components/blocks/testimonials-with-marquee";
 import { AboutSection } from "@/components/blocks/about-section";
 import { TrustSection } from "@/components/blocks/trust-section";
@@ -17,7 +15,7 @@ import { useEffect } from "react";
 const Landing = () => {
   const benefits = [
     "Reduce review time by 75%",
-    "Improve analysis accuracy",
+    "Improve analysis accuracy", 
     "Ensure compliance across jurisdictions",
     "Streamline team collaboration"
   ];
@@ -115,11 +113,8 @@ const Landing = () => {
       <PageLayout>
         <HeroSection benefits={benefits} />
         <FeaturedSection />
-        <PowerfulFeaturesSection />
-        <div className="bg-white/80 backdrop-blur-sm">
-          <FeaturesSection />
-        </div>
         <HowItWorksSection />
+        <PowerfulFeaturesSection />
         <TrustSection />
         <div className="bg-gradient-to-br from-gray-50 to-blue-50/50">
           <PricingSection />
