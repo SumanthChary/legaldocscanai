@@ -1,5 +1,5 @@
 
-import { useEffect, useState, memo, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { FileText, AlertTriangle, ChevronDown, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,40 +13,7 @@ interface DocumentGalleryProps {
   userId: string;
 }
 
-const DocumentSkeleton = memo(() => (
-  <Card className="p-6 hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
-    <div className="flex flex-col space-y-4">
-      <div className="flex items-start space-x-4">
-        <Skeleton className="h-14 w-14 rounded-xl" />
-        <div className="flex-1 min-w-0 space-y-2">
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-          <Skeleton className="h-6 w-20" />
-        </div>
-      </div>
-    </div>
-  </Card>
-));
-
-DocumentSkeleton.displayName = "DocumentSkeleton";
-
-const UsageSkeleton = memo(() => (
-  <Card className="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
-    <Skeleton className="h-6 w-48 mb-4" />
-    <div className="space-y-2">
-      <div className="flex justify-between">
-        <Skeleton className="h-4 w-32" />
-        <Skeleton className="h-4 w-16" />
-      </div>
-      <Skeleton className="h-3 w-full" />
-      <Skeleton className="h-3 w-4/5" />
-    </div>
-  </Card>
-));
-
-UsageSkeleton.displayName = "UsageSkeleton";
-
-export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
+export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
   const [documents, setDocuments] = useState<any[]>([]);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [expandedDocs, setExpandedDocs] = useState<string[]>([]);
@@ -54,7 +21,7 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
   const [refreshing, setRefreshing] = useState(false);
   const { toast } = useToast();
 
-  const fetchDocuments = useCallback(async () => {
+  const fetchDocuments = async () => {
     try {
       const { data: docs, error } = await supabase
         .from('document_analyses')
@@ -81,9 +48,9 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
       setIsLoading(false);
       setRefreshing(false);
     }
-  }, [userId, toast]);
+  };
 
-  const fetchProfile = useCallback(async () => {
+  const fetchProfile = async () => {
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
@@ -105,17 +72,18 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
     } catch (err) {
       console.error("Failed to fetch profile:", err);
     }
-  }, [userId, toast]);
+  };
 
-  const refreshData = useCallback(async () => {
+  const refreshData = async () => {
     setRefreshing(true);
     await Promise.all([fetchDocuments(), fetchProfile()]);
-  }, [fetchDocuments, fetchProfile]);
+  };
 
   useEffect(() => {
     fetchDocuments();
     fetchProfile();
 
+    // Set up real-time subscription with more specific filtering
     const channel = supabase
       .channel(`document_updates_${userId}`)
       .on(
@@ -128,6 +96,7 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
         },
         (payload) => {
           console.log("🔄 Real-time document update:", payload);
+          // Immediate refresh when status changes
           fetchDocuments();
         }
       )
@@ -135,6 +104,7 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
         console.log("📡 Subscription status:", status);
       });
 
+    // Auto-refresh every 5 seconds for pending documents
     const interval = setInterval(() => {
       const hasPendingDocs = documents.some(doc => doc.analysis_status === 'pending');
       if (hasPendingDocs) {
@@ -147,41 +117,64 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
       supabase.removeChannel(channel);
       clearInterval(interval);
     };
-  }, [userId, documents, fetchDocuments, fetchProfile]);
+  }, [userId, documents]);
 
-  const toggleSummary = useCallback((docId: string) => {
+  const toggleSummary = (docId: string) => {
     setExpandedDocs(prev => 
       prev.includes(docId) 
         ? prev.filter(id => id !== docId)
         : [...prev, docId]
     );
-  }, []);
+  };
 
-  const getStatusBadge = useCallback((status: string) => {
-    const statusConfig = {
-      completed: { emoji: "✅", label: "Completed", bg: "bg-green-100", text: "text-green-800" },
-      pending: { emoji: "⏳", label: "Processing...", bg: "bg-blue-100", text: "text-blue-800" },
-      failed: { emoji: "❌", label: "Failed", bg: "bg-red-100", text: "text-red-800" },
-    };
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || 
-                  { emoji: "", label: status, bg: "bg-gray-100", text: "text-gray-800" };
-    
-    return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text} border transition-all`}>
-        {config.emoji && <span className="mr-1">{config.emoji}</span>}
-        {config.label}
-      </span>
-    );
-  }, []);
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+          ✅ Completed
+        </span>;
+      case 'pending':
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+          Processing...
+        </span>;
+      case 'failed':
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+          ❌ Failed
+        </span>;
+      default:
+        return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+          {status}
+        </span>;
+    }
+  };
 
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <UsageSkeleton />
+        <Card className="p-4 sm:p-6">
+          <Skeleton className="h-6 w-48 mb-4" />
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+            <Skeleton className="h-2 w-full" />
+          </div>
+        </Card>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array(6).fill(0).map((_, i) => (
-            <DocumentSkeleton key={i} />
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-4">
+              <div className="flex items-start space-x-4">
+                <Skeleton className="h-10 w-10 rounded-lg" />
+                <div className="flex-1">
+                  <Skeleton className="h-5 w-3/4 mb-2" />
+                  <Skeleton className="h-4 w-1/3 mb-2" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+              </div>
+            </Card>
           ))}
         </div>
       </div>
@@ -191,13 +184,13 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold font-aeonik">Your Documents</h2>
+        <h2 className="text-xl font-semibold">Your Documents</h2>
         <Button 
           variant="outline" 
           size="sm" 
           onClick={refreshData}
           disabled={refreshing}
-          className="flex items-center gap-2 transition-all hover:scale-105"
+          className="flex items-center gap-2"
         >
           <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
           Refresh
@@ -205,8 +198,8 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
       </div>
 
       {userProfile && (
-        <Card className="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 animate-fade-in">
-          <h3 className="text-lg font-semibold mb-4 text-gray-800 font-aeonik">Document Usage</h3>
+        <Card className="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Document Usage</h3>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="font-medium">Documents Used</span>
@@ -229,7 +222,7 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {documents.map((doc) => (
           <InView key={doc.id}>
-            <Card className="p-6 hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white animate-fade-in">
+            <Card className="p-6 hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
               <div className="flex flex-col space-y-4">
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-blue-100 rounded-xl shrink-0">
@@ -300,11 +293,11 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
       </div>
 
       {documents.length === 0 && (
-        <Card className="p-8 text-center bg-gradient-to-br from-gray-50 to-blue-50 border border-gray-200 animate-fade-in">
+        <Card className="p-8 text-center bg-gradient-to-br from-gray-50 to-blue-50 border border-gray-200">
           <div className="p-4 bg-blue-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
             <FileText className="h-8 w-8 text-blue-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2 font-aeonik">No documents found</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No documents found</h3>
           <p className="text-sm text-gray-600">
             Upload your first document to get started with AI analysis
           </p>
@@ -312,6 +305,4 @@ export const DocumentGallery = memo(({ userId }: DocumentGalleryProps) => {
       )}
     </div>
   );
-});
-
-DocumentGallery.displayName = "DocumentGallery";
+};
