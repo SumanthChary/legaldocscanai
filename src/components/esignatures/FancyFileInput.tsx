@@ -21,14 +21,17 @@ export function FancyFileInput({ file, setFile, uploading }: FancyFileInputProps
       setFile(droppedFile);
     }
   }
+
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     setIsDragActive(true);
   }
+
   function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     setIsDragActive(false);
   }
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const selectedFile = e.target.files?.[0];
     if (selectedFile && selectedFile.type === "application/pdf") {
@@ -65,7 +68,7 @@ export function FancyFileInput({ file, setFile, uploading }: FancyFileInputProps
       />
       {!file ? (
         <div className="flex flex-col items-center gap-2 pointer-events-none select-none">
-          <Upload className="w-7 h-7 text-purple-600 mb-2 animate-fade-in" />
+          <Upload className="w-7 h-7 text-purple-600 mb-2 transition-transform duration-200 group-hover:scale-110" />
           <span className="text-purple-900 font-semibold">
             Drag PDF here or
             <span className="underline ml-1">Choose file</span>
@@ -76,13 +79,13 @@ export function FancyFileInput({ file, setFile, uploading }: FancyFileInputProps
         </div>
       ) : (
         <div className="flex w-full items-center gap-3 px-2 pointer-events-none">
-          <FileText className="w-6 h-6 text-blue-500 animate-fade-in shrink-0" />
-          <div className="flex-1 truncate text-base text-purple-900 font-medium animate-fade-in">{file.name}</div>
+          <FileText className="w-6 h-6 text-blue-500 shrink-0" />
+          <div className="flex-1 truncate text-base text-purple-900 font-medium">{file.name}</div>
           <Button
             variant="ghost"
             size="icon"
             type="button"
-            className="ml-2 !pointer-events-auto hover:bg-red-50 hover:text-red-500 transition-colors"
+            className="ml-2 !pointer-events-auto hover:bg-red-50 hover:text-red-500 transition-colors duration-200"
             onClick={e => {
               e.stopPropagation();
               setFile(null);
@@ -94,7 +97,7 @@ export function FancyFileInput({ file, setFile, uploading }: FancyFileInputProps
           </Button>
         </div>
       )}
-      <div className="absolute inset-0 pointer-events-none rounded-xl ring-2 ring-transparent group-hover:ring-purple-300 transition" />
+      <div className="absolute inset-0 pointer-events-none rounded-xl ring-2 ring-transparent group-hover:ring-purple-300 transition-all duration-200" />
     </div>
   );
 }

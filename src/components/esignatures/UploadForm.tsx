@@ -22,69 +22,80 @@ export function UploadForm({ user, fetchRequests }: Props) {
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !signerEmail) {
-      toast({ title: "Select a file and enter a signer email.", variant: "destructive" });
+      toast({ title: "Please select a file and enter a signer email.", variant: "destructive" });
       return;
     }
     if (!user) {
-      toast({ title: "Authentication error", variant: "destructive" });
+      toast({ title: "Please sign in to create signature requests.", variant: "destructive" });
       return;
     }
 
     setUploading(true);
 
-    // Upload PDF to Supabase Storage (bucket: 'esignatures')
-    const filename = `${user.id}/${Date.now()}_${file.name}`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from("esignatures")
-      .upload(filename, file);
+    try {
+      // Upload PDF to Supabase Storage (bucket: 'esignatures')
+      const filename = `${user.id}/${Date.now()}_${file.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("esignatures")
+        .upload(filename, file);
 
-    if (uploadError) {
-      toast({ title: "File upload failed", description: uploadError.message, variant: "destructive" });
-      setUploading(false);
-      return;
-    }
-    const document_path = uploadData?.path || filename;
+      if (uploadError) {
+        throw new Error(`File upload failed: ${uploadError.message}`);
+      }
+      
+      const document_path = uploadData?.path || filename;
 
-    // Insert signature_request
-    const { data: requestData, error: requestError } = await supabase
-      .from("signature_requests")
-      .insert({
-        user_id: user.id,
-        document_name: file.name,
-        document_path,
-        status: "pending"
-      })
-      .select()
-      .single();
+      // Insert signature_request
+      const { data: requestData, error: requestError } = await supabase
+        .from("signature_requests")
+        .insert({
+          user_id: user.id,
+          document_name: file.name,
+          document_path,
+          status: "pending"
+        })
+        .select()
+        .single();
 
-    if (requestError) {
-      toast({ title: "Failed to create request", description: requestError.message, variant: "destructive" });
-      setUploading(false);
-      return;
-    }
+      if (requestError) {
+        throw new Error(`Failed to create request: ${requestError.message}`);
+      }
 
-    // Insert a single signature_field for now
-    const { error: fieldError } = await supabase
-      .from("signature_fields")
-      .insert({
-        request_id: requestData.id,
-        assigned_signer_email: signerEmail,
-        field_type: "signature",
-        position: JSON.stringify({ page: 1, x: 100, y: 200, width: 200, height: 60 }),
-        required: true,
+      // Insert a single signature_field for now
+      const { error: fieldError } = await supabase
+        .from("signature_fields")
+        .insert({
+          request_id: requestData.id,
+          assigned_signer_email: signerEmail,
+          field_type: "signature",
+          position: JSON.stringify({ page: 1, x: 100, y: 200, width: 200, height: 60 }),
+          required: true,
+        });
+
+      if (fieldError) {
+        throw new Error(`Failed to add signer: ${fieldError.message}`);
+      }
+
+      toast({ 
+        title: "Success!", 
+        description: "Signature request created successfully" 
       });
-
-    if (fieldError) {
-      toast({ title: "Failed to add signer", description: fieldError.message, variant: "destructive" });
+      
+      // Reset form
+      setFile(null);
+      setSignerEmail("");
+      fetchRequests();
+      
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast({ 
+        title: "Error", 
+        description: error.message || "Failed to create signature request", 
+        variant: "destructive" 
+      });
+    } finally {
       setUploading(false);
-      return;
     }
-
-    toast({ title: "Signature request created!" });
-    setFile(null);
-    setSignerEmail("");
-    fetchRequests();
-    setUploading(false);
   };
 
   return (
@@ -106,22 +117,22 @@ export function UploadForm({ user, fetchRequests }: Props) {
             value={signerEmail}
             onChange={e => setSignerEmail(e.target.value)}
             disabled={uploading}
-            className="bg-purple-50 border-purple-200 text-purple-900 placeholder-purple-400"
+            className="bg-purple-50 border-purple-200 text-purple-900 placeholder-purple-400 transition-colors duration-200"
           />
         </div>
         <Button
           type="submit"
-          disabled={uploading}
-          className="w-full bg-gradient-to-tr from-purple-600 to-blue-400 hover:from-purple-700 hover:to-blue-500 text-white font-bold py-2 rounded-lg shadow-lg transition-all hover:scale-105 focus:ring-2 focus:ring-purple-300 focus:ring-offset-2"
+          disabled={uploading || !file || !signerEmail}
+          className="w-full bg-gradient-to-tr from-purple-600 to-blue-400 hover:from-purple-700 hover:to-blue-500 text-white font-bold py-2 rounded-lg shadow-lg transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-purple-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           {uploading ? (
             <span className="flex items-center justify-center gap-2">
-              <Loader2 className="animate-spin" />
+              <Loader2 className="animate-spin w-4 h-4" />
               Creating...
             </span>
           ) : (
             <>
-              <Pen className="mr-2" /> Create Signature Request
+              <Pen className="mr-2 w-4 h-4" /> Create Signature Request
             </>
           )}
         </Button>

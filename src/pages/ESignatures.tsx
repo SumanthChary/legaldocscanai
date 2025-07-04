@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ export default function ESignatures() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [requests, setRequests] = useState<SignatureRequest[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
 
   // Fetch current user's requests
@@ -29,19 +30,32 @@ export default function ESignatures() {
       supabase.auth.getUser().then(({ data }) => setUser(data.user || null))
     );
     fetchRequests();
-    // eslint-disable-next-line
   }, []);
 
   const fetchRequests = async () => {
     setLoading(true);
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { data, error } = await supabase
-      .from("signature_requests")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data, error } = await supabase
+        .from("signature_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (!error && data) setRequests(data);
-    setLoading(false);
+      if (!error && data) {
+        setRequests(data);
+      } else if (error) {
+        console.error("Error fetching requests:", error);
+        toast({
+          title: "Error fetching requests",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to fetch requests:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,7 +90,7 @@ export default function ESignatures() {
       </section>
 
       {/* Requests List */}
-      <SignatureRequestsList requests={requests} loading={loading} />
+      <SignatureRequestsList requests={requests} loading={loading} onRefresh={fetchRequests} />
     </div>
   );
 }
