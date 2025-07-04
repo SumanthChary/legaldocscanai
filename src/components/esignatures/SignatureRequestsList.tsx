@@ -1,9 +1,11 @@
 
-import { useState, useEffect } from "react";
-import { FileText, Check, Pen, Loader2, Plus } from "lucide-react";
+import { memo } from "react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { FileText, RefreshCw } from "lucide-react";
 import { SignatureRequestActions } from "./SignatureRequestActions";
+import { PDFViewer } from "./PDFViewer";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type SignatureRequest = {
   id: string;
@@ -13,140 +15,105 @@ type SignatureRequest = {
   created_at: string;
 };
 
-type SignatureField = {
-  id: string;
-  request_id: string;
-  assigned_signer_email: string;
-  field_type: string;
-  required: boolean;
-};
-
-type SignatureRequestsListProps = {
+type Props = {
   requests: SignatureRequest[];
   loading: boolean;
   onRefresh: () => void;
 };
 
-export function SignatureRequestsList({ requests, loading, onRefresh }: SignatureRequestsListProps) {
-  const [expandedRequest, setExpandedRequest] = useState<string | null>(null);
-  const [requestFields, setRequestFields] = useState<Record<string, SignatureField[]>>({});
-  const [fieldsLoading, setFieldsLoading] = useState<Record<string, boolean>>({});
+const RequestSkeleton = () => (
+  <Card className="p-6">
+    <div className="flex items-start space-x-4">
+      <Skeleton className="h-12 w-12 rounded-lg" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-6 w-20" />
+      </div>
+    </div>
+  </Card>
+);
 
-  const fetchRequestFields = async (requestId: string) => {
-    if (requestFields[requestId]) return; // Already loaded
-
-    setFieldsLoading(prev => ({ ...prev, [requestId]: true }));
+export const SignatureRequestsList = memo(({ requests, loading, onRefresh }: Props) => {
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Pending" },
+      completed: { bg: "bg-green-100", text: "text-green-800", label: "Completed" },
+      in_progress: { bg: "bg-blue-100", text: "text-blue-800", label: "In Progress" },
+    };
     
-    try {
-      const { data, error } = await supabase
-        .from("signature_fields")
-        .select("*")
-        .eq("request_id", requestId);
-
-      if (error) throw error;
-
-      setRequestFields(prev => ({ ...prev, [requestId]: data || [] }));
-    } catch (error) {
-      console.error("Error fetching signature fields:", error);
-    } finally {
-      setFieldsLoading(prev => ({ ...prev, [requestId]: false }));
-    }
-  };
-
-  const toggleExpanded = (requestId: string) => {
-    if (expandedRequest === requestId) {
-      setExpandedRequest(null);
-    } else {
-      setExpandedRequest(requestId);
-      fetchRequestFields(requestId);
-    }
+    const config = statusConfig[status as keyof typeof statusConfig] || 
+                  { bg: "bg-gray-100", text: "text-gray-800", label: status };
+    
+    return (
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text} border`}>
+        {config.label}
+      </span>
+    );
   };
 
   return (
     <section className="animate-fade-in">
-      <div className="flex items-center gap-2 mb-6 pl-1">
-        <FileText className="text-blue-500 w-5 h-5" />
-        <h3 className="text-lg md:text-xl font-semibold text-purple-800">
-          My Signature Requests
-        </h3>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-purple-900">Signature Requests</h2>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={onRefresh}
+          disabled={loading}
+          className="flex items-center gap-2 transition-all hover:scale-105"
+        >
+          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
-      
+
       {loading ? (
-        <div className="py-8 text-center flex justify-center rounded">
-          <Loader2 className="animate-spin text-purple-700" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array(3).fill(0).map((_, i) => (
+            <RequestSkeleton key={i} />
+          ))}
         </div>
+      ) : requests.length === 0 ? (
+        <Card className="p-8 text-center bg-gradient-to-br from-purple-50 to-blue-50">
+          <div className="p-4 bg-purple-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+            <FileText className="h-8 w-8 text-purple-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-purple-800 mb-2">No signature requests</h3>
+          <p className="text-purple-600">Create your first signature request above</p>
+        </Card>
       ) : (
-        <div className="space-y-4">
-          {requests.map(request => (
-            <div key={request.id} className="space-y-4">
-              <div
-                className={`bg-gradient-to-br from-purple-50 to-white border border-purple-100 p-5 rounded-xl flex flex-col gap-3 shadow hover:shadow-lg transition shadow-purple-100/30 cursor-pointer ${
-                  request.status === "completed" ? "ring-2 ring-green-200" : ""
-                }`}
-                onClick={() => toggleExpanded(request.id)}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <FileText className="text-purple-700 w-4 h-4" />
-                  <span className="font-semibold text-purple-900 truncate">{request.document_name}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {requests.map((request) => (
+            <Card key={request.id} className="p-6 hover:shadow-xl transition-all duration-300 border border-purple-100 bg-white/80 backdrop-blur-sm animate-fade-in">
+              <div className="flex items-start space-x-4 mb-4">
+                <div className="p-3 bg-purple-100 rounded-xl">
+                  <FileText className="h-6 w-6 text-purple-600" />
                 </div>
-                <div className="flex flex-row gap-4 items-end justify-between">
-                  <span className={`text-xs rounded-full px-3 py-1 font-bold capitalize transition 
-                    ${request.status === "pending" ? "bg-purple-100 text-purple-800"
-                      : request.status === "completed" ? "bg-green-100 text-green-800"
-                      : request.status === "in_progress" ? "bg-blue-100 text-blue-800"
-                      : "bg-gray-100 text-gray-500"}`}>
-                    {request.status}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    {requestFields[request.id] && (
-                      <span className="text-xs text-gray-500">
-                        {requestFields[request.id].length} signer{requestFields[request.id].length !== 1 ? 's' : ''}
-                      </span>
-                    )}
-                    {request.status === "completed" ? (
-                      <Check className="w-5 h-5 text-green-500 animate-pulse" />
-                    ) : (
-                      <Pen className="w-5 h-5 text-purple-400" />
-                    )}
-                    <Button size="sm" variant="ghost" className="text-xs">
-                      {expandedRequest === request.id ? "Hide Details" : "Show Details"}
-                    </Button>
-                  </div>
-                </div>
-                <div className="text-xs text-gray-400 mt-3">
-                  Created: {new Date(request.created_at).toLocaleString()}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-purple-900 truncate mb-1">
+                    {request.document_name}
+                  </h3>
+                  <p className="text-sm text-purple-600 mb-2">
+                    {new Date(request.created_at).toLocaleDateString()}
+                  </p>
+                  {getStatusBadge(request.status)}
                 </div>
               </div>
-
-              {expandedRequest === request.id && (
-                <div className="ml-4">
-                  {fieldsLoading[request.id] ? (
-                    <div className="flex justify-center py-4">
-                      <Loader2 className="animate-spin text-purple-700" />
-                    </div>
-                  ) : (
-                    <SignatureRequestActions
-                      request={request}
-                      fields={requestFields[request.id] || []}
-                      onUpdate={() => {
-                        fetchRequestFields(request.id);
-                        onRefresh();
-                      }}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
+              
+              <div className="space-y-4">
+                <PDFViewer 
+                  documentPath={request.document_path} 
+                  documentName={request.document_name} 
+                />
+                <SignatureRequestActions requestId={request.id} onRefresh={onRefresh} />
+              </div>
+            </Card>
           ))}
-          
-          {requests.length === 0 && (
-            <div className="col-span-full text-purple-400 text-center py-14 font-semibold text-lg rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 shadow">
-              No requests yet.<br />
-              <span className="text-base font-normal block mt-2 text-purple-300">Create your first e-signature request above!</span>
-            </div>
-          )}
         </div>
       )}
     </section>
   );
-}
+});
+
+SignatureRequestsList.displayName = "SignatureRequestsList";

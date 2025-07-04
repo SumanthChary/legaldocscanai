@@ -33,8 +33,8 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 10 * 60 * 1000, // 10 minutes
-      gcTime: 15 * 60 * 1000, // 15 minutes
+      staleTime: 15 * 60 * 1000, // 15 minutes
+      gcTime: 20 * 60 * 1000, // 20 minutes
     },
   },
 });
@@ -48,10 +48,18 @@ const paypalOptions = {
   "disable-funding": "credit,card" as const,
 };
 
-// Loading component
+// Fast loading component with skeleton
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+  <div className="min-h-screen flex items-center justify-center bg-white">
+    <div className="space-y-4 w-full max-w-md animate-fade-in">
+      <div className="flex justify-center">
+        <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto animate-pulse"></div>
+      </div>
+    </div>
   </div>
 );
 

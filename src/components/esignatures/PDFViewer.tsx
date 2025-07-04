@@ -1,8 +1,8 @@
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, memo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Download, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Download, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 type PDFViewerProps = {
@@ -10,7 +10,7 @@ type PDFViewerProps = {
   documentName: string;
 };
 
-export function PDFViewer({ documentPath, documentName }: PDFViewerProps) {
+export const PDFViewer = memo(({ documentPath, documentName }: PDFViewerProps) => {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
@@ -85,10 +85,10 @@ export function PDFViewer({ documentPath, documentName }: PDFViewerProps) {
           disabled={loading}
           variant="outline"
           size="sm"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 transition-all hover:scale-105"
         >
           {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
           ) : isViewing ? (
             <EyeOff className="w-4 h-4" />
           ) : (
@@ -101,10 +101,10 @@ export function PDFViewer({ documentPath, documentName }: PDFViewerProps) {
           disabled={downloadLoading}
           variant="outline"
           size="sm"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 transition-all hover:scale-105"
         >
           {downloadLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
           ) : (
             <Download className="w-4 h-4" />
           )}
@@ -113,7 +113,7 @@ export function PDFViewer({ documentPath, documentName }: PDFViewerProps) {
       </div>
       
       {isViewing && pdfUrl && (
-        <div className="border rounded-lg overflow-hidden bg-white shadow-lg">
+        <div className="border rounded-lg overflow-hidden bg-white shadow-lg animate-fade-in">
           <iframe
             src={`${pdfUrl}#toolbar=1&navpanes=0&scrollbar=1`}
             className="w-full h-96 border-0"
@@ -124,4 +124,6 @@ export function PDFViewer({ documentPath, documentName }: PDFViewerProps) {
       )}
     </div>
   );
-}
+});
+
+PDFViewer.displayName = "PDFViewer";
