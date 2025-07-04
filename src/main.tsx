@@ -6,12 +6,12 @@ import './index.css';
 
 // Performance monitoring
 if (import.meta.env.DEV) {
-  import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-    getCLS(console.log);
-    getFID(console.log);
-    getFCP(console.log);
-    getLCP(console.log);
-    getTTFB(console.log);
+  import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+    onCLS(console.log);
+    onFID(console.log);
+    onFCP(console.log);
+    onLCP(console.log);
+    onTTFB(console.log);
   });
 }
 
