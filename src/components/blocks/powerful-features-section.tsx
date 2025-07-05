@@ -7,38 +7,32 @@ export const PowerfulFeaturesSection = () => {
     {
       icon: Brain,
       title: "Advanced AI Analysis",
-      description: "Powered by state-of-the-art language models for accurate document understanding",
-      color: "from-purple-500 to-purple-600"
+      description: "Powered by state-of-the-art language models for accurate document understanding"
     },
     {
       icon: FileText,
       title: "Multi-Format Support",
-      description: "Process PDFs, Word documents, and other legal file formats seamlessly",
-      color: "from-blue-500 to-blue-600"
+      description: "Process PDFs, Word documents, and other legal file formats seamlessly"
     },
     {
       icon: Shield,
       title: "Enterprise Security",
-      description: "Bank-grade encryption and compliance with GDPR, HIPAA, and SOC 2 standards",
-      color: "from-green-500 to-green-600"
+      description: "Bank-grade encryption and compliance with GDPR, HIPAA, and SOC 2 standards"
     },
     {
       icon: Clock,
       title: "Lightning Fast",
-      description: "Get comprehensive summaries in minutes, not hours of manual review",
-      color: "from-orange-500 to-orange-600"
+      description: "Get comprehensive summaries in minutes, not hours of manual review"
     },
     {
       icon: Search,
       title: "Smart Insights",
-      description: "Identify key clauses, risks, and opportunities with intelligent highlighting",
-      color: "from-red-500 to-red-600"
+      description: "Identify key clauses, risks, and opportunities with intelligent highlighting"
     },
     {
       icon: Users,
       title: "Team Collaboration",
-      description: "Share analyses and collaborate with your team in real-time",
-      color: "from-indigo-500 to-indigo-600"
+      description: "Share analyses and collaborate with your team in real-time"
     }
   ];
 
@@ -72,8 +66,8 @@ export const PowerfulFeaturesSection = () => {
               }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <div className="group p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 hover:border-purple-200 hover:shadow-lg transition-all duration-300">
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} text-white mb-4 group-hover:scale-110 transition-transform duration-300`}>
+              <div className="group p-6 rounded-lg bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-300">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-gray-100 text-gray-700 mb-4 group-hover:bg-gray-200 transition-colors duration-300">
                   <feature.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
