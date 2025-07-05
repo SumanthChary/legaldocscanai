@@ -7,32 +7,44 @@ export const PowerfulFeaturesSection = () => {
     {
       icon: Brain,
       title: "Advanced AI Analysis",
-      description: "Powered by state-of-the-art language models for accurate document understanding"
+      description: "Powered by state-of-the-art language models for accurate document understanding",
+      color: "from-blue-500 to-indigo-600",
+      bgColor: "bg-blue-50"
     },
     {
       icon: FileText,
       title: "Multi-Format Support",
-      description: "Process PDFs, Word documents, and other legal file formats seamlessly"
+      description: "Process PDFs, Word documents, and other legal file formats seamlessly",
+      color: "from-emerald-500 to-teal-600",
+      bgColor: "bg-emerald-50"
     },
     {
       icon: Shield,
       title: "Enterprise Security",
-      description: "Bank-grade encryption and compliance with GDPR, HIPAA, and SOC 2 standards"
+      description: "Bank-grade encryption and compliance with GDPR, HIPAA, and SOC 2 standards",
+      color: "from-purple-500 to-violet-600",
+      bgColor: "bg-purple-50"
     },
     {
       icon: Clock,
       title: "Lightning Fast",
-      description: "Get comprehensive summaries in minutes, not hours of manual review"
+      description: "Get comprehensive summaries in minutes, not hours of manual review",
+      color: "from-orange-500 to-red-500",
+      bgColor: "bg-orange-50"
     },
     {
       icon: Search,
       title: "Smart Insights",
-      description: "Identify key clauses, risks, and opportunities with intelligent highlighting"
+      description: "Identify key clauses, risks, and opportunities with intelligent highlighting",
+      color: "from-cyan-500 to-blue-500",
+      bgColor: "bg-cyan-50"
     },
     {
       icon: Users,
       title: "Team Collaboration",
-      description: "Share analyses and collaborate with your team in real-time"
+      description: "Share analyses and collaborate with your team in real-time",
+      color: "from-rose-500 to-pink-600",
+      bgColor: "bg-rose-50"
     }
   ];
 
@@ -66,11 +78,11 @@ export const PowerfulFeaturesSection = () => {
               }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <div className="group p-6 rounded-lg bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-300">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-gray-100 text-gray-700 mb-4 group-hover:bg-gray-200 transition-colors duration-300">
-                  <feature.icon className="w-6 h-6" />
+              <div className="group p-8 rounded-2xl bg-white border border-gray-200 hover:border-gray-300 hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${feature.color} text-white mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                  <feature.icon className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
                   {feature.title}
                 </h3>
                 <p className="text-gray-600 leading-relaxed">

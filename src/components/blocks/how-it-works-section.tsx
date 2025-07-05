@@ -1,37 +1,41 @@
 
 import { InView } from "@/components/ui/in-view";
-import { Upload, Brain, Download, Check } from "lucide-react";
+import { Upload, Brain, FileCheck, Sparkles } from "lucide-react";
 
 export const HowItWorksSection = () => {
   const steps = [
     {
       icon: Upload,
-      title: "Upload Document",
-      description: "Simply drag and drop your legal document or browse to select it from your device.",
-      color: "from-blue-500 to-blue-600"
+      title: "Upload Your Document",
+      description: "Simply drag and drop or select your legal document. We support PDFs, Word docs, and more.",
+      color: "from-blue-500 to-indigo-600",
+      number: "01"
     },
     {
       icon: Brain,
-      title: "AI Analysis",
-      description: "Our advanced AI analyzes your document, extracting key insights and important clauses.",
-      color: "from-purple-500 to-purple-600"
+      title: "AI Processing",
+      description: "Our advanced AI analyzes your document, extracting key insights and understanding context.",
+      color: "from-purple-500 to-violet-600",
+      number: "02"
     },
     {
-      icon: Download,
-      title: "Get Summary",
-      description: "Receive a comprehensive summary with highlighted key points and risk assessments.",
-      color: "from-green-500 to-green-600"
+      icon: FileCheck,
+      title: "Intelligent Summary",
+      description: "Get a comprehensive summary with highlighted key points, risks, and important clauses.",
+      color: "from-emerald-500 to-teal-600",
+      number: "03"
     },
     {
-      icon: Check,
+      icon: Sparkles,
       title: "Take Action",
-      description: "Use the insights to make informed decisions and streamline your legal workflow.",
-      color: "from-orange-500 to-orange-600"
+      description: "Use the insights to make informed decisions and streamline your legal workflow efficiently.",
+      color: "from-orange-500 to-red-500",
+      number: "04"
     }
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-blue-50/30">
+    <section className="py-16 md:py-24 bg-gradient-to-br from-slate-50 to-blue-50/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <InView
           variants={{
@@ -50,32 +54,44 @@ export const HowItWorksSection = () => {
           </div>
         </InView>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, index) => (
-            <InView
-              key={index}
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                visible: { opacity: 1, y: 0 }
-              }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-            >
-              <div className="relative text-center group">
-                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${step.color} text-white mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <step.icon className="w-8 h-8" />
+        <div className="relative">
+          {/* Connection Line */}
+          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-200 via-purple-200 to-emerald-200 transform -translate-y-1/2"></div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+            {steps.map((step, index) => (
+              <InView
+                key={index}
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  visible: { opacity: 1, y: 0 }
+                }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+              >
+                <div className="relative text-center group">
+                  {/* Step Number */}
+                  <div className="absolute -top-4 -right-4 w-12 h-12 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center text-lg font-bold text-gray-400 group-hover:border-purple-300 group-hover:text-purple-600 transition-all duration-300">
+                    {step.number}
+                  </div>
+                  
+                  {/* Icon */}
+                  <div className={`relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-r ${step.color} text-white mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-2xl`}>
+                    <step.icon className="w-10 h-10" />
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 group-hover:shadow-xl group-hover:-translate-y-2 transition-all duration-300">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {step.description}
-                </p>
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-gray-300 to-transparent -translate-x-8"></div>
-                )}
-              </div>
-            </InView>
-          ))}
+              </InView>
+            ))}
+          </div>
         </div>
       </div>
     </section>
