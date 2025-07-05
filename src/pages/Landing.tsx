@@ -1,10 +1,10 @@
+
 import { PageLayout } from "@/components/layout";
 import { HeroSection } from "@/components/blocks/hero-section";
 import { TestimonialsSection } from "@/components/blocks/testimonials-with-marquee";
 import { AboutSection } from "@/components/blocks/about-section";
 import { TrustSection } from "@/components/blocks/trust-section";
 import { FAQSection } from "@/components/blocks/faq-section";
-import { CTASection } from "@/components/blocks/cta-section";
 import { PricingSection } from "@/components/blocks/pricing-section";
 import { HowItWorksSection } from "@/components/blocks/how-it-works-section";
 import { AboutAuthorSection } from "@/components/blocks/about-author-section";
@@ -126,15 +126,12 @@ const Landing = () => {
             testimonials={testimonials}
           />
         </div>
+        <AboutAuthorSection />
         <div className="bg-gradient-to-br from-slate-50 to-gray-100/50">
           <AboutSection />
         </div>
-        <AboutAuthorSection />
         <div className="bg-white/90 backdrop-blur-sm">
           <FAQSection faqs={faqs} />
-        </div>
-        <div className="bg-gradient-to-br from-blue-50/50 to-purple-50/30">
-          <CTASection />
         </div>
       </PageLayout>
     </div>

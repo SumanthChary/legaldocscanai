@@ -58,7 +58,7 @@ export const HowItWorksSection = () => {
             >
               <div className="text-center group">
                 <div className="relative mb-6">
-                  <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
                     <step.icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full border-2 border-blue-100 flex items-center justify-center text-sm font-bold text-blue-600">

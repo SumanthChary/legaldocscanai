@@ -58,7 +58,7 @@ export const AboutAuthorSection = () => {
           <div className="bg-gray-50 rounded-2xl p-8 md:p-12">
             <div className="grid lg:grid-cols-3 gap-8 items-center">
               <div className="text-center lg:text-left">
-                <div className="w-24 h-24 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl font-bold mx-auto lg:mx-0 mb-4">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold mx-auto lg:mx-0 mb-4">
                   SC
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-1">

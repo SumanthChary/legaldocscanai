@@ -48,7 +48,7 @@ export const PowerfulFeaturesSection = () => {
         >
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Powerful Features
+              Powerful Features for Legal Professionals
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Everything you need to transform your legal document workflow
@@ -67,8 +67,8 @@ export const PowerfulFeaturesSection = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <div className="group p-6 rounded-lg border border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all duration-300 bg-white">
-                <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
-                  <feature.icon className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                  <feature.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {feature.title}
