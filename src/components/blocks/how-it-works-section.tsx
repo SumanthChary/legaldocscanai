@@ -27,7 +27,7 @@ export const HowItWorksSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-12 md:py-20 lg:py-24 bg-gray-50/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         <InView
           variants={{
@@ -36,17 +36,17 @@ export const HowItWorksSection = () => {
           }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12 md:mb-16 lg:mb-20">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-editorial font-normal text-gray-900 mb-4 md:mb-6">
               How It Works
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto font-editorial font-light">
               Transform your legal document workflow in four simple steps
             </p>
           </div>
         </InView>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
           {steps.map((step, index) => (
             <InView
               key={index}
@@ -54,26 +54,28 @@ export const HowItWorksSection = () => {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0 }
               }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
+              transition={{ duration: 0.5, delay: index * 0.15 }}
             >
-              <div className="text-center group">
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
-                    <step.icon className="w-8 h-8 text-white" />
+              <div className="text-center group relative">
+                {/* Connection line for desktop */}
+                {index < steps.length - 1 && (
+                  <div className="hidden lg:block absolute top-12 left-1/2 w-full h-px bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 transform translate-x-1/2 z-0"></div>
+                )}
+                
+                <div className="relative z-10 mb-6 md:mb-8">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center mx-auto mb-4 md:mb-6 group-hover:scale-105 transition-all duration-300 shadow-lg">
+                    <step.icon className="w-7 h-7 md:w-8 md:h-8 text-white" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full border-2 border-blue-100 flex items-center justify-center text-sm font-bold text-blue-600">
-                    {index + 1}
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-blue-100 -translate-y-1/2"></div>
-                  )}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  {step.description}
-                </p>
+                
+                <div className="space-y-2 md:space-y-3">
+                  <h3 className="text-lg md:text-xl font-editorial font-normal text-gray-900">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-gray-600 font-editorial font-light leading-relaxed max-w-xs mx-auto">
+                    {step.description}
+                  </p>
+                </div>
               </div>
             </InView>
           ))}

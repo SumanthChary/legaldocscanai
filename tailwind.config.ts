@@ -18,7 +18,8 @@ export default {
         container: "1280px",
       },
       fontFamily: {
-        sans: ["Aeonik", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["Editorial New", "Aeonik", "system-ui", "-apple-system", "sans-serif"],
+        editorial: ["Editorial New", "system-ui", "-apple-system", "sans-serif"],
         aeonik: ["Aeonik", "system-ui", "-apple-system", "sans-serif"],
       },
       colors: {

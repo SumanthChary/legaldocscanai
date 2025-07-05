@@ -3,6 +3,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Load Editorial New fonts */
+@font-face {
+  font-family: 'Editorial New';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/Editorial%20New%20Font/PPEditorialNew-Ultralight.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Editorial New';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/Editorial%20New%20Font/PPEditorialNew-UltralightItalic.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Editorial New';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/Editorial%20New%20Font/PPEditorialNew-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Editorial New';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/Editorial%20New%20Font/PPEditorialNew-Italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* Load Aeonik Grotesque fonts from Supabase storage */
 @font-face {
   font-family: 'Aeonik';
@@ -115,12 +148,12 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Aeonik", system-ui, -apple-system, sans-serif;
+    font-family: "Editorial New", "Aeonik", system-ui, -apple-system, sans-serif;
   }
   
-  /* Apply Aeonik font to all elements */
+  /* Apply Editorial New font to all elements */
   h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, label {
-    font-family: "Aeonik", system-ui, -apple-system, sans-serif;
+    font-family: "Editorial New", "Aeonik", system-ui, -apple-system, sans-serif;
   }
 
   /* Purple text selection styling like Perplexity */
