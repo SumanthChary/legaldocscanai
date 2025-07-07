@@ -1,16 +1,20 @@
 
 import { Button } from "@/components/ui/button";
-import { AlertTriangle } from "lucide-react";
-import { SummaryHeader } from "./components/SummaryHeader";
+import { AlertTriangle, FileText, RefreshCw, Download, Copy } from "lucide-react";
 import { SummaryDisplay } from "./components/SummaryDisplay";
+import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 
 interface SummaryContentProps {
   analysisStatus?: string;
   summary?: string | null;
   originalName?: string;
+  analysisId?: string;
+  refreshAnalysis?: () => void;
+  refreshing?: boolean;
 }
 
-export const SummaryContent = ({ analysisStatus, summary, originalName }: SummaryContentProps) => {
+export const SummaryContent = ({ analysisStatus, summary, originalName, analysisId, refreshAnalysis, refreshing }: SummaryContentProps) => {
   console.log("SummaryContent props:", { 
     analysisStatus, 
     summaryLength: summary?.length, 
@@ -55,20 +59,95 @@ export const SummaryContent = ({ analysisStatus, summary, originalName }: Summar
                                summary.includes("emergency analysis mode") ||
                                summary.includes("Processing challenges");
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(summary);
+    toast({
+      title: "Copied to clipboard",
+      description: "Summary has been copied to your clipboard.",
+    });
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([summary], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${originalName}_analysis.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-0 p-6">
-        <SummaryHeader 
-          analysisStatus={analysisStatus}
-          summary={summary}
-          originalName={originalName}
-          isEmergencyProcessing={isEmergencyProcessing}
-        />
-        
-        <SummaryDisplay 
-          summary={summary}
-          isEmergencyProcessing={isEmergencyProcessing}
-        />
+      {/* Combined Header Section */}
+      <div className="bg-white border border-gray-900 rounded-lg">
+        {/* File Info Header */}
+        <div className="border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <FileText className="h-5 w-5 text-gray-600" />
+              <div>
+                <h1 className="text-lg font-editorial-new font-light text-gray-900">{originalName}</h1>
+                <p className="text-sm text-gray-500 font-editorial-new">AI Legal Analysis</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={refreshAnalysis}
+                disabled={refreshing}
+                className="border-gray-900 font-editorial-new"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                className="border-gray-900 font-editorial-new"
+              >
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownload}
+                className="border-gray-900 font-editorial-new"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Emergency Processing Warning */}
+        {isEmergencyProcessing && (
+          <div className="border-b border-gray-200 px-6 py-4 bg-yellow-50">
+            <div className="flex items-start space-x-3">
+              <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+              <div className="text-sm">
+                <p className="font-editorial-new font-light text-yellow-800 mb-1">Emergency Processing Mode</p>
+                <p className="text-yellow-700 font-editorial-new">
+                  Document processed in emergency mode. For enhanced analysis, try re-uploading.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Analysis Content */}
+        <div className="p-6">
+          <SummaryDisplay 
+            summary={summary}
+            isEmergencyProcessing={isEmergencyProcessing}
+          />
+        </div>
       </div>
     </div>
   );

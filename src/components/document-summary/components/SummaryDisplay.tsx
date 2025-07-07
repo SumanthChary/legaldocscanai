@@ -1,7 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { TextSelectionAI } from "../TextSelectionAI";
 
 interface SummaryDisplayProps {
   summary: string;
@@ -10,46 +11,77 @@ interface SummaryDisplayProps {
 
 export const SummaryDisplay = ({ summary, isEmergencyProcessing }: SummaryDisplayProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [selectedText, setSelectedText] = useState("");
+  const [selectionPosition, setSelectionPosition] = useState({ x: 0, y: 0 });
+  const [showAI, setShowAI] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const formattedSummary = formatSummary(summary);
 
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim().length > 0) {
+      const selectedContent = selection.toString().trim();
+      if (selectedContent.length > 10) { // Only show for meaningful selections
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        
+        setSelectedText(selectedContent);
+        setSelectionPosition({
+          x: rect.left + rect.width / 2,
+          y: rect.top
+        });
+        setShowAI(true);
+      }
+    } else {
+      setShowAI(false);
+    }
+  };
+
   return (
     <>
-      <div className={`relative ${isExpanded ? '' : 'max-h-60 sm:max-h-80 overflow-hidden'}`}>
-        <div className={`p-3 sm:p-6 rounded-lg sm:rounded-xl border text-gray-700 whitespace-pre-line text-sm sm:text-base ${
-          isEmergencyProcessing 
-            ? 'border-yellow-200 bg-yellow-50' 
-            : 'border-green-100 bg-gradient-to-br from-green-50/50 to-blue-50/50'
-        }`}>
+      <div className={`relative ${isExpanded ? '' : 'max-h-80 overflow-hidden'}`}>
+        <div 
+          ref={contentRef}
+          className="p-6 border border-gray-200 rounded-lg text-gray-800 whitespace-pre-line text-base font-editorial-new leading-relaxed select-text"
+          onMouseUp={handleTextSelection}
+          style={{ userSelect: 'text' }}
+        >
           {formattedSummary}
           
           {!isExpanded && summary.length > 500 && (
-            <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-20 bg-gradient-to-t from-white to-transparent rounded-b-lg sm:rounded-b-xl"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent rounded-b-lg"></div>
           )}
         </div>
       </div>
       
       {summary.length > 500 && (
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="mt-3 sm:mt-4 w-full flex items-center justify-center hover:bg-blue-50 text-xs sm:text-sm"
+          className="mt-4 w-full flex items-center justify-center border-gray-900 font-editorial-new"
         >
           {isExpanded ? (
             <>
-              <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Show Less</span>
-              <span className="sm:hidden">Less</span>
+              <ChevronUp className="h-4 w-4 mr-2" />
+              Show Less
             </>
           ) : (
             <>
-              <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Show Full Analysis</span>
-              <span className="sm:hidden">Show Full</span>
+              <ChevronDown className="h-4 w-4 mr-2" />
+              Show Full Analysis
             </>
           )}
         </Button>
+      )}
+
+      {showAI && selectedText && (
+        <TextSelectionAI
+          selectedText={selectedText}
+          position={selectionPosition}
+          onClose={() => setShowAI(false)}
+        />
       )}
     </>
   );
