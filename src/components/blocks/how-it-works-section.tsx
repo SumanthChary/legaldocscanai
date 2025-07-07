@@ -1,6 +1,6 @@
 
 import { InView } from "@/components/ui/in-view";
-import { Upload, Brain, FileCheck, Sparkles } from "lucide-react";
+import { Upload, Cpu, FileText, CheckCircle } from "lucide-react";
 
 export const HowItWorksSection = () => {
   const steps = [
@@ -10,25 +10,25 @@ export const HowItWorksSection = () => {
       description: "Drag and drop your legal document or select from your device"
     },
     {
-      icon: Brain,
+      icon: Cpu,
       title: "AI Processing",
       description: "Advanced AI analyzes and extracts key insights from your document"
     },
     {
-      icon: FileCheck,
+      icon: FileText,
       title: "Get Summary",
       description: "Receive comprehensive analysis with highlighted key points"
     },
     {
-      icon: Sparkles,
+      icon: CheckCircle,
       title: "Take Action",
       description: "Use insights to make informed decisions quickly"
     }
   ];
 
   return (
-    <section className="py-12 md:py-20 lg:py-24 bg-gray-50/50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-50/80 via-white to-blue-50/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <InView
           variants={{
             hidden: { opacity: 0, y: 30 },
@@ -36,17 +36,17 @@ export const HowItWorksSection = () => {
           }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-12 md:mb-16 lg:mb-20">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-editorial font-normal text-gray-900 mb-4 md:mb-6">
+          <div className="text-center mb-16 md:mb-20 lg:mb-24">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">
               How It Works
             </h2>
-            <p className="text-base md:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto font-editorial font-light">
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-editorial font-light leading-relaxed">
               Transform your legal document workflow in four simple steps
             </p>
           </div>
         </InView>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           {steps.map((step, index) => (
             <InView
               key={index}
@@ -54,25 +54,20 @@ export const HowItWorksSection = () => {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0 }
               }}
-              transition={{ duration: 0.5, delay: index * 0.15 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <div className="text-center group relative">
-                {/* Connection line for desktop */}
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-12 left-1/2 w-full h-px bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 transform translate-x-1/2 z-0"></div>
-                )}
-                
-                <div className="relative z-10 mb-6 md:mb-8">
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex items-center justify-center mx-auto mb-4 md:mb-6 group-hover:scale-105 transition-all duration-300 shadow-lg">
-                    <step.icon className="w-7 h-7 md:w-8 md:h-8 text-white" />
+              <div className="text-center group">
+                <div className="relative mb-8">
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center mx-auto group-hover:shadow-xl transition-all duration-300">
+                    <step.icon className="w-8 h-8 md:w-10 md:h-10 text-blue-600" strokeWidth={1.5} />
                   </div>
                 </div>
                 
-                <div className="space-y-2 md:space-y-3">
-                  <h3 className="text-lg md:text-xl font-editorial font-normal text-gray-900">
+                <div className="space-y-3 md:space-y-4">
+                  <h3 className="text-xl md:text-2xl font-editorial font-light text-gray-900 tracking-tight">
                     {step.title}
                   </h3>
-                  <p className="text-sm md:text-base text-gray-600 font-editorial font-light leading-relaxed max-w-xs mx-auto">
+                  <p className="text-base md:text-lg text-gray-600 font-editorial font-light leading-relaxed max-w-sm mx-auto">
                     {step.description}
                   </p>
                 </div>

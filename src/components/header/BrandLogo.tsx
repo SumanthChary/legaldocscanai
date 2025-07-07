@@ -9,13 +9,13 @@ export const BrandLogo = () => {
         <div className="relative">
           <img 
             src="/lovable-uploads/033ae172-090d-4798-8206-fd0753c225bb.png" 
-            alt="LegalBriefAI" 
+            alt="DocBriefly AI" 
             className="h-6 w-6 sm:h-8 sm:w-8 object-contain rounded-lg"
           />
         </div>
       </div>
-      <span className="text-lg sm:text-xl font-bold font-aeonik bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-        LegalBriefAI
+      <span className="text-lg sm:text-xl font-normal font-editorial bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+        DocBriefly AI
       </span>
     </Link>
   );

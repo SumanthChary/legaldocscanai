@@ -29,8 +29,8 @@ export const AboutAuthorSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+    <section className="py-20 md:py-28 lg:py-32 bg-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         <InView
           variants={{
             hidden: { opacity: 0, y: 30 },
@@ -38,12 +38,12 @@ export const AboutAuthorSection = () => {
           }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-16 md:mb-20">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">
               Meet the Creator
             </h2>
-            <p className="text-lg text-gray-600">
-              The developer behind LegalBriefAI
+            <p className="text-lg md:text-xl text-gray-600 font-editorial font-light">
+              The developer behind DocBriefly AI
             </p>
           </div>
         </InView>
@@ -55,48 +55,48 @@ export const AboutAuthorSection = () => {
           }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="bg-gray-50 rounded-2xl p-8 md:p-12">
-            <div className="grid lg:grid-cols-3 gap-8 items-center">
+          <div className="bg-gradient-to-br from-gray-50/50 to-white rounded-3xl p-8 md:p-12 lg:p-16 border border-gray-100 shadow-xl">
+            <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-center">
               <div className="text-center lg:text-left">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold mx-auto lg:mx-0 mb-4">
+                <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl md:text-3xl font-editorial font-light mx-auto lg:mx-0 mb-6 shadow-xl">
                   SC
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
+                <h3 className="text-2xl md:text-3xl font-editorial font-light text-gray-900 mb-2 tracking-tight">
                   Sumanth Chary
                 </h3>
-                <p className="text-blue-600 font-medium mb-4">
+                <p className="text-lg text-blue-600 font-editorial font-light mb-6">
                   Full-Stack Developer
                 </p>
                 
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-3 gap-6 mb-8">
                   {stats.map((stat, index) => (
                     <div key={index} className="text-center">
-                      <div className="text-lg font-bold text-gray-900">{stat.value}</div>
-                      <div className="text-xs text-gray-600">{stat.label}</div>
+                      <div className="text-xl md:text-2xl font-editorial font-light text-gray-900">{stat.value}</div>
+                      <div className="text-sm text-gray-600 font-editorial font-light">{stat.label}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="lg:col-span-2">
-                <p className="text-gray-700 leading-relaxed mb-6">
+                <p className="text-gray-700 text-lg md:text-xl font-editorial font-light leading-relaxed mb-8">
                   Passionate about leveraging AI technology to solve real-world problems in the legal industry. 
-                  With expertise in modern web development and artificial intelligence, I created LegalBriefAI to help 
+                  With expertise in modern web development and artificial intelligence, I created DocBriefly AI to help 
                   legal professionals streamline their document analysis workflow.
                 </p>
                 
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-4">
                   {socialLinks.map((link, index) => (
                     <Button
                       key={index}
                       variant="outline"
-                      size="sm"
-                      className="border-gray-200 hover:border-blue-200 hover:bg-blue-50"
+                      size="lg"
+                      className="border-gray-200 hover:border-blue-200 hover:bg-blue-50 font-editorial font-light"
                       onClick={() => window.open(link.url, '_blank')}
                     >
-                      <link.icon className="w-4 h-4 mr-2" />
+                      <link.icon className="w-5 h-5 mr-3" strokeWidth={1.5} />
                       {link.label}
-                      <ExternalLink className="w-3 h-3 ml-1" />
+                      <ExternalLink className="w-4 h-4 ml-2" strokeWidth={1.5} />
                     </Button>
                   ))}
                 </div>
