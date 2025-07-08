@@ -1,7 +1,7 @@
 
 import { InView } from "@/components/ui/in-view";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Github, Twitter, Linkedin, Peerlist } from "lucide-react";
+import { ExternalLink, Github, Twitter, Linkedin } from "lucide-react";
 
 export const AboutAuthorSection = () => {
   const stats = [
@@ -20,11 +20,6 @@ export const AboutAuthorSection = () => {
       icon: Linkedin,
       label: "LinkedIn",
       url: "https://www.linkedin.com/in/sumanthchary/"
-    },
-    {
-      icon: Peerlist,
-      label: "Peerlist",
-      url: "https://peerlist.io/sumanthdev"
     },
     {
       icon: Github,
