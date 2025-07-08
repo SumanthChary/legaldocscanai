@@ -18,8 +18,8 @@ export const AboutAuthorSection = () => {
     },
     {
       icon: Linkedin,
-      label: "Peerlist",
-      url: "https://peerlist.io/sumanthdev"
+      label: "LinkedIn",
+      url: "https://www.linkedin.com/in/sumanthchary/"
     },
     {
       icon: Github,
