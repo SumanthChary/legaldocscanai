@@ -175,5 +175,5 @@ ${preview}${text.length > 1000 ? '...' : ''}
 
 ---
 
-✅ **Document Received** | LegalBriefAI Emergency Processing | ${timestamp}`;
+✅ **Document Received** | LegalDeep AI Emergency Processing | ${timestamp}`;
 }

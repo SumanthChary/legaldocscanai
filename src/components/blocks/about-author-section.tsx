@@ -44,7 +44,7 @@ export const AboutAuthorSection = () => {
               Meet the Creator
             </h2>
             <p className="text-lg md:text-xl text-gray-600 font-editorial font-light">
-              The developer behind DocBriefly AI
+              The developer behind LegalDeep AI
             </p>
           </div>
         </InView>
@@ -84,7 +84,7 @@ export const AboutAuthorSection = () => {
               <div className="lg:col-span-2">
                 <p className="text-gray-700 text-lg md:text-xl font-editorial font-light leading-relaxed mb-8">
                   Passionate about leveraging AI technology to solve real-world problems in the legal industry. 
-                  With expertise in modern web development and artificial intelligence, I created DocBriefly AI to help 
+                  With expertise in modern web development and artificial intelligence, I created LegalDeep AI to help 
                   legal professionals streamline their document analysis workflow.
                 </p>
                 

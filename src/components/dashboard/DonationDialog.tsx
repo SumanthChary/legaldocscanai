@@ -16,7 +16,7 @@ export const DonationDialog = ({ open, onOpenChange }: DonationDialogProps) => {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <Heart className="h-6 w-6 text-red-500 animate-pulse" />
-            Support LegalBriefAI
+            Support LegalDeep AI
           </DialogTitle>
           <Separator className="my-4" />
           <DialogDescription className="text-base space-y-4">
@@ -43,7 +43,7 @@ export const DonationDialog = ({ open, onOpenChange }: DonationDialogProps) => {
           <Button
             variant="default"
             onClick={() => {
-              window.open("https://www.figma.com/proto/eWAJORd1BV6OLT8V8a7CeE/LegalBriefAI?node-id=1-2&p=f&t=lxhZSOMTKwa7ZmrQ-1&scaling=scale-down-width&content-scaling=fixed&page-id=0%3A1", "_blank");
+              window.open("https://www.figma.com/proto/eWAJORd1BV6OLT8V8a7CeE/LegalDeepAI?node-id=1-2&p=f&t=lxhZSOMTKwa7ZmrQ-1&scaling=scale-down-width&content-scaling=fixed&page-id=0%3A1", "_blank");
               onOpenChange(false);
             }}
             className="gap-2"

@@ -18,7 +18,7 @@ export const DocumentInfo = ({ originalName, createdAt }: DocumentInfoProps) => 
         <div className="relative">
           <img 
             src="/lovable-uploads/44ba520f-766e-487a-bd01-1b6f8e71d7ee.png" 
-            alt="LegalBriefAI" 
+            alt="LegalDeep AI" 
             className="h-8 w-8 sm:h-12 sm:w-12 object-contain rounded-lg"
           />
           <Sparkles className="h-2 w-2 sm:h-3 sm:w-3 text-yellow-300 absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 animate-pulse" />

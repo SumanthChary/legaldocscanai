@@ -126,7 +126,7 @@ export function generateSuccessfulSummary(content: string, fileName: string, ana
   }
   
   // Add professional footer
-  const footer = `\n\n---\n\n✅ **Analysis Complete** | Powered by LegalBriefAI Advanced Analytics | ${timestamp}`;
+  const footer = `\n\n---\n\n✅ **Analysis Complete** | Powered by LegalDeep AI Advanced Analytics | ${timestamp}`;
   
   return header + formattedContent + footer;
 }

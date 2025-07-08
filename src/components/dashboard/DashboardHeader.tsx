@@ -27,7 +27,7 @@ export const DashboardHeader = ({ userName, onTabChange }: DashboardHeaderProps)
     {
       title: "Documentation",
       icon: HelpCircle,
-      action: () => window.open("https://docs.legalbriefai.com", "_blank"),
+      action: () => window.open("https://docs.legaldeepai.com", "_blank"),
       color: "text-purple-500"
     }
   ];

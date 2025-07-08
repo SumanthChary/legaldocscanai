@@ -50,7 +50,7 @@ export const TrustSection = () => {
               Trusted by Legal Professionals
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              LegalBriefAI meets the highest standards of security, compliance, and reliability. 
+              LegalDeep AI meets the highest standards of security, compliance, and reliability. 
               Your sensitive legal data is protected with enterprise-grade security measures.
             </p>
           </div>

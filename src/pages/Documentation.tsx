@@ -34,7 +34,7 @@ const Documentation = () => {
     <PageLayout>
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-2 text-center">LegalBriefAI Documentation</h1>
+          <h1 className="text-3xl font-bold mb-2 text-center">LegalDeep AI Documentation</h1>
           <p className="text-muted-foreground text-center mb-12">
             Everything you need to know about using our platform
           </p>
@@ -42,7 +42,7 @@ const Documentation = () => {
           <div className="grid gap-6 md:grid-cols-2 mb-12">
             <DocumentationSection
               title="Getting Started"
-              description="Learn the basics of LegalBriefAI and how to use its core features."
+              description="Learn the basics of LegalDeep AI and how to use its core features."
               icon={Play}
             >
               <Button variant="link" className="p-0" onClick={() => navigate("/documentation/getting-started")}>

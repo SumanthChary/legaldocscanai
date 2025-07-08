@@ -13,7 +13,7 @@ export const FeaturedSection = () => {
     {
       name: "Product Hunt",
       logo: "/lovable-uploads/b48c1cae-95cb-433b-9b42-3d6407f04e3c.png",
-      url: "https://www.producthunt.com/posts/postproai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-legalbriefai",
+      url: "https://www.producthunt.com/posts/postproai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-legaldeepai",
       description: "Featured Product"
     },
     {
