@@ -1,45 +1,39 @@
-
 import { InView } from "@/components/ui/in-view";
 import { Upload, Cpu, FileText, CheckCircle } from "lucide-react";
-
 export const HowItWorksSection = () => {
-  const steps = [
-    {
-      icon: Upload,
-      title: "Upload Document",
-      description: "Drag and drop your legal document or select from your device"
-    },
-    {
-      icon: Cpu,
-      title: "AI Processing",
-      description: "Advanced AI analyzes and extracts key insights from your document"
-    },
-    {
-      icon: FileText,
-      title: "Get Summary",
-      description: "Receive comprehensive analysis with highlighted key points"
-    },
-    {
-      icon: CheckCircle,
-      title: "Take Action",
-      description: "Use insights to make informed decisions quickly"
-    }
-  ];
-
-  return (
-    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-50/80 via-white to-blue-50/30">
+  const steps = [{
+    icon: Upload,
+    title: "Upload Document",
+    description: "Drag and drop your legal document or select from your device"
+  }, {
+    icon: Cpu,
+    title: "AI Processing",
+    description: "Advanced AI analyzes and extracts key insights from your document"
+  }, {
+    icon: FileText,
+    title: "Get Summary",
+    description: "Receive comprehensive analysis with highlighted key points"
+  }, {
+    icon: CheckCircle,
+    title: "Take Action",
+    description: "Use insights to make informed decisions quickly"
+  }];
+  return <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-50/80 via-white to-blue-50/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <InView
-          variants={{
-            hidden: { opacity: 0, y: 30 },
-            visible: { opacity: 1, y: 0 }
-          }}
-          transition={{ duration: 0.6 }}
-        >
+        <InView variants={{
+        hidden: {
+          opacity: 0,
+          y: 30
+        },
+        visible: {
+          opacity: 1,
+          y: 0
+        }
+      }} transition={{
+        duration: 0.6
+      }}>
           <div className="text-center mb-16 md:mb-20 lg:mb-24">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">
-              How It Works
-            </h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">How It Works ?</h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-editorial font-light leading-relaxed">
               Transform your legal document workflow in four simple steps
             </p>
@@ -47,15 +41,19 @@ export const HowItWorksSection = () => {
         </InView>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-          {steps.map((step, index) => (
-            <InView
-              key={index}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0 }
-              }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-            >
+          {steps.map((step, index) => <InView key={index} variants={{
+          hidden: {
+            opacity: 0,
+            y: 20
+          },
+          visible: {
+            opacity: 1,
+            y: 0
+          }
+        }} transition={{
+          duration: 0.6,
+          delay: index * 0.1
+        }}>
               <div className="text-center group">
                 <div className="relative mb-8">
                   <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center mx-auto group-hover:shadow-xl transition-all duration-300">
@@ -72,10 +70,8 @@ export const HowItWorksSection = () => {
                   </p>
                 </div>
               </div>
-            </InView>
-          ))}
+            </InView>)}
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
