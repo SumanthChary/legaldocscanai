@@ -4,6 +4,7 @@
 @tailwind utilities;
 
 /* Load Aeonik Grotesque fonts from Supabase storage */
+/* Load Aeonik Grotesque fonts from Supabase storage - optimized, no duplicates */
 @font-face {
   font-family: 'Aeonik';
   src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-Light.otf') format('opentype');
@@ -39,55 +40,6 @@
   font-style: normal;
   font-display: swap;
 }
-@font-face {
-  font-family: 'Aeonik';
-  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-BoldItalic.otf') format('opentype');
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* Load Aeonik Grotesque fonts from Supabase storage */
-@font-face {
-  font-family: 'Aeonik';
-  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-Light.otf') format('opentype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Aeonik';
-  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-LightItalic.otf') format('opentype');
-  font-weight: 300;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Aeonik';
-  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Aeonik';
-  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-RegularItalic.otf') format('opentype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Aeonik';
-  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-Bold.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 @font-face {
   font-family: 'Aeonik';
   src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/AeonikTRIAL-BoldItalic.otf') format('opentype');
