@@ -22,16 +22,16 @@ const Landing = () => {
 
   const faqs = [
     {
-      question: "What is DocBriefly AI?",
-      answer: "DocBriefly AI is an advanced AI-powered platform designed to help legal professionals analyze, summarize, and extract key information from legal documents efficiently. Our tool uses cutting-edge technology to save time and improve accuracy in legal document processing."
+      question: "What is LegalDeep AI?",
+      answer: "LegalDeep AI is an advanced AI-powered platform designed to help legal professionals analyze, summarize, and extract key information from legal documents efficiently. Our tool uses cutting-edge technology to save time and improve accuracy in legal document processing."
     },
     {
-      question: "How secure is my data on DocBriefly AI?",
+      question: "How secure is my data on LegalDeep AI?",
       answer: "We prioritize your data security with end-to-end encryption and compliance with major privacy regulations including GDPR, HIPAA, and SOC 2. All documents are stored securely with bank-grade encryption, and we maintain strict access controls to ensure your sensitive legal information remains confidential."
     },
     {
-      question: "What types of documents can DocBriefly AI process?",
-      answer: "DocBriefly AI can process a wide range of legal documents including contracts, agreements, legal briefs, court documents, regulatory filings, and complex PDFs with images and charts. Our advanced AI can handle multiple formats and extract insights from both text and visual content."
+      question: "What types of documents can LegalDeep AI process?",
+      answer: "LegalDeep AI can process a wide range of legal documents including contracts, agreements, legal briefs, court documents, regulatory filings, and complex PDFs with images and charts. Our advanced AI can handle multiple formats and extract insights from both text and visual content."
     },
     {
       question: "Do you offer a free trial?",
@@ -42,8 +42,8 @@ const Landing = () => {
       answer: "Our AI system maintains a high accuracy rate in document analysis and summary generation, powered by advanced models including Llama 4 and specialized legal training. However, we recommend using it as a supportive tool alongside professional legal judgment, not as a replacement for legal expertise."
     },
     {
-      question: "Can I integrate DocBriefly AI with my existing workflow?",
-      answer: "Absolutely! DocBriefly AI is designed to seamlessly integrate with your existing legal workflow. Our platform offers API access, bulk processing capabilities, and can be customized to fit your firm's specific needs and requirements."
+      question: "Can I integrate LegalDeep AI with my existing workflow?",
+      answer: "Absolutely! LegalDeep AI is designed to seamlessly integrate with your existing legal workflow. Our platform offers API access, bulk processing capabilities, and can be customized to fit your firm's specific needs and requirements."
     }
   ];
 
@@ -54,7 +54,7 @@ const Landing = () => {
         handle: "@sarahlegal",
         avatar: "/lovable-uploads/d4f6190e-3f8c-497d-b549-b42ff6e42fc9.png"
       },
-      text: "DocBriefly AI has revolutionized how we handle legal documents. The AI-powered analysis saves us countless hours of manual review.",
+      text: "LegalDeep AI has revolutionized how we handle legal documents. The AI-powered analysis saves us countless hours of manual review.",
       href: "https://twitter.com/sarahlegal"
     },
     {
@@ -122,7 +122,7 @@ const Landing = () => {
         <div className="bg-white/90 backdrop-blur-sm">
           <TestimonialsSection
             title="Trusted by Legal Professionals Worldwide"
-            description="Join thousands of legal professionals who are already transforming their document workflow with DocBriefly AI"
+            description="Join thousands of legal professionals who are already transforming their document workflow with LegalDeep AI"
             testimonials={testimonials}
           />
         </div>

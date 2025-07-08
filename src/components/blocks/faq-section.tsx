@@ -37,7 +37,7 @@ export const FAQSection = ({ faqs }: FAQSectionProps) => {
               Frequently Asked Questions
             </h2>
             <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-              Get answers to common questions about DocBriefly AI and how it can transform your legal document workflow
+              Get answers to common questions about LegalDeep AI and how it can transform your legal document workflow
             </p>
           </div>
         </InView>
