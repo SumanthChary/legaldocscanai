@@ -29,42 +29,12 @@ export const MainContent = ({ activeTab, setActiveTab, userId }: MainContentProp
       </TabsContent>
 
       <TabsContent value="insights">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              title: "Processing Speed",
-              value: "2.5x",
-              icon: Zap,
-              description: "Faster than manual review"
-            },
-            {
-              title: "Quality Score",
-              value: "92%",
-              icon: Target,
-              description: "Document quality rating"
-            },
-            {
-              title: "Success Rate",
-              value: "98%",
-              icon: TrendingUp,
-              description: "Analysis completion rate"
-            },
-            {
-              title: "Time Saved",
-              value: "75%",
-              icon: Clock,
-              description: "Compared to manual process"
-            }
-          ].map((insight, index) => (
-            <Card key={index} className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <insight.icon className="h-8 w-8 text-accent" />
-                <span className="text-2xl font-bold">{insight.value}</span>
-              </div>
-              <h3 className="text-sm font-medium text-gray-600 mb-2">{insight.title}</h3>
-              <p className="text-xs text-gray-500">{insight.description}</p>
-            </Card>
-          ))}
+        {/* Enhanced Insights Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Your Insights</h2>
+          {/* Dynamically loaded insights for the user */}
+          {/* @ts-expect-error: userId is passed from Dashboard */}
+          <InsightsSection userId={userId} />
         </div>
       </TabsContent>
     </Tabs>
