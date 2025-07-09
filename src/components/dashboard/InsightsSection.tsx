@@ -1,15 +1,23 @@
+
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { TrendingUp, FileText, Clock, BarChart } from "lucide-react";
 
+type InsightsData = {
+  totalDocs: number;
+  analyzedDocs: number;
+  avgTime: number;
+  accuracy: number;
+};
+
 export const InsightsSection = ({ userId }: { userId: string }) => {
-  const [insights, setInsights] = useState<any>(null);
+  const [insights, setInsights] = useState<InsightsData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`/api/insights?userId=${userId}`)
       .then(res => res.json())
-      .then(data => {
+      .then((data: InsightsData) => {
         setInsights(data);
         setLoading(false);
       });
