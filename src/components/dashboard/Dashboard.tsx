@@ -15,7 +15,8 @@ import { DashboardSkeleton } from "./DashboardSkeleton";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
-  const [session, setSession] = useState<any>(null);
+  type SessionType = { user?: { id: string } } | null;
+  const [session, setSession] = useState<SessionType>(null);
   const [showUpgradeBanner, setShowUpgradeBanner] = useState(true);
   const [activeTab, setActiveTab] = useState("documents");
   const [isLoading, setIsLoading] = useState(true);
@@ -37,11 +38,27 @@ export const Dashboard = () => {
 
   const { analysisStats, isLoading: statsLoading } = useAnalyticsStats(session?.user?.id);
 
+
   if (!session && isLoading) {
     return <DashboardSkeleton />;
   }
 
-  if (!session) return null;
+  if (!session && !isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+        <div className="bg-white/90 p-8 rounded-xl shadow text-center">
+          <h2 className="text-2xl font-bold mb-2">Please log in to access your dashboard</h2>
+          <p className="mb-4 text-gray-600">You must be signed in to view your documents and analytics.</p>
+          <button
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            onClick={() => navigate('/auth')}
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <PageLayout>
