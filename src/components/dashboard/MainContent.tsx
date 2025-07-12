@@ -2,8 +2,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocumentAnalysis } from "@/components/DocumentAnalysis";
 import { DocumentGallery } from "@/components/DocumentGallery";
+
 import { Card } from "@/components/ui/card";
 import { Clock, Target, TrendingUp, Zap } from "lucide-react";
+import { InsightsSection } from "@/components/dashboard/InsightsSection";
 
 type MainContentProps = {
   activeTab: string;
@@ -33,7 +35,6 @@ export const MainContent = ({ activeTab, setActiveTab, userId }: MainContentProp
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">Your Insights</h2>
           {/* Dynamically loaded insights for the user */}
-          {/* @ts-expect-error: userId is passed from Dashboard */}
           <InsightsSection userId={userId} />
         </div>
       </TabsContent>
