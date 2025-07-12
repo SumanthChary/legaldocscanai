@@ -10,20 +10,56 @@ type InsightsData = {
   accuracy: number;
 };
 
+
 export const InsightsSection = ({ userId }: { userId: string }) => {
   const [insights, setInsights] = useState<InsightsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // Demo fallback data
+  const demoData: InsightsData = {
+    totalDocs: 12,
+    analyzedDocs: 10,
+    avgTime: 2.3,
+    accuracy: 97,
+  };
 
   useEffect(() => {
+    let didTimeout = false;
+    const timeout = setTimeout(() => {
+      didTimeout = true;
+      setLoading(false);
+      setInsights(demoData);
+      setError("Showing demo data due to slow or unavailable API.");
+    }, 2000); // 2 seconds fallback
+
     fetch(`/api/insights?userId=${userId}`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("API error");
+        return res.json();
+      })
       .then((data: InsightsData) => {
-        setInsights(data);
-        setLoading(false);
+        if (!didTimeout) {
+          clearTimeout(timeout);
+          setInsights(data);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (!didTimeout) {
+          clearTimeout(timeout);
+          setLoading(false);
+          setInsights(demoData);
+          setError("Failed to load insights. Showing demo data.");
+        }
+        // Optionally log error
+        console.error("InsightsSection error:", err);
       });
+
+    return () => clearTimeout(timeout);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
-  if (loading) return <Card className="p-6">Loading insights...</Card>;
+  if (loading) return <Card className="p-6 animate-pulse">Loading insights...</Card>;
   if (!insights) return <Card className="p-6">No insights available.</Card>;
 
   return (
