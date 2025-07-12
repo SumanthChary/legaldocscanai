@@ -1,5 +1,6 @@
 
 export { Dashboard } from "./Dashboard";
+export { InsightsSection } from "./InsightsSection";
 export { AnalyticsCards } from "./AnalyticsCards";
 export { MainContent } from "./MainContent";
 export { PerformanceMetrics } from "./PerformanceMetrics";
