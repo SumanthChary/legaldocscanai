@@ -3,6 +3,10 @@ import { ArrowRight, Check, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DemoVideo } from "./demo-video";
 import { InView } from "@/components/ui/in-view";
+import { LiveDocumentCounter } from "@/components/legal/LiveDocumentCounter";
+import { SecurityBadges } from "@/components/legal/SecurityBadges";
+import { RiskFreeGuarantee } from "@/components/legal/RiskFreeGuarantee";
+import { ComplianceStatement } from "@/components/legal/ComplianceStatement";
 interface HeroProps {
   benefits: string[];
 }
@@ -43,16 +47,16 @@ export const HeroSection = ({
             ease: [0.25, 0.1, 0.25, 1]
           }}>
               <div className="space-y-3 md:space-y-4 lg:space-y-6">
-                {/* Premium badge */}
-                <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-2 rounded-full bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200/50 backdrop-blur-sm">
-                  <Users className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
-                  <span className="text-xs md:text-sm font-medium text-green-700">2,500+ Active Users</span>
-                </div>
+                {/* Live Document Counter */}
+                <LiveDocumentCounter />
                 
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-transparent leading-tight">
-                  Transform Legal
+                  Generate Contract Reviews in 
                   <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Documents with AI
+                    5 Minutes - Save 2+ Hours
+                  </span>
+                  <span className="block text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-gray-600 mt-2">
+                    Per Document
                   </span>
                 </h1>
               </div>
@@ -71,7 +75,10 @@ export const HeroSection = ({
             duration: 0.8,
             delay: 0.4
           }}>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">Stop spending hours reading contracts, depositions, and case files. Our AI reads, analyzes, and summarizes any legal document faster than you think. Also Ask Law AI Deep Insights!</p>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">
+                Professional-grade AI that analyzes contracts, depositions, and legal briefs with attorney-level accuracy. 
+                Trusted by law firms worldwide for confidential document review and legal research.
+              </p>
             </InView>
             
             <InView variants={{
@@ -89,13 +96,16 @@ export const HeroSection = ({
           }}>
               <div className="flex flex-col sm:flex-row gap-2 md:gap-3 lg:gap-4">
                 <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 border-0 w-full sm:w-auto" onClick={() => navigate("/dashboard")}>
-                  Get Started Free
+                  Start Free Trial
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5 md:ml-2 md:h-4 md:w-4" />
                 </Button>
                 <Button size="lg" variant="outline" className="border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 w-full sm:w-auto" onClick={() => navigate("/documentation")}>
-                  Watch Demo
+                  Book Legal Demo
                 </Button>
               </div>
+              
+              {/* Security Badges */}
+              <SecurityBadges />
             </InView>
             
             <InView variants={{
@@ -118,6 +128,12 @@ export const HeroSection = ({
                       <span className="text-xs md:text-sm lg:text-base text-gray-700 font-medium">{benefit}</span>
                     </div>)}
                 </div>
+                
+                {/* Risk-Free Guarantee */}
+                <RiskFreeGuarantee />
+                
+                {/* Compliance Statement */}
+                <ComplianceStatement />
               </div>
             </InView>
           </div>
