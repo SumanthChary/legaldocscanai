@@ -18,31 +18,37 @@ export const DesktopMenu = ({ session, profile, handleSignOut }: DesktopMenuProp
       <Button
         variant="ghost"
         onClick={() => navigate("/features")}
-        className="text-gray-600 hover:text-primary hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
+        className="text-neutral-600 hover:text-legal-navy transition-all duration-200"
       >
         Features
       </Button>
       <Button
         variant="ghost"
         onClick={() => navigate("/pricing")}
-        className="text-gray-600 hover:text-primary hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
+        className="text-neutral-600 hover:text-legal-navy transition-all duration-200"
       >
         Pricing
       </Button>
       <Button
         variant="ghost"
-        onClick={() => navigate("/blog")}
-        className="text-gray-600 hover:text-primary hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200 flex items-center gap-2"
+        onClick={() => navigate("/security")}
+        className="text-neutral-600 hover:text-legal-navy transition-all duration-200"
       >
-        <Book className="h-4 w-4" />
-        Blog
+        Security
+      </Button>
+      <Button
+        variant="ghost"
+        onClick={() => navigate("/contact")}
+        className="text-neutral-600 hover:text-legal-navy transition-all duration-200"
+      >
+        Contact
       </Button>
       {session ? (
         <>
           <Button
             variant="ghost"
             onClick={() => navigate("/dashboard")}
-            className="text-gray-600 hover:text-primary hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
+            className="text-neutral-600 hover:text-legal-navy transition-all duration-200"
           >
             Dashboard
           </Button>
@@ -50,11 +56,11 @@ export const DesktopMenu = ({ session, profile, handleSignOut }: DesktopMenuProp
         </>
       ) : (
         <Button 
-          variant="default" 
+          variant="outline" 
           onClick={() => navigate("/auth")}
-          className="ml-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+          className="ml-4 border-legal-gold text-legal-gold hover:bg-legal-gold hover:text-legal-navy transition-all duration-300"
         >
-          Sign In
+          Start Free Trial
         </Button>
       )}
     </nav>

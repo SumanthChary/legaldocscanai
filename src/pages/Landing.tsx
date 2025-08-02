@@ -1,15 +1,12 @@
 
 import { PageLayout } from "@/components/layout";
-import { HeroSection } from "@/components/blocks/hero-section";
-import { TestimonialsSection } from "@/components/blocks/testimonials-with-marquee";
-import { AboutSection } from "@/components/blocks/about-section";
-import { TrustSection } from "@/components/blocks/trust-section";
+import { ProfessionalHeroSection } from "@/components/blocks/professional-hero-section";
+import { CustomerLogosSection } from "@/components/blocks/customer-logos-section";
+import { ProfessionalFeaturesSection } from "@/components/blocks/professional-features-section";
+import { ProfessionalPricingSection } from "@/components/blocks/professional-pricing-section";
+import { FinalCtaSection } from "@/components/blocks/final-cta-section";
+import { ProfessionalFooter } from "@/components/blocks/professional-footer";
 import { FAQSection } from "@/components/blocks/faq-section";
-import { PricingSection } from "@/components/blocks/pricing-section";
-import { HowItWorksSection } from "@/components/blocks/how-it-works-section";
-import { AboutAuthorSection } from "@/components/blocks/about-author-section";
-import { FeaturedSection } from "@/components/blocks/featured-section";
-import { PowerfulFeaturesSection } from "@/components/blocks/powerful-features-section";
 import { useEffect } from "react";
 
 const Landing = () => {
@@ -109,31 +106,18 @@ const Landing = () => {
   }, []);
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+    <div className="bg-neutral-50">
       <PageLayout>
-        <HeroSection benefits={benefits} />
-        <FeaturedSection />
-        <HowItWorksSection />
-        <PowerfulFeaturesSection />
-        <TrustSection />
-        <div className="bg-gradient-to-br from-gray-50 to-blue-50/50">
-          <PricingSection />
-        </div>
-        <div className="bg-white/90 backdrop-blur-sm">
-          <TestimonialsSection
-            title="Trusted by Legal Professionals Worldwide"
-            description="Join thousands of legal professionals who are already transforming their document workflow with LegalDeep AI"
-            testimonials={testimonials}
-          />
-        </div>
-        <AboutAuthorSection />
-        <div className="bg-gradient-to-br from-slate-50 to-gray-100/50">
-          <AboutSection />
-        </div>
-        <div className="bg-white/90 backdrop-blur-sm">
+        <ProfessionalHeroSection />
+        <CustomerLogosSection />
+        <ProfessionalFeaturesSection />
+        <ProfessionalPricingSection />
+        <FinalCtaSection />
+        <div className="bg-neutral-50">
           <FAQSection faqs={faqs} />
         </div>
       </PageLayout>
+      <ProfessionalFooter />
     </div>
   );
 };

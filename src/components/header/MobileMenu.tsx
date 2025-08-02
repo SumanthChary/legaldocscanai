@@ -59,13 +59,22 @@ export const MobileMenu = ({
             <Button
               variant="ghost"
               onClick={() => {
-                navigate("/blog");
+                navigate("/security");
                 setIsOpen(false);
               }}
               className="justify-start"
             >
-              <Book className="mr-2 h-4 w-4" />
-              Blog
+              Security
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                navigate("/contact");
+                setIsOpen(false);
+              }}
+              className="justify-start"
+            >
+              Contact
             </Button>
             {session ? (
               <>
