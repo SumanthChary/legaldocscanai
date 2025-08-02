@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandLogo, DesktopMenu, MobileMenu, useAuthSession } from "./header";
-import { TrustSignalsBar } from "./header/TrustSignalsBar";
 import { Button } from "./ui/button";
 
 export function Header() {
@@ -27,29 +26,26 @@ export function Header() {
   };
 
   return (
-    <>
-      <TrustSignalsBar />
-      <header className="border-b bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <BrandLogo />
-            
-            <MobileMenu 
-              session={session} 
-              profile={profile} 
-              isOpen={isOpen} 
-              setIsOpen={setIsOpen} 
-              handleSignOut={handleSignOut} 
-            />
-            
-            <DesktopMenu 
-              session={session} 
-              profile={profile} 
-              handleSignOut={handleSignOut} 
-            />
-          </div>
+    <header className="border-b bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <BrandLogo />
+          
+          <MobileMenu 
+            session={session} 
+            profile={profile} 
+            isOpen={isOpen} 
+            setIsOpen={setIsOpen} 
+            handleSignOut={handleSignOut} 
+          />
+          
+          <DesktopMenu 
+            session={session} 
+            profile={profile} 
+            handleSignOut={handleSignOut} 
+          />
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   );
 }
