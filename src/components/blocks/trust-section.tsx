@@ -1,38 +1,38 @@
 
 import { InView } from "@/components/ui/in-view";
-import { Shield, Award, Users, Globe, CheckCircle, Lock, FileText, Scale, Building } from "lucide-react";
+import { Shield, Award, Users, Globe, CheckCircle } from "lucide-react";
 
 export const TrustSection = () => {
   const trustItems = [
     {
       icon: Shield,
-      title: "SOC 2 Type II Certified",
-      description: "Highest security standards for legal document handling"
+      title: "SOC 2 Compliant",
+      description: "Certified for security, availability, and confidentiality"
     },
     {
-      icon: Scale,
-      title: "ABA Technology Guidelines",
-      description: "Compliant with American Bar Association technology standards"
+      icon: Award,
+      title: "ISO 27001 Certified",
+      description: "International standard for information security management"
     },
     {
-      icon: Lock,
-      title: "Attorney Work Product",
-      description: "Privileged communications and zero data retention"
+      icon: Users,
+      title: "10,000+ Users",
+      description: "Trusted by legal professionals worldwide"
     },
     {
-      icon: Building,
-      title: "1,200+ Law Firms",
-      description: "Trusted by leading legal practices nationwide"
+      icon: Globe,
+      title: "99.9% Uptime",
+      description: "Reliable service with enterprise-grade infrastructure"
     }
   ];
 
   const certifications = [
+    "GDPR Compliant",
+    "HIPAA Ready",
     "SOC 2 Type II",
-    "GDPR Compliant", 
-    "ABA Guidelines",
-    "Attorney Privilege",
-    "Zero Retention",
-    "Bank-Grade Security"
+    "ISO 27001",
+    "PCI DSS",
+    "CCPA Compliant"
   ];
 
   return (
@@ -47,11 +47,11 @@ export const TrustSection = () => {
         >
           <div className="text-center mb-16">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-6">
-              Enterprise-Grade Security for Legal Professionals
+              Trusted by Legal Professionals
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              DocBriefly AI meets the highest standards of legal security, compliance, and confidentiality. 
-              Your sensitive legal documents are protected with attorney work product privilege and zero data retention.
+              LegalDeep AI meets the highest standards of security, compliance, and reliability. 
+              Your sensitive legal data is protected with enterprise-grade security measures.
             </p>
           </div>
         </InView>
@@ -86,10 +86,10 @@ export const TrustSection = () => {
         >
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Legal Industry Compliance</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Security & Compliance</h3>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Built specifically for legal professionals with attorney work product privilege, 
-                confidentiality protections, and compliance with legal industry standards.
+                We maintain the highest standards of data protection and regulatory compliance 
+                to ensure your legal documents are always secure.
               </p>
             </div>
             
