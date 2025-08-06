@@ -14,34 +14,28 @@ export const DesktopMenu = ({ session, profile, handleSignOut }: DesktopMenuProp
   const navigate = useNavigate();
 
   return (
-    <nav className="hidden md:flex items-center space-x-4">
+    <nav className="hidden md:flex items-center space-x-2">
       <Button
         variant="ghost"
         onClick={() => navigate("/features")}
-        className="text-navy-600 hover:text-navy-900 transition-colors font-medium text-sm"
+        className="text-gray-600 hover:text-primary hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
       >
         Features
       </Button>
       <Button
         variant="ghost"
         onClick={() => navigate("/pricing")}
-        className="text-navy-600 hover:text-navy-900 transition-colors font-medium text-sm"
+        className="text-gray-600 hover:text-primary hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
       >
         Pricing
       </Button>
       <Button
         variant="ghost"
-        onClick={() => navigate("/security")}
-        className="text-navy-600 hover:text-navy-900 transition-colors font-medium text-sm"
+        onClick={() => navigate("/blog")}
+        className="text-gray-600 hover:text-primary hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200 flex items-center gap-2"
       >
-        Security
-      </Button>
-      <Button
-        variant="ghost"
-        onClick={() => navigate("/contact")}
-        className="text-navy-600 hover:text-navy-900 transition-colors font-medium text-sm"
-      >
-        Contact
+        <Book className="h-4 w-4" />
+        Blog
       </Button>
       {session ? (
         <>
@@ -56,10 +50,11 @@ export const DesktopMenu = ({ session, profile, handleSignOut }: DesktopMenuProp
         </>
       ) : (
         <Button 
+          variant="default" 
           onClick={() => navigate("/auth")}
-          className="ml-4 bg-gold-500 hover:bg-gold-600 text-navy-900 font-semibold px-6"
+          className="ml-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          Start Free Trial
+          Sign In
         </Button>
       )}
     </nav>

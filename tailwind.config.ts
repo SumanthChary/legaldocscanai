@@ -8,12 +8,8 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "1rem",
+      padding: "2rem",
       screens: {
-        sm: "640px",
-        md: "768px", 
-        lg: "1024px",
-        xl: "1280px",
         "2xl": "1400px",
       },
     },
@@ -22,9 +18,9 @@ export default {
         container: "1280px",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
-        inter: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["Editorial New", "Aeonik", "system-ui", "-apple-system", "sans-serif"],
         editorial: ["Editorial New", "system-ui", "-apple-system", "sans-serif"],
+        aeonik: ["Aeonik", "system-ui", "-apple-system", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -32,50 +28,25 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        // Professional Legal Color Palette
-        navy: {
-          50: "hsl(210, 40%, 98%)",
-          100: "hsl(210, 40%, 96%)",
-          200: "hsl(214, 32%, 91%)",
-          300: "hsl(213, 27%, 84%)",
-          400: "hsl(215, 20%, 65%)",
-          500: "hsl(215, 16%, 47%)",
-          600: "hsl(215, 19%, 35%)",
-          700: "hsl(215, 25%, 27%)",
-          800: "hsl(217, 33%, 17%)",
-          900: "hsl(222, 47%, 11%)",
-        },
-        gold: {
-          50: "hsl(48, 100%, 96%)",
-          100: "hsl(48, 96%, 89%)",
-          200: "hsl(48, 97%, 77%)",
-          300: "hsl(46, 97%, 65%)",
-          400: "hsl(43, 96%, 56%)",
-          500: "hsl(38, 92%, 50%)",
-          600: "hsl(32, 95%, 44%)",
-          700: "hsl(26, 90%, 37%)",
-          800: "hsl(23, 83%, 31%)",
-          900: "hsl(22, 78%, 26%)",
-        },
         primary: {
-          DEFAULT: "hsl(222, 47%, 11%)",
-          foreground: "hsl(0, 0%, 100%)",
+          DEFAULT: "#2D3748",
+          foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "hsl(0, 0%, 100%)",
-          foreground: "hsl(222, 47%, 11%)",
+          DEFAULT: "#4A5568",
+          foreground: "#FFFFFF",
         },
         accent: {
-          DEFAULT: "hsl(38, 92%, 50%)",
-          foreground: "hsl(222, 47%, 11%)",
+          DEFAULT: "#63B3ED",
+          foreground: "#FFFFFF",
         },
         success: {
-          DEFAULT: "hsl(142, 76%, 36%)",
-          foreground: "hsl(0, 0%, 100%)",
+          DEFAULT: "#48BB78",
+          foreground: "#FFFFFF",
         },
         warning: {
-          DEFAULT: "hsl(38, 92%, 50%)",
-          foreground: "hsl(222, 47%, 11%)",
+          DEFAULT: "#ED8936",
+          foreground: "#FFFFFF",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
