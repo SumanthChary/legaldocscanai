@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandLogo, DesktopMenu, MobileMenu, useAuthSession } from "./header";
 import { Button } from "./ui/button";
+import { TrustBar } from "./blocks/trust-bar";
 
 export function Header() {
   const navigate = useNavigate();
@@ -26,26 +27,29 @@ export function Header() {
   };
 
   return (
-    <header className="border-b bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <BrandLogo />
-          
-          <MobileMenu 
-            session={session} 
-            profile={profile} 
-            isOpen={isOpen} 
-            setIsOpen={setIsOpen} 
-            handleSignOut={handleSignOut} 
-          />
-          
-          <DesktopMenu 
-            session={session} 
-            profile={profile} 
-            handleSignOut={handleSignOut} 
-          />
+    <>
+      <TrustBar />
+      <header className="border-b bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-4 py-3 md:py-4">
+          <div className="flex items-center justify-between">
+            <BrandLogo />
+            
+            <MobileMenu 
+              session={session} 
+              profile={profile} 
+              isOpen={isOpen} 
+              setIsOpen={setIsOpen} 
+              handleSignOut={handleSignOut} 
+            />
+            
+            <DesktopMenu 
+              session={session} 
+              profile={profile} 
+              handleSignOut={handleSignOut} 
+            />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }

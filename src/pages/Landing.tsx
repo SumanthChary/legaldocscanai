@@ -1,49 +1,47 @@
 
 import { PageLayout } from "@/components/layout";
-import { HeroSection } from "@/components/blocks/hero-section";
-import { TestimonialsSection } from "@/components/blocks/testimonials-with-marquee";
-import { AboutSection } from "@/components/blocks/about-section";
-import { TrustSection } from "@/components/blocks/trust-section";
+import { ProfessionalHero } from "@/components/blocks/professional-hero";
+import { LawFirmLogos } from "@/components/blocks/law-firm-logos";
+import { TransparentPricing } from "@/components/blocks/transparent-pricing";
+import { IntegrationsShowcase } from "@/components/blocks/integrations-showcase";
+import { FounderCredibility } from "@/components/blocks/founder-credibility";
+import { FinalCtaSection } from "@/components/blocks/final-cta-section";
 import { FAQSection } from "@/components/blocks/faq-section";
-import { PricingSection } from "@/components/blocks/pricing-section";
-import { HowItWorksSection } from "@/components/blocks/how-it-works-section";
-import { AboutAuthorSection } from "@/components/blocks/about-author-section";
-import { FeaturedSection } from "@/components/blocks/featured-section";
-import { PowerfulFeaturesSection } from "@/components/blocks/powerful-features-section";
 import { useEffect } from "react";
 
 const Landing = () => {
-  const benefits = [
-    "Reduce review time by 75%",
-    "Improve analysis accuracy", 
-    "Ensure compliance across jurisdictions",
-    "Streamline team collaboration"
-  ];
-
   const faqs = [
     {
-      question: "What is LegalDeep AI?",
-      answer: "LegalDeep AI is an advanced AI-powered platform designed to help legal professionals analyze, summarize, and extract key information from legal documents efficiently. Our tool uses cutting-edge technology to save time and improve accuracy in legal document processing."
+      question: "How much time will LegalDeep AI save me per contract?",
+      answer: "On average, our users save 2.3 hours per contract review. What typically takes 3-4 hours for a senior associate can be completed in 45 minutes with LegalDeep AI's assistance, including AI analysis, risk assessment, and citation verification."
     },
     {
-      question: "How secure is my data on LegalDeep AI?",
-      answer: "We prioritize your data security with end-to-end encryption and compliance with major privacy regulations including GDPR, HIPAA, and SOC 2. All documents are stored securely with bank-grade encryption, and we maintain strict access controls to ensure your sensitive legal information remains confidential."
+      question: "Is my client data secure with LegalDeep AI?", 
+      answer: "Absolutely. We maintain SOC 2 Type II certification, HIPAA compliance, and follow ABA technology guidelines. Most importantly, we have a zero data retention policy - your documents are processed and immediately deleted, never stored on our servers."
     },
     {
-      question: "What types of documents can LegalDeep AI process?",
-      answer: "LegalDeep AI can process a wide range of legal documents including contracts, agreements, legal briefs, court documents, regulatory filings, and complex PDFs with images and charts. Our advanced AI can handle multiple formats and extract insights from both text and visual content."
+      question: "Do I need to change my existing workflow?",
+      answer: "No. LegalDeep AI integrates seamlessly with Clio, LexisNexis, Westlaw, and other tools you already use. Upload documents directly from your DMS, get AI analysis, and results flow back into your existing systems. Setup takes under 5 minutes."
     },
     {
-      question: "Do you offer a free trial?",
-      answer: "Yes, we offer a free tier that allows you to analyze up to 3 documents to experience our platform's capabilities. You can upgrade to our professional or enterprise plans for additional features and higher document limits."
+      question: "What's included in the 14-day free trial?",
+      answer: "Full access to all features with no credit card required. Analyze unlimited contracts, test all integrations, and experience the full platform. If you don't save at least 2 hours on your first contract, we'll refund your money plus send a $50 gift card."
     },
     {
-      question: "How accurate is the AI analysis?",
-      answer: "Our AI system maintains a high accuracy rate in document analysis and summary generation, powered by advanced models including Llama 4 and specialized legal training. However, we recommend using it as a supportive tool alongside professional legal judgment, not as a replacement for legal expertise."
+      question: "How accurate is the AI compared to human review?",
+      answer: "Our AI maintains 94% accuracy in risk identification and has been trained on 50+ million legal documents. It identifies issues human reviewers often miss due to fatigue or time pressure. However, it's designed to augment, not replace, your legal expertise."
     },
     {
-      question: "Can I integrate LegalDeep AI with my existing workflow?",
-      answer: "Absolutely! LegalDeep AI is designed to seamlessly integrate with your existing legal workflow. Our platform offers API access, bulk processing capabilities, and can be customized to fit your firm's specific needs and requirements."
+      question: "Can I use this for client-sensitive documents?",
+      answer: "Yes. We're built for BigLaw-level security with attorney-client privilege protection, end-to-end encryption, and zero data retention. Many Am Law 100 firms trust us with their most sensitive M&A and securities work."
+    },
+    {
+      question: "What if I need custom AI training for my practice area?",
+      answer: "Our Enterprise plan includes custom AI model training for your specific practice area, clause libraries, and document types. We can also provide dedicated deployment for maximum security and customization."
+    },
+    {
+      question: "How quickly can I see ROI?",
+      answer: "Most users see immediate ROI on their first contract. At an average billing rate of $400/hour, saving 2.3 hours per contract means each analysis pays for a month of our service. Most firms recoup their annual subscription cost in the first week."
     }
   ];
 
@@ -109,28 +107,15 @@ const Landing = () => {
   }, []);
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+    <div className="bg-white">
       <PageLayout>
-        <HeroSection benefits={benefits} />
-        <FeaturedSection />
-        <HowItWorksSection />
-        <PowerfulFeaturesSection />
-        <TrustSection />
-        <div className="bg-gradient-to-br from-gray-50 to-blue-50/50">
-          <PricingSection />
-        </div>
-        <div className="bg-white/90 backdrop-blur-sm">
-          <TestimonialsSection
-            title="Trusted by Legal Professionals Worldwide"
-            description="Join thousands of legal professionals who are already transforming their document workflow with LegalDeep AI"
-            testimonials={testimonials}
-          />
-        </div>
-        <AboutAuthorSection />
-        <div className="bg-gradient-to-br from-slate-50 to-gray-100/50">
-          <AboutSection />
-        </div>
-        <div className="bg-white/90 backdrop-blur-sm">
+        <ProfessionalHero />
+        <LawFirmLogos />
+        <TransparentPricing />
+        <IntegrationsShowcase />
+        <FounderCredibility />
+        <FinalCtaSection />
+        <div className="bg-navy-50">
           <FAQSection faqs={faqs} />
         </div>
       </PageLayout>
