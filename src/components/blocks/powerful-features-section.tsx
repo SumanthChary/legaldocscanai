@@ -6,32 +6,32 @@ export const PowerfulFeaturesSection = () => {
   const features = [
     {
       icon: Cpu,
-      title: "Advanced AI Analysis",
-      description: "Powered by state-of-the-art language models for accurate document understanding"
+      title: "Advanced Processing",
+      description: "Identify hidden risks and opportunities worth thousands in contract negotiations"
     },
     {
       icon: FileText,
-      title: "Multi-Format Support",
-      description: "Process PDFs, Word documents, and other legal file formats seamlessly"
+      title: "Any Document Type",
+      description: "Process contracts, briefs, depositions - even scanned documents with 95% accuracy"
     },
     {
       icon: Shield,
-      title: "Enterprise Security",
-      description: "Bank-grade encryption and compliance with GDPR, HIPAA, and SOC 2 standards"
+      title: "Bank-Grade Security",
+      description: "SOC 2 certified with zero data retention - your documents stay private always"
     },
     {
       icon: Clock,
-      title: "Lightning Fast",
-      description: "Get comprehensive summaries in minutes, not hours of manual review"
+      title: "12-Minute Analysis",
+      description: "What takes 2+ hours manually now takes 12 minutes - recover $920 per contract"
     },
     {
       icon: Search,
-      title: "Smart Insights",
-      description: "Identify key clauses, risks, and opportunities with intelligent highlighting"
+      title: "Analytics Dashboard",
+      description: "Track time saved, documents processed, and ROI with detailed analytics"
     },
     {
       icon: Users,
-      title: "Team Collaboration",
+      title: "Collaboration (Coming Soon)",
       description: "Share analyses and collaborate with your team in real-time"
     }
   ];
@@ -48,10 +48,10 @@ export const PowerfulFeaturesSection = () => {
         >
           <div className="text-center mb-16 md:mb-20">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">
-              Powerful Features for Legal Professionals
+              Stop Losing Money on Manual Document Review
             </h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-editorial font-light leading-relaxed">
-              Everything you need to transform your legal document workflow
+              Every hour spent reading contracts is an hour not spent on high-value legal work
             </p>
           </div>
         </InView>

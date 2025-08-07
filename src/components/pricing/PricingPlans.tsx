@@ -11,6 +11,9 @@ interface PlanProps {
   features: string[];
   highlight?: boolean;
   popular?: boolean;
+  originalPrice?: string;
+  discount?: string;
+  isRedeemCode?: boolean;
 }
 
 interface PricingPlansProps {
@@ -38,12 +41,36 @@ export const PricingPlans = ({ plans, isAnnual }: PricingPlansProps) => {
                 </span>
               </div>
             )}
+            {plan.discount && (
+              <div className="absolute -top-3 -right-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                {plan.discount}
+              </div>
+            )}
             <h3 className="text-lg md:text-xl font-semibold mb-2">{plan.name}</h3>
             <div className="flex items-baseline mb-3 md:mb-4">
-              {plan.price !== "0" && <span className="text-lg md:text-xl">$</span>}
-              <span className="text-2xl md:text-3xl lg:text-4xl font-bold">{plan.price}</span>
-              <span className="text-gray-600 ml-1 text-sm md:text-base">{plan.period}</span>
+              {plan.originalPrice && plan.discount && (
+                <div className="flex flex-col items-start">
+                  <span className="text-sm text-gray-500 line-through">${plan.originalPrice}</span>
+                  <div className="flex items-baseline">
+                    {plan.price !== "0" && <span className="text-lg md:text-xl">$</span>}
+                    <span className="text-2xl md:text-3xl lg:text-4xl font-bold text-green-600">{plan.price}</span>
+                    <span className="text-gray-600 ml-1 text-sm md:text-base">{plan.period}</span>
+                  </div>
+                </div>
+              )}
+              {!plan.originalPrice && (
+                <>
+                  {plan.price !== "0" && <span className="text-lg md:text-xl">$</span>}
+                  <span className="text-2xl md:text-3xl lg:text-4xl font-bold">{plan.price}</span>
+                  <span className="text-gray-600 ml-1 text-sm md:text-base">{plan.period}</span>
+                </>
+              )}
             </div>
+            {plan.isRedeemCode && (
+              <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium mb-3">
+                Redeemable with Promotion Code (Value: ${plan.originalPrice})
+              </div>
+            )}
             <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">{plan.description}</p>
             <ul className="space-y-2 md:space-y-3 lg:space-y-4 mb-6 md:mb-8">
               {plan.features.map((feature) => (

@@ -50,9 +50,9 @@ export const HeroSection = ({
                 </div>
                 
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-transparent leading-tight">
-                  Transform Legal
+                  Review 30-Page Contracts in
                   <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Documents with AI
+                    12 Minutes, Not 2 Hours
                   </span>
                 </h1>
               </div>
@@ -71,7 +71,7 @@ export const HeroSection = ({
             duration: 0.8,
             delay: 0.4
           }}>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">Stop spending hours reading contracts, depositions, and case files. Our AI reads, analyzes, and summarizes any legal document faster than you think. Also Ask Law AI Deep Insights!</p>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">Save 2.3 billable hours per contract = $920 in recovered time. Stop losing money on manual review. Join 3,400+ attorneys who've already transformed their practice with our AI-powered document analysis.</p>
             </InView>
             
             <InView variants={{
@@ -89,11 +89,11 @@ export const HeroSection = ({
           }}>
               <div className="flex flex-col sm:flex-row gap-2 md:gap-3 lg:gap-4">
                 <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 border-0 w-full sm:w-auto" onClick={() => navigate("/dashboard")}>
-                  Get Started Free
+                  Start Saving Time Now - Free Trial
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5 md:ml-2 md:h-4 md:w-4" />
                 </Button>
                 <Button size="lg" variant="outline" className="border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 w-full sm:w-auto" onClick={() => navigate("/documentation")}>
-                  Watch Demo
+                  See $920 Savings Calculator
                 </Button>
               </div>
             </InView>

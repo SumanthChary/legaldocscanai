@@ -26,26 +26,38 @@ export function Header() {
   };
 
   return (
-    <header className="border-b bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <BrandLogo />
-          
-          <MobileMenu 
-            session={session} 
-            profile={profile} 
-            isOpen={isOpen} 
-            setIsOpen={setIsOpen} 
-            handleSignOut={handleSignOut} 
-          />
-          
-          <DesktopMenu 
-            session={session} 
-            profile={profile} 
-            handleSignOut={handleSignOut} 
-          />
+    <>
+      {/* Discount Banner */}
+      <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white py-2 px-4 text-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30"></div>
+        <div className="relative flex items-center justify-center gap-2 text-sm md:text-base font-medium">
+          <span className="animate-pulse">🔥</span>
+          <span>Limited Time: <strong>40% OFF</strong> All Plans - Save Hundreds on Legal Document Analysis!</span>
+          <span className="animate-pulse">🔥</span>
         </div>
       </div>
-    </header>
+      
+      <header className="border-b bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <BrandLogo />
+            
+            <MobileMenu 
+              session={session} 
+              profile={profile} 
+              isOpen={isOpen} 
+              setIsOpen={setIsOpen} 
+              handleSignOut={handleSignOut} 
+            />
+            
+            <DesktopMenu 
+              session={session} 
+              profile={profile} 
+              handleSignOut={handleSignOut} 
+            />
+          </div>
+        </div>
+      </header>
+    </>
   );
 }
