@@ -3,20 +3,20 @@ import { Upload, Cpu, FileText, CheckCircle } from "lucide-react";
 export const HowItWorksSection = () => {
   const steps = [{
     icon: Upload,
-    title: "Upload Your Contract",
-    description: "Drag & drop any legal document - PDF, Word, or scanned files"
+    title: "Upload Document",
+    description: "Drag and drop your legal document or select from your device"
   }, {
     icon: Cpu,
-    title: "AI Analyzes in Seconds",
-    description: "Our AI reads every clause, identifies risks, and flags important terms"
+    title: "AI Processing",
+    description: "Advanced AI analyzes and extracts key insights from your document"
   }, {
     icon: FileText,
-    title: "Get Instant Summary",
-    description: "Receive detailed analysis with key risks highlighted and explained"
+    title: "Get Summary",
+    description: "Receive comprehensive analysis with highlighted key points"
   }, {
     icon: CheckCircle,
-    title: "Save 2+ Hours",
-    description: "Make informed decisions faster and bill more hours on real work"
+    title: "Take Action",
+    description: "Use insights to make informed decisions quickly"
   }];
   return <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-50/80 via-white to-blue-50/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -33,9 +33,9 @@ export const HowItWorksSection = () => {
         duration: 0.6
       }}>
           <div className="text-center mb-16 md:mb-20 lg:mb-24">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">From Upload to Billable Hours in 4 Steps</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">How It Works ?</h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-editorial font-light leading-relaxed">
-              Stop wasting billable hours on document review. Get straight to legal strategy.
+              Transform your legal document workflow in four simple steps
             </p>
           </div>
         </InView>

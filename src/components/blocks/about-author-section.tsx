@@ -65,11 +65,9 @@ export const AboutAuthorSection = () => {
           <div className="bg-gradient-to-br from-gray-50/50 to-white rounded-3xl p-8 md:p-12 lg:p-16 border border-gray-100 shadow-xl">
             <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-center">
               <div className="text-center lg:text-left">
-                <img 
-                  src="/src/assets/founder-image.jpg"
-                  alt="Sumanth Chary - Founder and CEO"
-                  className="w-28 h-28 md:w-32 md:h-32 rounded-full object-cover mx-auto lg:mx-0 mb-6 shadow-xl border-4 border-white"
-                />
+                <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl md:text-3xl font-editorial font-light mx-auto lg:mx-0 mb-6 shadow-xl">
+                  SC
+                </div>
                 <h3 className="text-2xl md:text-3xl font-editorial font-light text-gray-900 mb-2 tracking-tight">
                   Sumanth Chary
                 </h3>

@@ -1,52 +1,45 @@
 
 export const getPricingPlans = (isAnnual: boolean) => [
   {
-    name: "Lifetime Free",
+    name: "Free",
     price: "0",
     period: "",
-    description: "Limited trial features",
-    originalPrice: "69",
+    description: "7-day free trial with limits",
     features: [
-      "2 document analyses/month",
-      "Basic summaries only",
+      "3 free document analyses",
+      "Basic document summarization",
       "Email support",
       "Standard processing time"
     ],
-    highlight: false,
-    isRedeemCode: true
+    highlight: false
   },
   {
     name: "Starter Plan",
-    price: isAnnual ? "11.94" : "19.90",
+    price: isAnnual ? "16" : "20",
     period: isAnnual ? "/month, billed annually" : "/month",
-    description: "Perfect for Solo Practitioners",
-    originalPrice: isAnnual ? "19.90" : "33.17",
-    discount: "40% OFF",
+    description: "For Individual Users",
     features: [
-      "25 documents/month",
-      "Advanced AI analysis",
-      "Risk detection & alerts",
-      "Email & chat support",
-      "Priority processing",
-      "Document export options"
+      "Summarize up to 25 documents/month",
+      "Basic clause analysis",
+      "Email support",
+      "Standard processing time",
+      "Basic document templates"
     ],
     highlight: false
   },
   {
     name: "Professional",
-    price: isAnnual ? "59.40" : "99.00",
+    price: isAnnual ? "79" : "99",
     period: isAnnual ? "/month, billed annually" : "/month",
-    description: "For Growing Law Firms",
-    originalPrice: isAnnual ? "99.00" : "165.00",
-    discount: "40% OFF",
+    description: "For Small to Mid-Size Firms",
     features: [
-      "500 documents/month",
-      "Advanced clause analysis & risk detection",
+      "Summarize up to 500 documents/month",
+      "Advanced clause analysis and risk detection",
       "Jurisdiction-specific insights",
       "Multi-user access (up to 5 team members)",
-      "Advanced Processing & Analytics Dashboard",
-      "Priority email & phone support",
-      "Beta access to new features"
+      "Real-time collaboration tools",
+      "Priority email support",
+      "Beta access to select new features"
     ],
     highlight: true,
     popular: true
@@ -58,16 +51,46 @@ export const getPricingPlans = (isAnnual: boolean) => [
     description: "For Large Firms and Enterprises",
     features: [
       "Unlimited document summarization",
-      "Custom AI model training",
-      "Batch processing & advanced analytics",
-      "White-label solutions",
-      "Dedicated account manager & 24/7 support",
-      "On-premises deployment options",
-      "Full access to all features",
-      "Custom integrations & API access"
+      "AI fine-tuning for firm-specific needs",
+      "Batch processing and advanced analytics",
+      "Integration with legal software",
+      "Dedicated account manager and 24/7 support",
+      "On-premises or private cloud option",
+      "Full access to all beta features",
+      "Exclusive roadmap visibility and input"
+    ],
+    highlight: false
+  },
+  {
+    name: "Pay-Per-Document",
+    price: "3",
+    period: "/document",
+    description: "Flexible for Low-Volume Users",
+    features: [
+      "Full access to summarization tools",
+      "Complete analysis features",
+      "Pay as you go pricing",
+      "No monthly commitment",
+      "Discounted bundles available"
     ],
     highlight: false
   }
 ];
 
-export const getAddOns = () => [];
+export const getAddOns = () => [
+  {
+    name: "Additional Users",
+    price: "$20/user/month",
+    description: "Beyond plan limit"
+  },
+  {
+    name: "API Access",
+    price: "$199/month",
+    description: "Plus usage-based pricing"
+  },
+  {
+    name: "Custom Model Training",
+    price: "From $1,000",
+    description: "One-time setup fee"
+  }
+];
