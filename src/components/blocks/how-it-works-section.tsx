@@ -3,20 +3,20 @@ import { Upload, Cpu, FileText, CheckCircle } from "lucide-react";
 export const HowItWorksSection = () => {
   const steps = [{
     icon: Upload,
-    title: "Upload Document",
-    description: "Drag and drop your legal document or select from your device"
+    title: "Upload in Seconds",
+    description: "Drop your file and get started instantly—no setup."
   }, {
     icon: Cpu,
-    title: "AI Processing",
-    description: "Advanced AI analyzes and extracts key insights from your document"
+    title: "Analyze for Answers",
+    description: "Our engine surfaces risks, deadlines, and must-know clauses."
   }, {
     icon: FileText,
-    title: "Get Summary",
-    description: "Receive comprehensive analysis with highlighted key points"
+    title: "Get Actionable Summary",
+    description: "Clear next steps and highlights—not technical fluff."
   }, {
     icon: CheckCircle,
-    title: "Take Action",
-    description: "Use insights to make informed decisions quickly"
+    title: "Act with Confidence",
+    description: "Share, export, or proceed—reduce revisions and rework."
   }];
   return <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-br from-slate-50/80 via-white to-blue-50/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -33,9 +33,9 @@ export const HowItWorksSection = () => {
         duration: 0.6
       }}>
           <div className="text-center mb-16 md:mb-20 lg:mb-24">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">How It Works ?</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">How it works</h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-editorial font-light leading-relaxed">
-              Transform your legal document workflow in four simple steps
+              Value at every step: faster reviews, clearer decisions
             </p>
           </div>
         </InView>
@@ -57,7 +57,7 @@ export const HowItWorksSection = () => {
               <div className="text-center group">
                 <div className="relative mb-8">
                   <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center mx-auto group-hover:shadow-xl transition-all duration-300">
-                    <step.icon className="w-8 h-8 md:w-10 md:h-10 text-blue-600" strokeWidth={1.5} />
+                  <step.icon className="w-7 h-7 md:w-8 md:h-8 text-blue-600" strokeWidth={1.5} />
                   </div>
                 </div>
                 

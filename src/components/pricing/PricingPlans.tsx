@@ -11,6 +11,7 @@ interface PlanProps {
   features: string[];
   highlight?: boolean;
   popular?: boolean;
+  originalPrice?: string;
 }
 
 interface PricingPlansProps {
@@ -44,6 +45,9 @@ export const PricingPlans = ({ plans, isAnnual }: PricingPlansProps) => {
               <span className="text-2xl md:text-3xl lg:text-4xl font-bold">{plan.price}</span>
               <span className="text-gray-600 ml-1 text-sm md:text-base">{plan.period}</span>
             </div>
+            {plan.price !== "0" && (
+              <div className="text-xs text-red-600 font-medium mb-2">Limited-time 40% OFF</div>
+            )}
             <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">{plan.description}</p>
             <ul className="space-y-2 md:space-y-3 lg:space-y-4 mb-6 md:mb-8">
               {plan.features.map((feature) => (

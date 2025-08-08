@@ -50,9 +50,9 @@ export const HeroSection = ({
                 </div>
                 
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-transparent leading-tight">
-                  Transform Legal
+                  Review contracts 90% faster.
                   <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Documents with AI
+                    Win back billable hours.
                   </span>
                 </h1>
               </div>
@@ -71,7 +71,7 @@ export const HeroSection = ({
             duration: 0.8,
             delay: 0.4
           }}>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">Stop spending hours reading contracts, depositions, and case files. Our AI reads, analyzes, and summarizes any legal document faster than you think. Also Ask Law AI Deep Insights!</p>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">Slash review time, catch hidden risks, and deliver clear answers your clients love. No setup—just upload and go.</p>
             </InView>
             
             <InView variants={{

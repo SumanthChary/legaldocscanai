@@ -102,9 +102,9 @@ export const RedeemCodeModal = ({ isOpen, onClose }: RedeemCodeModalProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Redeem a Code</DialogTitle>
+          <DialogTitle>Redeem Lifetime Deal</DialogTitle>
           <DialogDescription>
-            Enter your promotional code to get access to premium features
+            Enter your code to unlock the Lifetime Plan (one-time $69 value)
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">

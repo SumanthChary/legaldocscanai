@@ -5,34 +5,36 @@ import { FileText, Cpu, Shield, Clock, Search, Users } from "lucide-react";
 export const PowerfulFeaturesSection = () => {
   const features = [
     {
-      icon: Cpu,
-      title: "Advanced AI Analysis",
-      description: "Powered by state-of-the-art language models for accurate document understanding"
-    },
-    {
-      icon: FileText,
-      title: "Multi-Format Support",
-      description: "Process PDFs, Word documents, and other legal file formats seamlessly"
-    },
-    {
-      icon: Shield,
-      title: "Enterprise Security",
-      description: "Bank-grade encryption and compliance with GDPR, HIPAA, and SOC 2 standards"
+      icon: Search,
+      title: "Risk & Clause Detection",
+      description: "Spot hidden risks, obligations, and renewal traps before they cost you."
     },
     {
       icon: Clock,
-      title: "Lightning Fast",
-      description: "Get comprehensive summaries in minutes, not hours of manual review"
+      title: "90% Faster Reviews",
+      description: "Ship decisions in minutes and reclaim billable hours."
     },
     {
-      icon: Search,
-      title: "Smart Insights",
-      description: "Identify key clauses, risks, and opportunities with intelligent highlighting"
+      icon: FileText,
+      title: "One‑Click Summaries",
+      description: "Export clean briefs your clients actually understand."
+    },
+    {
+      icon: Shield,
+      title: "Privacy by Default",
+      description: "Your documents stay protected with enterprise‑grade controls."
     },
     {
       icon: Users,
-      title: "Team Collaboration",
-      description: "Share analyses and collaborate with your team in real-time"
+      title: "Collaboration",
+      description: "Assign, comment, and align as a team.",
+      comingSoon: true
+    },
+    {
+      icon: Cpu,
+      title: "Cloud Integrations",
+      description: "Connect with your drive and DMS.",
+      comingSoon: true
     }
   ];
 
@@ -70,9 +72,14 @@ export const PowerfulFeaturesSection = () => {
                 <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white shadow-lg border border-gray-100 flex items-center justify-center mb-6 group-hover:shadow-xl transition-all duration-300">
                   <feature.icon className="w-6 h-6 md:w-7 md:h-7 text-blue-600" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-xl md:text-2xl font-editorial font-light text-gray-900 mb-4 tracking-tight">
-                  {feature.title}
-                </h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-xl md:text-2xl font-editorial font-light text-gray-900 tracking-tight">
+                    {feature.title}
+                  </h3>
+                  {('comingSoon' in feature) && (feature as any).comingSoon && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">Coming Soon</span>
+                  )}
+                </div>
                 <p className="text-gray-600 text-base md:text-lg font-editorial font-light leading-relaxed">
                   {feature.description}
                 </p>

@@ -14,7 +14,7 @@ import { useEffect } from "react";
 
 const Landing = () => {
   const benefits = [
-    "Reduce review time by 75%",
+    "Reduce review time by 90%",
     "Improve analysis accuracy", 
     "Ensure compliance across jurisdictions",
     "Streamline team collaboration"
@@ -110,7 +110,7 @@ const Landing = () => {
 
   return (
     <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-      <PageLayout>
+      <PageLayout withBanner>
         <HeroSection benefits={benefits} />
         <FeaturedSection />
         <HowItWorksSection />

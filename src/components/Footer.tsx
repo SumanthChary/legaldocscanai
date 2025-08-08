@@ -103,14 +103,9 @@ export const Footer = () => {
               <a href="/pricing" className="block text-muted-foreground hover:text-primary">
                 Pricing
               </a>
-              <Button 
-                variant="ghost" 
-                className="w-full justify-start p-0 h-auto font-normal text-xs sm:text-sm text-muted-foreground hover:text-primary"
-                onClick={scrollToFAQs}
-              >
-                <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                FAQs
-              </Button>
+              <a href="/support" className="block text-muted-foreground hover:text-primary">
+                Support
+              </a>
             </nav>
           </div>
           

@@ -13,7 +13,7 @@ export const PricingHeader = ({ onRedeemClick }: PricingHeaderProps) => {
         Start with 3 Free Documents
       </h1>
       <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4 mb-4 md:mb-6">
-        Try our document analyzer for free, then choose the plan that's right for you
+        Try our analyzer free, then secure a limited-time 40% OFF on paid plans.
       </p>
       <Button 
         onClick={onRedeemClick}
@@ -22,7 +22,7 @@ export const PricingHeader = ({ onRedeemClick }: PricingHeaderProps) => {
         className="flex items-center mx-auto text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
       >
         <Ticket className="mr-2 h-4 w-4" />
-        Redeem a Promotion Code
+        Redeem Lifetime Deal ($69)
       </Button>
     </div>
   );
