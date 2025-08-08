@@ -50,10 +50,7 @@ export const HeroSection = ({
                 </div>
                 
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-transparent leading-tight">
-                  Review contracts 90% faster.
-                  <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Win back billable hours.
-                  </span>
+                  Review 30-Page Contracts in 12 Minutes, Not 2 Hours
                 </h1>
               </div>
             </InView>
