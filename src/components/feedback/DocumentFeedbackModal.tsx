@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
 interface DocumentFeedbackModalProps {
@@ -24,13 +23,16 @@ export const DocumentFeedbackModal = ({ open, onClose, analysisId }: DocumentFee
     }
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      await supabase.from("document_feedback").insert({
-        user_id: user?.id || null,
-        analysis_id: analysisId,
+      // Save locally for now (no backend table yet)
+      const payload = {
+        analysisId,
         rating,
         feedback,
-      });
+        createdAt: new Date().toISOString(),
+      };
+      const existing = JSON.parse(localStorage.getItem("doc_feedback") || "[]");
+      existing.push(payload);
+      localStorage.setItem("doc_feedback", JSON.stringify(existing));
       toast({ title: "Thanks!", description: "Your feedback helps us improve." });
       onClose();
     } catch (e: any) {
