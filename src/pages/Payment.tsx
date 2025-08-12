@@ -20,22 +20,6 @@ interface LocationState {
   };
 }
 
-declare global {
-  interface Window {
-    paypal: any;
-  }
-}
-
-interface PayPalButtonsComponentProps {
-  style: any;
-  disabled?: boolean;
-  forceReRender?: any[];
-  fundingSource?: string;
-  createOrder: (data: any, actions: any) => Promise<string>;
-  onApprove: (data: any, actions: any) => Promise<void>;
-  onError: (err: any) => void;
-  onCancel: () => void;
-}
 
 const Payment = () => {
   const location = useLocation();
@@ -44,23 +28,7 @@ const Payment = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [paypalLoaded, setPaypalLoaded] = useState(false);
   const { plan } = (location.state as LocationState) || {};
-
-  // Debug PayPal script loading
-  useEffect(() => {
-    const checkPayPalLoaded = () => {
-      if (typeof window !== 'undefined' && window.paypal) {
-        console.log("PayPal script loaded successfully");
-        setPaypalLoaded(true);
-      } else {
-        console.log("PayPal script not loaded yet, retrying...");
-        setTimeout(checkPayPalLoaded, 1000);
-      }
-    };
-    checkPayPalLoaded();
-    return () => clearTimeout(checkPayPalLoaded as unknown as number);
-  }, []);
 
   // Check authentication status
   useEffect(() => {
@@ -189,12 +157,6 @@ const Payment = () => {
   const handlePayPalError = (err: any) => {
     console.error("PayPal error:", err);
     const errorMessage = err.message || "There was an error with PayPal.";
-    console.log("Full error details:", {
-      message: err.message,
-      name: err.name,
-      stack: err.stack,
-      details: err.details
-    });
     toast({
       title: "Payment Error",
       description: `${errorMessage} Please try again or contact support.`,
@@ -211,15 +173,10 @@ const Payment = () => {
 
   // PayPal configuration
   const paypalOptions = {
-    "client-id": "AZiHrC_GIm4eru7Ql0zgdwXuBv9tWhcL-WE1ZQyCIBIKGFvGWTt5r9IcPXrkVm8fWlDhzRuMF9IGBD0_",
+    clientId: "AZiHrC_GIm4eru7Ql0zgdwXuBv9tWhcL-WE1ZQyCIBIKGFvGWTt5r9IcPXrkVm8fWlDhzRuMF9IGBD0_",
     currency: "USD",
     intent: "capture",
     components: "buttons",
-    "data-namespace": "PayPalSDK",
-    // Set to 'sandbox' for testing with new accounts
-    "enable-funding": "card",
-    "disable-funding": "paylater,venmo", // Disable advanced features for new accounts
-    "buyer-country": "US" // Add your target country code
   };
 
   return (

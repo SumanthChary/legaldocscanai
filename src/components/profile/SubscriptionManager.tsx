@@ -62,10 +62,10 @@ export const SubscriptionManager = () => {
 
       if (profileError) throw profileError;
 
-      // Get document usage count
+      // Get document usage count from document_analyses table
       const { count: documentsUsed, error: documentsError } = await supabase
-        .from("documents")
-        .select("*", { count: true })
+        .from("document_analyses")
+        .select("*", { count: "exact" })
         .eq("user_id", user.id);
 
       if (documentsError) throw documentsError;
