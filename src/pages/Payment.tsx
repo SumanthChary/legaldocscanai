@@ -174,6 +174,11 @@ const Payment = () => {
     currency: "USD",
     intent: "capture" as const,
     components: "buttons" as const,
+    // Enable PayPal Checkout with improved features
+    enableStandardCardFields: true,
+    merchantId: "YOUR_MERCHANT_ID", // Optional: Add if you have a PayPal merchant ID
+    dataUserIdToken: true, // This helps with fraud prevention
+    dataClientToken: true,
   };
 
   return (
@@ -259,35 +264,59 @@ const Payment = () => {
                     )}
                     
                     <PayPalScriptProvider options={paypalOptions}>
-                      <PayPalButtons
-                        style={{ 
-                          layout: "horizontal", 
-                          color: "blue", 
-                          shape: "pill", 
-                          height: 50,
-                          tagline: false 
-                        }}
-                        disabled={loading}
-                        createOrder={(data, actions) => {
-                          return actions.order.create({
-                            intent: "CAPTURE",
-                            purchase_units: [
-                              {
-                                amount: {
-                                  currency_code: "USD",
-                                  value: amount,
+                      {loading ? (
+                        <div className="flex items-center justify-center p-4">
+                          <Loader2 className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+                          <span className="text-blue-600">Processing payment...</span>
+                        </div>
+                      ) : (
+                        <PayPalButtons
+                          style={{ 
+                            layout: "horizontal", 
+                            color: "blue", 
+                            shape: "pill", 
+                            height: 50,
+                            tagline: false 
+                          }}
+                          disabled={loading}
+                          createOrder={(data, actions) => {
+                            return actions.order.create({
+                              intent: "CAPTURE",
+                              purchase_units: [
+                                {
+                                  amount: {
+                                    currency_code: "USD",
+                                    value: amount,
+                                    breakdown: {
+                                      item_total: {
+                                        currency_code: "USD",
+                                        value: amount
+                                      }
+                                    }
+                                  },
+                                  items: [
+                                    {
+                                      name: `${plan.name} Plan Subscription`,
+                                      quantity: "1",
+                                      unit_amount: {
+                                        currency_code: "USD",
+                                        value: amount
+                                      },
+                                      category: "DIGITAL_GOODS"
+                                    }
+                                  ]
                                 },
-                                payee: {
-                                  email_address: "enjoywithpandu@gmail.com"
-                                }
-                              },
-                            ],
-                          });
-                        }}
-                        onApprove={handlePayPalApprove}
-                        onError={handlePayPalError}
-                        onCancel={handlePayPalCancel}
-                      />
+                              ],
+                              application_context: {
+                                shipping_preference: "NO_SHIPPING"
+                              }
+                            });
+                          }}
+                          onApprove={handlePayPalApprove}
+                          onError={handlePayPalError}
+                          onCancel={handlePayPalCancel}
+                        />
+                      )}
                     </PayPalScriptProvider>
                   </div>
 

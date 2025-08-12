@@ -37,14 +37,51 @@ async function verifyPayPalPayment(orderId: string, accessToken: string) {
   return await response.json();
 }
 
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 10;
+const requestCounts = new Map();
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const userRequests = requestCounts.get(userId) || [];
+  
+  // Remove old requests outside the window
+  const validRequests = userRequests.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW);
+  
+  if (validRequests.length >= MAX_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+  
+  validRequests.push(now);
+  requestCounts.set(userId, validRequests);
+  return true;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
+  
+  // Add request timestamp tracking for rate limiting
+  const requestTimestamp = new Date().toISOString();
 
   try {
     const { orderId, userId, planType, amount } = await req.json();
+
+    // Check rate limit
+    if (!checkRateLimit(userId)) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'Too many requests. Please try again later.',
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 429,
+        }
+      );
+    }
 
     // Validate required parameters
     if (!orderId || !userId || !planType) {
