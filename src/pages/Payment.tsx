@@ -333,62 +333,6 @@ const Payment = () => {
                         )}
                       </PayPalScriptProvider>
                     </div>
-                              return actions.order.create({
-                              intent: "CAPTURE",
-                              purchase_units: [
-                                {
-                                  amount: {
-                                    currency_code: "USD",
-                                    value: amount,
-                                    breakdown: {
-                                      item_total: {
-                                        currency_code: "USD",
-                                        value: amount
-                                      }
-                                    }
-                                  },
-                                  description: `${plan.name} Plan Subscription - LegalDeepAI`,
-                                  items: [
-                                    {
-                                      name: `${plan.name} Plan`,
-                                      description: "AI-powered legal document analysis subscription",
-                                      quantity: "1",
-                                      unit_amount: {
-                                        currency_code: "USD",
-                                        value: amount
-                                      },
-                                      category: "DIGITAL_GOODS"
-                                    }
-                                  ]
-                                },
-                              ],
-                              application_context: {
-                                brand_name: "LegalDeepAI",
-                                shipping_preference: "NO_SHIPPING",
-                                user_action: "PAY_NOW",
-                                return_url: window.location.origin + "/dashboard",
-                                cancel_url: window.location.origin + "/pricing"
-                              }
-                            }).then(orderId => {
-                              console.log("PayPal order created:", orderId);
-                              return orderId;
-                            }).catch(err => {
-                              console.error("PayPal order creation failed:", err);
-                              throw err;
-                            });
-                          }}
-                          onApprove={handlePayPalApprove}
-                          onError={(err) => {
-                            console.error("PayPal error details:", err);
-                            handlePayPalError(err);
-                          }}
-                          onCancel={(data) => {
-                            console.log("Payment cancelled:", data);
-                            handlePayPalCancel();
-                          }}
-                        />
-                      )}
-                    </PayPalScriptProvider>
                   </div>
 
                   <div className="border border-gray-200 rounded-xl p-6 opacity-50">
