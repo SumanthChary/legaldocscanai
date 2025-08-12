@@ -169,58 +169,7 @@ export const EnhancedInsights = ({
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Weekly Activity Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-blue-600" />
-              Weekly Document Analysis
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={insights.weeklyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip formatter={(value, name) => [value, name === "documents" ? "Documents" : "Avg Time (min)"]} />
-                <Bar dataKey="documents" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Risk Distribution Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-orange-600" />
-              Risk Distribution
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie data={insights.riskDistribution} cx="50%" cy="50%" innerRadius={60} outerRadius={120} paddingAngle={2} dataKey="count">
-                  {insights.riskDistribution.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                </Pie>
-                <Tooltip formatter={value => [value, "Documents"]} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              {insights.riskDistribution.map(item => <div key={item.risk} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{
-                backgroundColor: item.color
-              }}></div>
-                  <span className="text-sm text-gray-600">
-                    {item.risk}: {item.count}
-                  </span>
-                </div>)}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      
 
       {/* Performance Metrics */}
       
