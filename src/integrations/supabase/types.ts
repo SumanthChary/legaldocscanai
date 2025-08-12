@@ -328,6 +328,12 @@ export type Database = {
         Args: { analysis_id: string; new_summary: string; new_status: string }
         Returns: undefined
       }
+      get_public_profile: {
+        Args: { user_id: string }
+        Returns: {
+          username: string
+        }[]
+      }
     }
     Enums: {
       subscription_tier:
