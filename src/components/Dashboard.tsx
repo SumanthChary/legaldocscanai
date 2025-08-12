@@ -4,8 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { UpgradeBanner } from "@/components/ui/upgrade-banner";
 import { useNavigate } from "react-router-dom";
 import { DashboardHeader } from "./dashboard/DashboardHeader";
-import { StatsCards } from "./dashboard/StatsCards";
-import { ActivitySummary } from "./dashboard/ActivitySummary";
 import { ContentTabs } from "./dashboard/ContentTabs";
 import { DonationDialog } from "./dashboard/DonationDialog";
 
@@ -16,12 +14,6 @@ export const Dashboard = () => {
   const [showDonationDialog, setShowDonationDialog] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("documents");
-  const [analysisStats, setAnalysisStats] = useState({
-    totalDocuments: 0,
-    averageScore: 0,
-    improvementRate: 0,
-  });
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -53,12 +45,12 @@ export const Dashboard = () => {
       }
     };
 
-    const fetchAnalysisStats = async () => {
+    const checkDonationPrompt = async () => {
       if (!session?.user?.id) return;
 
       const { data: analyses, error } = await supabase
         .from('document_analyses')
-        .select('*')
+        .select('summary')
         .eq('user_id', session.user.id);
       
       if (error) {
@@ -76,16 +68,10 @@ export const Dashboard = () => {
         setShowDonationDialog(true);
         localStorage.setItem('lastDonationPrompt', now.toString());
       }
-
-      setAnalysisStats({
-        totalDocuments: analyses?.length || 0,
-        averageScore: 85,
-        improvementRate: 24,
-      });
     };
 
     if (session?.user?.id) {
-      fetchAnalysisStats();
+      checkDonationPrompt();
     }
   }, [session?.user?.id]);
 
@@ -133,10 +119,6 @@ export const Dashboard = () => {
         userName={userName} 
         onTabChange={setActiveTab} 
       />
-
-      <StatsCards stats={analysisStats} />
-
-      <ActivitySummary />
 
       <ContentTabs 
         activeTab={activeTab} 
