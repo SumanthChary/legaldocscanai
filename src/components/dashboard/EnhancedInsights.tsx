@@ -110,63 +110,7 @@ export const EnhancedInsights = ({
   const completionRate = insights.analyzedDocs / insights.totalDocs * 100;
   return <div className="space-y-8">
       {/* Main Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <div className="flex items-center justify-between mb-4">
-            <FileText className="h-8 w-8 text-blue-600" />
-            <div className="flex items-center text-green-600">
-              <ArrowUp className="h-4 w-4" />
-              <span className="text-sm font-medium ml-1">+{insights.monthlyTrends.documentsGrowth}%</span>
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-blue-900">{insights.totalDocs}</div>
-          <div className="text-blue-700 font-medium">Total Documents</div>
-          <div className="text-sm text-blue-600 mt-2">
-            {insights.analyzedDocs} analyzed this month
-          </div>
-        </Card>
-
-        <Card className="p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <div className="flex items-center justify-between mb-4">
-            <CheckCircle className="h-8 w-8 text-green-600" />
-            <div className="flex items-center text-green-600">
-              <ArrowUp className="h-4 w-4" />
-              <span className="text-sm font-medium ml-1">+{insights.monthlyTrends.accuracyChange}%</span>
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-green-900">{insights.accuracy}%</div>
-          <div className="text-green-700 font-medium">AI Accuracy</div>
-          <Progress value={insights.accuracy} className="mt-3 h-2" />
-        </Card>
-
-        <Card className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <div className="flex items-center justify-between mb-4">
-            <Clock className="h-8 w-8 text-purple-600" />
-            <div className="flex items-center text-green-600">
-              <ArrowDown className="h-4 w-4" />
-              <span className="text-sm font-medium ml-1">{Math.abs(insights.monthlyTrends.timeImprovement)}% faster</span>
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-purple-900">{insights.avgTime}m</div>
-          <div className="text-purple-700 font-medium">Avg. Analysis Time</div>
-          <div className="text-sm text-purple-600 mt-2">
-            vs. 45m manual review
-          </div>
-        </Card>
-
-        <Card className="p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-          <div className="flex items-center justify-between mb-4">
-            <Target className="h-8 w-8 text-orange-600" />
-            <div className="flex items-center text-green-600">
-              <CheckCircle className="h-4 w-4" />
-              <span className="text-sm font-medium ml-1">{completionRate.toFixed(1)}%</span>
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-orange-900">{insights.analyzedDocs}</div>
-          <div className="text-orange-700 font-medium">Completed</div>
-          <Progress value={completionRate} className="mt-3 h-2" />
-        </Card>
-      </div>
+      
 
       {/* Charts Section */}
       
