@@ -20,6 +20,22 @@ interface LocationState {
   };
 }
 
+declare global {
+  interface Window {
+    paypal: any;
+  }
+}
+
+interface PayPalButtonsComponentProps {
+  style: any;
+  disabled?: boolean;
+  forceReRender?: any[];
+  fundingSource?: string;
+  createOrder: (data: any, actions: any) => Promise<string>;
+  onApprove: (data: any, actions: any) => Promise<void>;
+  onError: (err: any) => void;
+  onCancel: () => void;
+}
 
 const Payment = () => {
   const location = useLocation();
@@ -28,7 +44,23 @@ const Payment = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [paypalLoaded, setPaypalLoaded] = useState(false);
   const { plan } = (location.state as LocationState) || {};
+
+  // Debug PayPal script loading
+  useEffect(() => {
+    const checkPayPalLoaded = () => {
+      if (typeof window !== 'undefined' && window.paypal) {
+        console.log("PayPal script loaded successfully");
+        setPaypalLoaded(true);
+      } else {
+        console.log("PayPal script not loaded yet, retrying...");
+        setTimeout(checkPayPalLoaded, 1000);
+      }
+    };
+    checkPayPalLoaded();
+    return () => clearTimeout(checkPayPalLoaded as unknown as number);
+  }, []);
 
   // Check authentication status
   useEffect(() => {
@@ -157,6 +189,12 @@ const Payment = () => {
   const handlePayPalError = (err: any) => {
     console.error("PayPal error:", err);
     const errorMessage = err.message || "There was an error with PayPal.";
+    console.log("Full error details:", {
+      message: err.message,
+      name: err.name,
+      stack: err.stack,
+      details: err.details
+    });
     toast({
       title: "Payment Error",
       description: `${errorMessage} Please try again or contact support.`,
@@ -173,10 +211,15 @@ const Payment = () => {
 
   // PayPal configuration
   const paypalOptions = {
-    clientId: "AZiHrC_GIm4eru7Ql0zgdwXuBv9tWhcL-WE1ZQyCIBIKGFvGWTt5r9IcPXrkVm8fWlDhzRuMF9IGBD0_",
+    "client-id": "AZiHrC_GIm4eru7Ql0zgdwXuBv9tWhcL-WE1ZQyCIBIKGFvGWTt5r9IcPXrkVm8fWlDhzRuMF9IGBD0_",
     currency: "USD",
     intent: "capture",
     components: "buttons",
+    "data-namespace": "PayPalSDK",
+    // Set to 'sandbox' for testing with new accounts
+    "enable-funding": "card",
+    "disable-funding": "paylater,venmo", // Disable advanced features for new accounts
+    "buyer-country": "US" // Add your target country code
   };
 
   return (
@@ -290,6 +333,62 @@ const Payment = () => {
                         )}
                       </PayPalScriptProvider>
                     </div>
+                              return actions.order.create({
+                              intent: "CAPTURE",
+                              purchase_units: [
+                                {
+                                  amount: {
+                                    currency_code: "USD",
+                                    value: amount,
+                                    breakdown: {
+                                      item_total: {
+                                        currency_code: "USD",
+                                        value: amount
+                                      }
+                                    }
+                                  },
+                                  description: `${plan.name} Plan Subscription - LegalDeepAI`,
+                                  items: [
+                                    {
+                                      name: `${plan.name} Plan`,
+                                      description: "AI-powered legal document analysis subscription",
+                                      quantity: "1",
+                                      unit_amount: {
+                                        currency_code: "USD",
+                                        value: amount
+                                      },
+                                      category: "DIGITAL_GOODS"
+                                    }
+                                  ]
+                                },
+                              ],
+                              application_context: {
+                                brand_name: "LegalDeepAI",
+                                shipping_preference: "NO_SHIPPING",
+                                user_action: "PAY_NOW",
+                                return_url: window.location.origin + "/dashboard",
+                                cancel_url: window.location.origin + "/pricing"
+                              }
+                            }).then(orderId => {
+                              console.log("PayPal order created:", orderId);
+                              return orderId;
+                            }).catch(err => {
+                              console.error("PayPal order creation failed:", err);
+                              throw err;
+                            });
+                          }}
+                          onApprove={handlePayPalApprove}
+                          onError={(err) => {
+                            console.error("PayPal error details:", err);
+                            handlePayPalError(err);
+                          }}
+                          onCancel={(data) => {
+                            console.log("Payment cancelled:", data);
+                            handlePayPalCancel();
+                          }}
+                        />
+                      )}
+                    </PayPalScriptProvider>
                   </div>
 
                   <div className="border border-gray-200 rounded-xl p-6 opacity-50">

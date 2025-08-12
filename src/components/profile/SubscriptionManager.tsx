@@ -49,7 +49,7 @@ export const SubscriptionManager = () => {
         .select("*")
         .eq("user_id", user.id)
         .eq("status", "active")
-        .maybeSingle();
+        .single();
 
       if (subscriptionError) throw subscriptionError;
 
@@ -58,26 +58,21 @@ export const SubscriptionManager = () => {
         .from("profiles")
         .select("document_limit")
         .eq("id", user.id)
-        .maybeSingle();
+        .single();
 
       if (profileError) throw profileError;
 
-      // Get document usage count from document_analyses table
+      // Get document usage count
       const { count: documentsUsed, error: documentsError } = await supabase
-        .from("document_analyses")
-        .select("*", { count: "exact" })
+        .from("documents")
+        .select("*", { count: true })
         .eq("user_id", user.id);
 
       if (documentsError) throw documentsError;
 
       setSubscription({
-        ...(subscriptionData || {
-          plan_type: "free",
-          status: "active",
-          current_period_start: new Date().toISOString(),
-          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        }),
-        document_limit: profileData?.document_limit || 3,
+        ...subscriptionData,
+        document_limit: profileData.document_limit,
         documents_used: documentsUsed || 0,
       });
     } catch (error: any) {

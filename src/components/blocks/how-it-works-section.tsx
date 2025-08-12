@@ -33,7 +33,7 @@ export const HowItWorksSection = () => {
         duration: 0.6
       }}>
           <div className="text-center mb-16 md:mb-20 lg:mb-24">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">How it works 🚀 ?</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-editorial font-light text-gray-900 mb-6 md:mb-8 tracking-tight">How it works</h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-editorial font-light leading-relaxed">
               Value at every step: faster reviews, clearer decisions
             </p>

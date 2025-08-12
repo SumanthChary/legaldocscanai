@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { PageLayout } from "@/components/layout";
 import { WelcomeHeader } from "./WelcomeHeader";
 import { QuickActions } from "./QuickActions";
-import { EnhancedInsights } from "./EnhancedInsights";
+import { AnalyticsCards } from "./AnalyticsCards";
 import { RecentActivity } from "./RecentActivity";
 import { PerformanceMetrics } from "./PerformanceMetrics";
 import { MainContent } from "./MainContent";
@@ -88,7 +88,7 @@ export const Dashboard = () => {
               <QuickActions onTabChange={setActiveTab} />
             </div>
 
-            <EnhancedInsights userId={session?.user?.id || ""} />
+            <AnalyticsCards stats={analysisStats} isLoading={statsLoading} />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <RecentActivity isLoading={statsLoading} />

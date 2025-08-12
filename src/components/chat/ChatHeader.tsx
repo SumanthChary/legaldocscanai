@@ -9,8 +9,12 @@ export const ChatHeader = () => {
           
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-700 bg-clip-text text-transparent leading-tight">Law AI Assistant</h1>
-          <p className="text-gray-600 text-xs sm:text-sm md:text-base lg:text-lg mt-0.5 sm:mt-1 leading-relaxed">Ask Law AI - Upload Files and Chat with Files Themselves</p>
+          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-700 bg-clip-text text-transparent leading-tight">
+            AI Legal Assistant
+          </h1>
+          <p className="text-gray-600 text-xs sm:text-sm md:text-base lg:text-lg mt-0.5 sm:mt-1 leading-relaxed">
+            Professional legal document analysis
+          </p>
         </div>
       </div>
     </div>;
