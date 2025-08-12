@@ -108,32 +108,25 @@ const Payment = () => {
 
       const planType = plan.name.toLowerCase().replace(/\s+/g, '_') as SubscriptionTier;
 
-      // Update subscription in database
-      const { error: subscriptionError } = await supabase.from("subscriptions").insert({
-        user_id: user.id,
-        plan_type: planType,
-        status: "active",
-        current_period_start: new Date().toISOString(),
-        current_period_end: new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-      });
+      // Call our Supabase Edge Function to process the payment
+      const { data: processResult, error: processError } = await supabase.functions.invoke(
+        'process-paypal-payment',
+        {
+          body: {
+            orderId: details.id,
+            userId: user.id,
+            planType,
+            amount: amount
+          }
+        }
+      );
 
-      if (subscriptionError) {
-        console.error("Subscription error:", subscriptionError);
-        throw new Error("Failed to update subscription in database");
+      if (processError) {
+        throw new Error(processError.message || 'Payment processing failed');
       }
 
-      // Update user profile with higher document limit
-      const newLimit = planType === 'professional' ? 500 : planType === 'enterprise' ? 999999 : 25;
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({ document_limit: newLimit })
-        .eq("id", user.id);
-
-      if (profileError) {
-        console.error("Profile update error:", profileError);
-        // Don't throw here as subscription was successful
+      if (!processResult.success) {
+        throw new Error(processResult.message || 'Payment processing failed');
       }
 
       toast({
@@ -177,7 +170,7 @@ const Payment = () => {
 
   // PayPal configuration
   const paypalOptions = {
-    clientId: "ASwEnGxUl0eURMQkZ7lolWGxgRznZ9lx-h55cblFMiJj0qYOzluIe5BFBdeGYhwyabLRHZZvBPAJJBv6",
+    clientId: "AZiHrC_GIm4eru7Ql0zgdwXuBv9tWhcL-WE1ZQyCIBIKGFvGWTt5r9IcPXrkVm8fWlDhzRuMF9IGBD0_",
     currency: "USD",
     intent: "capture" as const,
     components: "buttons" as const,
