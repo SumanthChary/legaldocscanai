@@ -7,6 +7,7 @@ import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { CreditCard, Shield, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import "./Payment.css";
 import { Database } from "@/integrations/supabase/types";
 
 type SubscriptionTier = Database["public"]["Enums"]["subscription_tier"];
@@ -19,6 +20,23 @@ interface LocationState {
   };
 }
 
+declare global {
+  interface Window {
+    paypal: any;
+  }
+}
+
+interface PayPalButtonsComponentProps {
+  style: any;
+  disabled?: boolean;
+  forceReRender?: any[];
+  fundingSource?: string;
+  createOrder: (data: any, actions: any) => Promise<string>;
+  onApprove: (data: any, actions: any) => Promise<void>;
+  onError: (err: any) => void;
+  onCancel: () => void;
+}
+
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -26,7 +44,23 @@ const Payment = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [paypalLoaded, setPaypalLoaded] = useState(false);
   const { plan } = (location.state as LocationState) || {};
+
+  // Debug PayPal script loading
+  useEffect(() => {
+    const checkPayPalLoaded = () => {
+      if (typeof window !== 'undefined' && window.paypal) {
+        console.log("PayPal script loaded successfully");
+        setPaypalLoaded(true);
+      } else {
+        console.log("PayPal script not loaded yet, retrying...");
+        setTimeout(checkPayPalLoaded, 1000);
+      }
+    };
+    checkPayPalLoaded();
+    return () => clearTimeout(checkPayPalLoaded as unknown as number);
+  }, []);
 
   // Check authentication status
   useEffect(() => {
@@ -154,9 +188,16 @@ const Payment = () => {
 
   const handlePayPalError = (err: any) => {
     console.error("PayPal error:", err);
+    const errorMessage = err.message || "There was an error with PayPal.";
+    console.log("Full error details:", {
+      message: err.message,
+      name: err.name,
+      stack: err.stack,
+      details: err.details
+    });
     toast({
       title: "Payment Error",
-      description: "There was an error with PayPal. Please try again or contact support.",
+      description: `${errorMessage} Please try again or contact support.`,
       variant: "destructive",
     });
   };
@@ -170,15 +211,15 @@ const Payment = () => {
 
   // PayPal configuration
   const paypalOptions = {
-    clientId: "AZiHrC_GIm4eru7Ql0zgdwXuBv9tWhcL-WE1ZQyCIBIKGFvGWTt5r9IcPXrkVm8fWlDhzRuMF9IGBD0_",
+    "client-id": "AZiHrC_GIm4eru7Ql0zgdwXuBv9tWhcL-WE1ZQyCIBIKGFvGWTt5r9IcPXrkVm8fWlDhzRuMF9IGBD0_",
     currency: "USD",
-    intent: "capture" as const,
-    components: "buttons" as const,
-    // Enable PayPal Checkout with improved features
-    enableStandardCardFields: true,
-    merchantId: "YOUR_MERCHANT_ID", // Optional: Add if you have a PayPal merchant ID
-    dataUserIdToken: true, // This helps with fraud prevention
-    dataClientToken: true,
+    intent: "capture",
+    components: "buttons",
+    "data-namespace": "PayPalSDK",
+    // Set to 'sandbox' for testing with new accounts
+    "enable-funding": "card",
+    "disable-funding": "paylater,venmo", // Disable advanced features for new accounts
+    "buyer-country": "US" // Add your target country code
   };
 
   return (
@@ -256,31 +297,43 @@ const Payment = () => {
                       PayPal - Secure & Instant
                     </h3>
                     
-                    {loading && (
-                      <div className="text-center py-4">
-                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-blue-600" />
-                        <p className="text-sm text-gray-600 mt-2">Processing payment...</p>
-                      </div>
-                    )}
-                    
-                    <PayPalScriptProvider options={paypalOptions}>
-                      {loading ? (
-                        <div className="flex items-center justify-center p-4">
-                          <Loader2 className="h-6 w-6 animate-spin text-blue-600 mr-2" />
-                          <span className="text-blue-600">Processing payment...</span>
-                        </div>
-                      ) : (
-                        <PayPalButtons
-                          style={{ 
-                            layout: "horizontal", 
-                            color: "blue", 
-                            shape: "pill", 
-                            height: 50,
-                            tagline: false 
-                          }}
-                          disabled={loading}
-                          createOrder={(data, actions) => {
-                            return actions.order.create({
+                    <div id="paypal-button-container" className="w-full min-h-[200px]">
+                      <PayPalScriptProvider options={paypalOptions}>
+                        {loading ? (
+                          <div className="flex items-center justify-center p-4">
+                            <Loader2 className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+                            <span className="text-blue-600">Processing payment...</span>
+                          </div>
+                        ) : (
+                          <PayPalButtons
+                            style={{
+                              layout: "vertical",
+                              color: "gold",
+                              shape: "rect",
+                              label: "pay"
+                            }}
+                            createOrder={(data, actions) => {
+                              console.log("Creating order with amount:", amount);
+                              return actions.order.create({
+                                intent: "CAPTURE",
+                                purchase_units: [
+                                  {
+                                    amount: {
+                                      value: amount,
+                                      currency_code: "USD"
+                                    }
+                                  }
+                                ]
+                              });
+                            }}
+                            onApprove={handlePayPalApprove}
+                            onCancel={handlePayPalCancel}
+                            onError={handlePayPalError}
+                          />
+                        )}
+                      </PayPalScriptProvider>
+                    </div>
+                              return actions.order.create({
                               intent: "CAPTURE",
                               purchase_units: [
                                 {
@@ -294,9 +347,11 @@ const Payment = () => {
                                       }
                                     }
                                   },
+                                  description: `${plan.name} Plan Subscription - LegalDeepAI`,
                                   items: [
                                     {
-                                      name: `${plan.name} Plan Subscription`,
+                                      name: `${plan.name} Plan`,
+                                      description: "AI-powered legal document analysis subscription",
                                       quantity: "1",
                                       unit_amount: {
                                         currency_code: "USD",
@@ -308,13 +363,29 @@ const Payment = () => {
                                 },
                               ],
                               application_context: {
-                                shipping_preference: "NO_SHIPPING"
+                                brand_name: "LegalDeepAI",
+                                shipping_preference: "NO_SHIPPING",
+                                user_action: "PAY_NOW",
+                                return_url: window.location.origin + "/dashboard",
+                                cancel_url: window.location.origin + "/pricing"
                               }
+                            }).then(orderId => {
+                              console.log("PayPal order created:", orderId);
+                              return orderId;
+                            }).catch(err => {
+                              console.error("PayPal order creation failed:", err);
+                              throw err;
                             });
                           }}
                           onApprove={handlePayPalApprove}
-                          onError={handlePayPalError}
-                          onCancel={handlePayPalCancel}
+                          onError={(err) => {
+                            console.error("PayPal error details:", err);
+                            handlePayPalError(err);
+                          }}
+                          onCancel={(data) => {
+                            console.log("Payment cancelled:", data);
+                            handlePayPalCancel();
+                          }}
                         />
                       )}
                     </PayPalScriptProvider>

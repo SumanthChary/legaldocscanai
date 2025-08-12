@@ -1,0 +1,27 @@
+.paypal-button-container {
+  width: 100%;
+  min-height: 200px;
+  margin: 10px 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure PayPal iframe is visible */
+.paypal-button-container iframe {
+  min-height: 55px !important;
+  z-index: 2;
+  position: relative;
+}
+
+/* Container styling */
+.payment-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+/* Add shadow on hover */
+.payment-section:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
