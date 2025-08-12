@@ -68,7 +68,7 @@ export const HeroSection = ({
             duration: 0.8,
             delay: 0.4
           }}>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">Slash review time, catch hidden risks, and deliver clear answers your clients love. No setup—just upload and go.</p>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">Slash review time, catch hidden risks, and deliver clear answers your clients love. No setup, just upload and go.</p>
             </InView>
             
             <InView variants={{
