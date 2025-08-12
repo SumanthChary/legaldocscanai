@@ -49,7 +49,7 @@ export const SubscriptionManager = () => {
         .select("*")
         .eq("user_id", user.id)
         .eq("status", "active")
-        .single();
+        .maybeSingle();
 
       if (subscriptionError) throw subscriptionError;
 
@@ -58,7 +58,7 @@ export const SubscriptionManager = () => {
         .from("profiles")
         .select("document_limit")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) throw profileError;
 
@@ -71,8 +71,13 @@ export const SubscriptionManager = () => {
       if (documentsError) throw documentsError;
 
       setSubscription({
-        ...subscriptionData,
-        document_limit: profileData.document_limit,
+        ...(subscriptionData || {
+          plan_type: "free",
+          status: "active",
+          current_period_start: new Date().toISOString(),
+          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        }),
+        document_limit: profileData?.document_limit || 3,
         documents_used: documentsUsed || 0,
       });
     } catch (error: any) {
