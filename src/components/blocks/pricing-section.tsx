@@ -15,49 +15,61 @@ export const PricingSection = () => {
 
   const plans = [
     {
-      name: "Free",
+      name: "Starter",
       price: "0",
       period: "",
-      description: "7-day free trial with limits",
+      description: "Perfect for trying out LegalDeep AI",
       features: [
         "3 free document analyses",
-        "Basic document summarization",
-        "E-Signature requests (single signer, PDF only)",
+        "Basic AI document summarization",
+        "Standard processing (24-48 hours)",
         "Email support",
-        "Standard processing time"
+        "Basic risk detection",
+        "PDF export of summaries"
       ],
-      highlight: false
-    },
-    {
-      name: "Starter Plan",
-      price: isAnnual ? "16" : "20",
-      period: isAnnual ? "/month, billed annually" : "/month",
-      description: "For Individual Users",
-      features: [
-        "Summarize up to 25 documents/month",
-        "Basic clause analysis",
-        "E-Signature requests (single signer, PDF only)",
-        "Email support",
-        "Standard processing time",
-        "Basic document templates"
-      ],
-      highlight: false
+      highlight: false,
+      badge: "Free Trial"
     },
     {
       name: "Professional",
-      price: isAnnual ? "79" : "99",
+      price: isAnnual ? "49" : "59",
       period: isAnnual ? "/month, billed annually" : "/month",
-      description: "For Small to Mid-Size Firms",
+      originalPrice: isAnnual ? "$59" : "",
+      description: "For solo practitioners and small firms",
       features: [
-        "Summarize up to 500 documents/month",
-        "Advanced clause analysis",
-        "E-Signature requests (single signer, PDF only)",
-        "Risk detection",
-        "Multi-user access (up to 5 users)",
-        "Priority support"
+        "100 document analyses/month",
+        "Advanced AI clause analysis",
+        "Priority processing (1-4 hours)",
+        "Risk assessment & recommendations",
+        "Custom document templates",
+        "Chat support",
+        "Document version comparison",
+        "API access"
       ],
       highlight: true,
-      popular: true
+      popular: true,
+      badge: "Most Popular"
+    },
+    {
+      name: "Enterprise",
+      price: isAnnual ? "149" : "179",
+      period: isAnnual ? "/month, billed annually" : "/month",
+      originalPrice: isAnnual ? "$179" : "",
+      description: "For large firms and enterprises",
+      features: [
+        "Unlimited document analyses",
+        "Advanced AI with legal precedents",
+        "Instant processing (real-time)",
+        "Custom AI model training",
+        "Multi-user team collaboration",
+        "White-label solutions",
+        "24/7 phone & chat support",
+        "Custom integrations",
+        "Advanced analytics dashboard",
+        "Dedicated account manager"
+      ],
+      highlight: false,
+      badge: "Best Value"
     }
   ];
 
@@ -85,10 +97,10 @@ export const PricingSection = () => {
         >
           <div className="text-center mb-6 md:mb-8 lg:mb-12">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-3 md:mb-4 lg:mb-6">
-              Simple, Transparent Pricing
+              Choose Your Legal AI Plan
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto mb-4 md:mb-6">
-              Start with 3 free documents, then choose the plan that works best for you
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-3xl mx-auto mb-4 md:mb-6">
+              From solo practitioners to enterprise firms - unlock the power of AI-driven legal document analysis. Start free, scale as you grow.
             </p>
             <Button 
               onClick={() => setIsRedeemModalOpen(true)}
@@ -125,28 +137,40 @@ export const PricingSection = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Card
-                className={`relative h-full transition-all duration-300 hover:scale-105 ${
+                className={`relative h-full transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
                   plan.highlight 
-                    ? 'border-accent shadow-lg shadow-accent/20' 
-                    : 'border-gray-200'
+                    ? 'border-2 border-blue-500 shadow-lg shadow-blue-500/20 ring-2 ring-blue-100' 
+                    : 'border border-gray-200 hover:border-gray-300'
                 }`}
               >
-                {plan.popular && (
-                  <div className="absolute -top-2 md:-top-3 lg:-top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-accent text-white px-2 py-1 md:px-3 md:py-1 lg:px-4 lg:py-1 rounded-full text-xs md:text-sm font-medium">
-                      Most Popular
+                {(plan.popular || plan.badge) && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      plan.popular 
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
+                        : 'bg-gray-100 text-gray-700'
+                    }`}>
+                      {plan.badge || 'Most Popular'}
                     </span>
                   </div>
                 )}
                 
-                <CardContent className="pt-4 md:pt-6 lg:pt-8 pb-4 md:pb-6 px-3 md:px-4 lg:px-6">
-                  <h3 className="text-base md:text-lg lg:text-xl font-semibold mb-2">{plan.name}</h3>
-                  <div className="flex items-baseline mb-3 md:mb-4">
-                    {plan.price !== "0" && <span className="text-base md:text-lg lg:text-xl">$</span>}
-                    <span className="text-2xl md:text-3xl lg:text-4xl font-bold">{plan.price}</span>
-                    <span className="text-gray-600 ml-1 text-xs md:text-sm lg:text-base">{plan.period}</span>
+                <CardContent className="pt-6 pb-6 px-6">
+                  <div className="text-center mb-6">
+                    <h3 className="text-xl font-bold mb-2 text-gray-900">{plan.name}</h3>
+                    <div className="flex items-baseline justify-center mb-2">
+                      {plan.price !== "0" && <span className="text-xl text-gray-600">$</span>}
+                      <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                      <span className="text-gray-600 ml-1">{plan.period}</span>
+                    </div>
+                    {plan.originalPrice && (
+                      <p className="text-sm text-gray-500">
+                        <span className="line-through">{plan.originalPrice}</span> 
+                        <span className="ml-2 text-green-600 font-medium">Save 20%</span>
+                      </p>
+                    )}
+                    <p className="text-gray-600 mt-2">{plan.description}</p>
                   </div>
-                  <p className="text-gray-600 mb-4 md:mb-6 text-xs md:text-sm lg:text-base">{plan.description}</p>
                   <ul className="space-y-2 md:space-y-3 lg:space-y-4 mb-4 md:mb-6 lg:mb-8">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start text-gray-600 text-xs md:text-sm lg:text-base">
@@ -156,12 +180,17 @@ export const PricingSection = () => {
                     ))}
                   </ul>
                   <Button
-                    className="w-full mt-auto"
-                    size="default"
-                    variant={plan.name === "Free" ? "outline" : "default"}
+                    className={`w-full mt-auto ${
+                      plan.highlight 
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white' 
+                        : ''
+                    }`}
+                    size="lg"
+                    variant={plan.name === "Starter" ? "outline" : "default"}
                     onClick={() => handleGetStarted(plan)}
                   >
-                    {plan.name === "Free" ? "Start Free Trial" : "Get Started"}
+                    {plan.name === "Starter" ? "Start Free Trial" : 
+                     plan.name === "Enterprise" ? "Contact Sales" : "Get Started"}
                   </Button>
                 </CardContent>
               </Card>

@@ -67,7 +67,7 @@ export const AboutAuthorSection = () => {
               <div className="text-center lg:text-left">
                 <div className="w-28 h-28 md:w-32 md:h-32 rounded-full mx-auto lg:mx-0 mb-6 shadow-xl overflow-hidden">
                   <img 
-                    src="/lovable-uploads/87ef7b87-6da4-45d5-922b-7851221679c0.png" 
+                    src="/lovable-uploads/f5d7719d-683d-4e4e-9d30-6ec4da40c974.png" 
                     alt="Sumanth Chary - Founder and CEO"
                     className="w-full h-full object-cover"
                   />

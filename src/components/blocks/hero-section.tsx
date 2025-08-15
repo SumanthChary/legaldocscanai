@@ -50,7 +50,7 @@ export const HeroSection = ({
                 </div>
                 
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-transparent leading-tight">
-                  Review 30-Page <span className="font-editorial-new-italic">Contracts</span> in 12 Minutes, <span className="bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">Not 2 Hours</span>
+                  Review 30-Page <span className="font-editorial-new-italic text-blue-600 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Contracts</span> in 12 Minutes, <span className="bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">Not 2 Hours</span>
                 </h1>
               </div>
             </InView>
