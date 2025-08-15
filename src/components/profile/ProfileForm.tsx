@@ -1,10 +1,11 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User, Mail, Settings, Save } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { User, Mail, Settings, Save, Camera, Upload } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,11 +14,90 @@ type ProfileFormProps = {
   email: string;
   onUsernameChange: (value: string) => void;
   loading?: boolean;
+  avatarUrl?: string;
+  onAvatarChange?: (url: string) => void;
 };
 
-export const ProfileForm = ({ username, email, onUsernameChange, loading = false }: ProfileFormProps) => {
+export const ProfileForm = ({ username, email, onUsernameChange, loading = false, avatarUrl, onAvatarChange }: ProfileFormProps) => {
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast({
+        variant: "destructive",
+        title: "File too large",
+        description: "Please select an image under 5MB",
+      });
+      return;
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid file type",
+        description: "Please select a JPG, PNG, or WebP image",
+      });
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user logged in");
+
+      // Upload to storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/avatar.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('documents')
+        .getPublicUrl(fileName);
+
+      const avatarUrl = urlData.publicUrl;
+
+      // Update profile
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: avatarUrl })
+        .eq("id", user.id);
+
+      if (updateError) throw updateError;
+
+      onAvatarChange?.(avatarUrl);
+      toast({
+        title: "Success",
+        description: "Profile picture updated successfully",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error uploading image",
+        description: error.message,
+      });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const updateProfile = async () => {
     setSaving(true);
@@ -95,6 +175,40 @@ export const ProfileForm = ({ username, email, onUsernameChange, loading = false
       </div>
 
       <div className="space-y-4 sm:space-y-6">
+        {/* Avatar Section */}
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative">
+            <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
+              <AvatarImage src={avatarUrl} alt="Profile picture" />
+              <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg sm:text-xl font-semibold">
+                {username ? username.charAt(0).toUpperCase() : 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <Button
+              onClick={handleAvatarClick}
+              disabled={uploadingAvatar}
+              size="sm"
+              className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg"
+            >
+              {uploadingAvatar ? (
+                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+              ) : (
+                <Camera className="h-3 w-3" />
+              )}
+            </Button>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <p className="text-xs text-gray-500 text-center">
+            Click the camera icon to update your profile picture
+          </p>
+        </div>
+
         <div className="space-y-2">
           <label htmlFor="username" className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
             <User className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 text-blue-600" />

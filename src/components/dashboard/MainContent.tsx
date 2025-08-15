@@ -5,7 +5,7 @@ import { DocumentGallery } from "@/components/DocumentGallery";
 
 import { Card } from "@/components/ui/card";
 import { Clock, Target, TrendingUp, Zap } from "lucide-react";
-import { InsightsSection } from "@/components/dashboard/InsightsSection";
+import { EnhancedInsightsSection } from "@/components/dashboard/EnhancedInsightsSection";
 
 type MainContentProps = {
   activeTab: string;
@@ -31,11 +31,11 @@ export const MainContent = ({ activeTab, setActiveTab, userId }: MainContentProp
       </TabsContent>
 
       <TabsContent value="insights">
-        {/* Enhanced Insights Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Your Insights</h2>
-          {/* Dynamically loaded insights for the user */}
-          <InsightsSection userId={userId} />
+          <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            Analytics & Insights
+          </h2>
+          <EnhancedInsightsSection userId={userId} />
         </div>
       </TabsContent>
     </Tabs>

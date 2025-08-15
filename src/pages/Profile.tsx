@@ -10,6 +10,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const Profile = () => {
         if (data) {
           setUsername(data.username);
           setEmail(data.email);
+          setAvatarUrl(data.avatar_url || "");
         }
       }
     } catch (error: any) {
@@ -58,6 +60,8 @@ const Profile = () => {
               email={email}
               onUsernameChange={setUsername}
               loading={loading}
+              avatarUrl={avatarUrl}
+              onAvatarChange={setAvatarUrl}
             />
           </div>
         </div>

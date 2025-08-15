@@ -10,9 +10,11 @@ type ProfileTabsProps = {
   email: string;
   onUsernameChange: (value: string) => void;
   loading?: boolean;
+  avatarUrl?: string;
+  onAvatarChange?: (url: string) => void;
 };
 
-export const ProfileTabs = ({ username, email, onUsernameChange, loading = false }: ProfileTabsProps) => {
+export const ProfileTabs = ({ username, email, onUsernameChange, loading = false, avatarUrl, onAvatarChange }: ProfileTabsProps) => {
   return (
     <Tabs defaultValue="profile" className="space-y-4 sm:space-y-6">
       <TabsList className="w-full justify-start grid grid-cols-3 sm:flex">
@@ -36,6 +38,8 @@ export const ProfileTabs = ({ username, email, onUsernameChange, loading = false
           email={email}
           onUsernameChange={onUsernameChange}
           loading={loading}
+          avatarUrl={avatarUrl}
+          onAvatarChange={onAvatarChange}
         />
       </TabsContent>
 
