@@ -22,6 +22,7 @@ import { MainFeatures } from "@/components/features/MainFeatures";
 import { BetaProgram } from "@/components/features/BetaProgram";
 import { FeatureHighlight } from "@/components/features/FeatureHighlight";
 import { PreviewFeatures } from "@/components/features/PreviewFeatures";
+import { WaitlistForm } from "@/components/features/WaitlistForm";
 
 const Features = () => {
   const navigate = useNavigate();
@@ -182,7 +183,17 @@ const Features = () => {
             features={previewFeatures}
           />
           
-          <div className="text-center">
+          <div className="text-center bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 mt-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Be First to Know About New Features
+            </h2>
+            <p className="mb-6 text-gray-600 max-w-2xl mx-auto">
+              Join our waitlist to get early access to upcoming features and exclusive updates about LegalDeep AI innovations.
+            </p>
+            <WaitlistForm />
+          </div>
+          
+          <div className="text-center mt-8">
             <p className="mb-6 text-gray-600">
               Ready to experience our powerful document analysis capabilities?
             </p>

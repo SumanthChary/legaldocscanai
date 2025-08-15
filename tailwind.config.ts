@@ -18,10 +18,10 @@ export default {
         container: "1280px",
       },
       fontFamily: {
-        sans: ["Editorial New", "Aeonik", "system-ui", "-apple-system", "sans-serif"],
-        editorial: ["Editorial New", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        editorial: ["Editorial New", "serif"],
         aeonik: ["Aeonik", "system-ui", "-apple-system", "sans-serif"],
-        "editorial-new-italic": ["Editorial New Italic", "serif"],
+        'editorial-new': ['Editorial New', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
