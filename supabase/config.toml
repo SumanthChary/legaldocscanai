@@ -38,6 +38,10 @@ backend = "postgres"
 verify_jwt = true
 system_import = true
 
+[functions."send-email"]
+verify_jwt = false
+system_import = true
+
 [functions."subscribe-email"]
 verify_jwt = false
 system_import = true
