@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Github, FileText, Shield, Users, AlertCircle, CheckCircle } from "lucide-react";
+import { Github } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { SignInPage, Testimonial } from "@/components/ui/sign-in";
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -188,175 +186,61 @@ const Auth = () => {
     }
   };
 
+  const sampleTestimonials: Testimonial[] = [
+    {
+      avatarSrc: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+      name: "Sarah Chen",
+      handle: "@sarahdigital",
+      text: "LegalDeep AI transformed our contract review process. What used to take hours now takes minutes."
+    },
+    {
+      avatarSrc: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      name: "Marcus Johnson",
+      handle: "@marcustech",
+      text: "The AI insights are incredibly accurate. It's like having a legal expert review every document."
+    },
+    {
+      avatarSrc: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+      name: "David Martinez",
+      handle: "@davidcreates",
+      text: "Game-changer for our law firm. The analysis quality and speed are unmatched."
+    },
+  ];
+
   if (checkingSession) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Checking authentication...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl w-full flex items-center gap-16">
-        {/* Left side - Branding */}
-        <div className="hidden lg:flex flex-col space-y-8 flex-1">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg">
-                <FileText className="h-8 w-8 text-white" />
-              </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                LegalDeep AI
-              </h1>
-            </div>
-            <p className="text-xl text-gray-600 leading-relaxed">
-              Transform your legal document workflow with AI-powered analysis, intelligent insights, and professional automation.
-            </p>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="flex items-start space-x-4">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Shield className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Enterprise Security</h3>
-                <p className="text-gray-600">Bank-grade encryption and compliance standards</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start space-x-4">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Users className="h-6 w-6 text-purple-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Trusted by Legal Teams</h3>
-                <p className="text-gray-600">Used by law firms and corporations worldwide</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right side - Form */}
-        <div className="flex-1 max-w-md">
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-2xl p-8 space-y-8">
-            <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                {isSignUp ? "Create Account" : "Welcome Back"}
-              </h2>
-              <p className="text-gray-600">
-                {isSignUp ? "Start your legal document transformation" : "Continue to your dashboard"}
-              </p>
-            </div>
-
-            <form className="space-y-6" onSubmit={handleEmailAuth}>
-              {isSignUp && (
-                <div className="space-y-2">
-                  <label htmlFor="username" className="block text-sm font-semibold text-gray-700">
-                    Full Name
-                  </label>
-                  <Input
-                    id="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                    placeholder="Enter your full name"
-                  />
-                </div>
-              )}
-              
-              <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
-                  Email Address
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Enter your email"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
-                  Password
-                </label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Enter your password (min 6 characters)"
-                  minLength={6}
-                />
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg transition-all duration-300" 
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Processing...
-                  </div>
-                ) : (
-                  isSignUp ? "Create Account" : "Sign In"
-                )}
-              </Button>
-            </form>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500">Or continue with</span>
-              </div>
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-12 border-gray-200 hover:bg-gray-50 transition-all duration-200"
-              onClick={handleGithubAuth}
-              disabled={loading}
-            >
-              <Github className="mr-3 h-5 w-5" />
-              GitHub
-            </Button>
-
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
-                disabled={loading}
-              >
-                {isSignUp
-                  ? "Already have an account? Sign in"
-                  : "Need an account? Sign up"}
-              </button>
-            </div>
-
-            {/* Debug info for development */}
-            <div className="text-xs text-gray-400 text-center">
-              <p>Having trouble? Contact support</p>
-            </div>
-          </Card>
-        </div>
-      </div>
+    <div className="bg-background text-foreground">
+      <SignInPage
+        heroImageSrc="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=2160&q=80"
+        testimonials={sampleTestimonials}
+        onSignIn={handleEmailAuth}
+        onGoogleSignIn={handleGithubAuth}
+        onResetPassword={() => {
+          toast({
+            title: "Password Reset",
+            description: "Password reset functionality will be available soon.",
+          });
+        }}
+        onCreateAccount={() => setIsSignUp(!isSignUp)}
+        isSignUp={isSignUp}
+        isLoading={loading}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        username={username}
+        setUsername={setUsername}
+      />
     </div>
   );
 };
