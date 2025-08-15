@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, FileText, RefreshCw, Download, Copy } from "lucide-react";
 import { SummaryDisplay } from "./components/SummaryDisplay";
-import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import { DocumentFeedbackModal } from "@/components/feedback/DocumentFeedbackModal";
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { useFeedbackTrigger } from "@/hooks/useFeedbackTrigger";
 
 interface SummaryContentProps {
   analysisStatus?: string;
@@ -15,17 +15,8 @@ interface SummaryContentProps {
 }
 
 export const SummaryContent = ({ analysisStatus, summary, originalName, analysisId, refreshAnalysis, refreshing }: SummaryContentProps) => {
-  const [showFeedback, setShowFeedback] = useState(false);
-
-  useEffect(() => {
-    if (analysisStatus === 'completed' && summary && analysisId) {
-      const key = `feedback_shown_${analysisId}`;
-      if (!localStorage.getItem(key)) {
-        const t = setTimeout(() => setShowFeedback(true), 600);
-        return () => clearTimeout(t);
-      }
-    }
-  }, [analysisStatus, summary, analysisId]);
+  const isCompleted = analysisStatus === 'completed';
+  const { showFeedback, closeFeedback } = useFeedbackTrigger(analysisId || '', isCompleted);
 
   if (analysisStatus !== 'completed') {
     return null;
@@ -149,9 +140,9 @@ export const SummaryContent = ({ analysisStatus, summary, originalName, analysis
         </div>
       </div>
 
-      <DocumentFeedbackModal
+      <FeedbackModal
         open={showFeedback}
-        onClose={() => { setShowFeedback(false); if (analysisId) localStorage.setItem(`feedback_shown_${analysisId}`, '1'); }}
+        onClose={closeFeedback}
         analysisId={analysisId || ''}
       />
     </div>
