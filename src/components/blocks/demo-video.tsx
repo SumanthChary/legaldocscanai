@@ -10,6 +10,8 @@ export const DemoVideo = () => {
   
   // Demo video from Supabase storage
   const videoUrl = "https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/demo%20for%20legaldeepai.mp4";
+  // Custom thumbnail to replace Vimeo watermark
+  const thumbnailUrl = "https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/Screenshot%20(582).png";
   
   const togglePlay = () => {
     if (videoRef.current) {
@@ -49,6 +51,18 @@ export const DemoVideo = () => {
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
               onEnded={() => setIsPlaying(false)}
+            />
+            
+            {/* Custom thumbnail overlay */}
+            <div
+              className={`absolute inset-0 transition-all duration-500 ${
+                isPlaying ? "opacity-0 pointer-events-none" : "opacity-100"
+              }`}
+              style={{
+                backgroundImage: `url(${thumbnailUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
             />
             
             {/* Professional overlay */}
