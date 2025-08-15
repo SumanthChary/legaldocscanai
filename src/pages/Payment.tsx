@@ -137,10 +137,8 @@ const Payment = () => {
         duration: 5000,
       });
       
-      // Redirect to dashboard after a short delay
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);
+      // Redirect to success page with plan details
+      navigate(`/payment-success?plan=${encodeURIComponent(plan.name)}&amount=${amount}`);
       
     } catch (error: any) {
       console.error("Payment processing error:", error);
@@ -215,19 +213,23 @@ const Payment = () => {
                   <div className="space-y-3 py-4">
                     <div className="flex items-center text-green-600">
                       <CheckCircle className="h-5 w-5 mr-2" />
-                      <span>Unlimited document analysis</span>
+                      <span>{plan.name === 'Professional' ? '500' : plan.name === 'Enterprise' ? 'Unlimited' : '25'} document analyses/month</span>
                     </div>
                     <div className="flex items-center text-green-600">
                       <CheckCircle className="h-5 w-5 mr-2" />
-                      <span>Advanced AI insights</span>
+                      <span>Advanced AI risk detection</span>
                     </div>
                     <div className="flex items-center text-green-600">
                       <CheckCircle className="h-5 w-5 mr-2" />
-                      <span>Priority support</span>
+                      <span>Priority email support</span>
                     </div>
                     <div className="flex items-center text-green-600">
                       <CheckCircle className="h-5 w-5 mr-2" />
-                      <span>30-day money-back guarantee</span>
+                      <span>60-day money-back guarantee</span>
+                    </div>
+                    <div className="flex items-center text-green-600">
+                      <CheckCircle className="h-5 w-5 mr-2" />
+                      <span>Cancel anytime</span>
                     </div>
                   </div>
                   
@@ -319,12 +321,29 @@ const Payment = () => {
                   </div>
                 </div>
                 
-                <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-                  <div className="flex items-start">
-                    <Shield className="h-5 w-5 text-blue-600 mt-0.5 mr-2" />
-                    <div className="text-sm text-blue-800">
-                      <p className="font-medium">Secure Payment Processing</p>
-                      <p>Your payment information is encrypted and secure. We never store your payment details.</p>
+                <div className="mt-8 space-y-4">
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <div className="flex items-start">
+                      <Shield className="h-5 w-5 text-blue-600 mt-0.5 mr-2" />
+                      <div className="text-sm text-blue-800">
+                        <p className="font-medium">Bank-Level Security</p>
+                        <p>Your payment is protected by 256-bit SSL encryption. We never store your payment details.</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4 text-center text-xs">
+                    <div className="flex flex-col items-center">
+                      <Shield className="h-4 w-4 text-green-600 mb-1" />
+                      <span className="text-gray-600">SSL Encrypted</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <CheckCircle className="h-4 w-4 text-green-600 mb-1" />
+                      <span className="text-gray-600">60-Day Guarantee</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <CreditCard className="h-4 w-4 text-green-600 mb-1" />
+                      <span className="text-gray-600">PayPal Protected</span>
                     </div>
                   </div>
                 </div>

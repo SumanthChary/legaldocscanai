@@ -107,9 +107,10 @@ export const SubscriptionManager = () => {
           name: "Professional",
           limit: 500,
           features: [
-            "500 documents per month",
-            "Priority support",
-            "Advanced AI analysis",
+            "500 document analyses per month",
+            "Priority email support (24-hour response)",
+            "Advanced AI risk scoring",
+            "Analytics dashboard",
             "60-day money-back guarantee",
           ],
         };
@@ -118,22 +119,35 @@ export const SubscriptionManager = () => {
           name: "Enterprise",
           limit: 999999,
           features: [
-            "Unlimited documents",
-            "24/7 Priority support",
-            "Custom AI models",
-            "60-day money-back guarantee",
+            "Unlimited document analyses",
+            "24/7 priority support with dedicated manager",
+            "Custom AI model training",
+            "Advanced analytics and business intelligence",
             "API access",
+            "60-day money-back guarantee",
+          ],
+        };
+      case "starter":
+        return {
+          name: "Starter",
+          limit: 25,
+          features: [
+            "25 document analyses per month",
+            "Priority email support (24-hour response)",
+            "Advanced clause highlights",
+            "Document comparison tools",
+            "60-day money-back guarantee",
           ],
         };
       default:
         return {
-          name: "Basic",
-          limit: 25,
+          name: "Free Trial",
+          limit: 3,
           features: [
-            "25 documents per month",
-            "Basic support",
-            "Standard AI analysis",
-            "60-day money-back guarantee",
+            "3 free document analyses",
+            "Basic document summarization",
+            "Risk identification highlights",
+            "Email support within 48 hours",
           ],
         };
     }

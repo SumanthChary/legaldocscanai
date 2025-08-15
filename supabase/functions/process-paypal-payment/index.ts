@@ -1,9 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
-const PAYPAL_API_URL = 'https://api-m.paypal.com'; // Change to sandbox URL for testing
-const PAYPAL_CLIENT_ID = 'AZiHrC_GIm4eru7Ql0zgdwXuBv9tWhcL-WE1ZQyCIBIKGFvGWTt5r9IcPXrkVm8fWlDhzRuMF9IGBD0_';
-const PAYPAL_SECRET = 'EM5CnMkNyCZN9JychYoEFTPA1o5S7T6dgWptoIxvzei1O9A_v3aYVdXSJIlNPb7l5BHHzJsCbYzyiGc8';
+const PAYPAL_API_URL = 'https://api-m.paypal.com'; // Live API URL
+const PAYPAL_CLIENT_ID = Deno.env.get('PAYPAL_CLIENT_ID')!;
+const PAYPAL_SECRET = Deno.env.get('PAYPAL_SECRET')!;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -85,7 +85,11 @@ serve(async (req) => {
 
     // Validate required parameters
     if (!orderId || !userId || !planType) {
-      throw new Error('Missing required parameters');
+      throw new Error('Missing required parameters: orderId, userId, or planType');
+    }
+
+    if (!PAYPAL_CLIENT_ID || !PAYPAL_SECRET) {
+      throw new Error('PayPal configuration missing');
     }
 
     // Get PayPal access token
@@ -113,25 +117,53 @@ serve(async (req) => {
     const now = new Date();
     const periodEnd = new Date(now.setMonth(now.getMonth() + 1));
 
-    // Update subscription in database
-    const { error: subscriptionError } = await supabase
+    // Check if user already has an active subscription and update or insert
+    const { data: existingSub } = await supabase
       .from('subscriptions')
-      .insert({
-        user_id: userId,
-        plan_type: planType,
-        status: 'active',
-        current_period_start: new Date().toISOString(),
-        current_period_end: periodEnd.toISOString(),
-        payment_provider: 'paypal',
-        payment_id: orderId,
-      });
+      .select('id')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .maybeSingle();
+
+    let subscriptionError;
+    if (existingSub) {
+      // Update existing subscription
+      const { error } = await supabase
+        .from('subscriptions')
+        .update({
+          plan_type: planType,
+          current_period_start: new Date().toISOString(),
+          current_period_end: periodEnd.toISOString(),
+          payment_id: orderId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId)
+        .eq('status', 'active');
+      subscriptionError = error;
+    } else {
+      // Insert new subscription
+      const { error } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: userId,
+          plan_type: planType,
+          status: 'active',
+          current_period_start: new Date().toISOString(),
+          current_period_end: periodEnd.toISOString(),
+          payment_id: orderId,
+        });
+      subscriptionError = error;
+    }
 
     if (subscriptionError) {
+      console.error('Subscription error:', subscriptionError);
       throw subscriptionError;
     }
 
     // Update user's document limit based on plan
-    const newLimit = planType === 'professional' ? 500 : planType === 'enterprise' ? 999999 : 25;
+    const newLimit = planType === 'professional' ? 500 : 
+                    planType === 'enterprise' ? 999999 : 
+                    planType === 'starter' ? 25 : 3;
     const { error: profileError } = await supabase
       .from('profiles')
       .update({ document_limit: newLimit })
