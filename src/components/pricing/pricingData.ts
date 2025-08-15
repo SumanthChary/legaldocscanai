@@ -4,6 +4,7 @@ export const getPricingPlans = (isAnnual: boolean) => [
     name: "Free Trial",
     price: "0",
     period: "",
+    originalPrice: "",
     description: "Perfect for trying our platform",
     features: [
       "3 free document analyses",
@@ -11,16 +12,16 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Risk identification highlights",
       "Email support within 48 hours",
       "Standard processing (2-5 minutes)",
-      "PDF and Word document support",
-      "Basic contract templates"
+      "PDF and Word document support"
     ],
     highlight: false
   },
   {
     name: "Starter",
-    price: isAnnual ? "15" : "25",
+    price: isAnnual ? "12" : "20",
+    originalPrice: isAnnual ? "20" : "",
     period: isAnnual ? "/month (billed annually)" : "/month",
-    description: "Ideal for solo practitioners and small teams",
+    description: "Ideal for solo practitioners",
     features: [
       "25 document analyses per month",
       "Advanced clause highlights & risk detection",
@@ -28,8 +29,7 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Priority email support (24-hour response)",
       "Fast processing (under 2 minutes)",
       "Document comparison tools",
-      "Basic analytics dashboard",
-      "Contract templates library (50+ templates)",
+      "Analytics dashboard",
       "Export to PDF, Word, and PowerPoint"
     ],
     highlight: false
@@ -37,21 +37,19 @@ export const getPricingPlans = (isAnnual: boolean) => [
   {
     name: "Professional",
     price: isAnnual ? "79" : "132",
+    originalPrice: isAnnual ? "132" : "",
     period: isAnnual ? "/month (billed annually)" : "/month",
-    description: "Built for growing law firms and departments",
+    description: "Built for growing law firms",
     features: [
       "500 document analyses per month",
       "Advanced risk scoring and insights",
       "Multi-jurisdiction compliance checks",
       "Priority support with dedicated success manager",
       "Lightning-fast processing (under 1 minute)",
-      "Team collaboration features",
       "Advanced analytics and reporting",
       "Custom contract templates and clauses",
-      "API access for integrations",
-      "White-label options available",
-      "Beta access to new AI features",
-      "Bulk document processing"
+      "Bulk document processing",
+      "Priority feature requests"
     ],
     highlight: true,
     popular: true
@@ -60,17 +58,16 @@ export const getPricingPlans = (isAnnual: boolean) => [
     name: "Enterprise",
     price: "Custom",
     period: "",
+    originalPrice: "",
     description: "Tailored solutions for large organizations",
     features: [
       "Unlimited document analyses",
-      "Custom AI model training for your use case",
-      "Advanced batch processing and workflow automation",
+      "Custom AI model training",
+      "Advanced batch processing",
       "Dedicated account manager and 24/7 phone support",
       "On-premises or private cloud deployment",
       "Advanced security and compliance (SOC 2, HIPAA)",
-      "Custom integrations with your existing tools",
       "Comprehensive analytics and business intelligence",
-      "Priority feature development and roadmap input",
       "Training and onboarding for your entire team",
       "SLA guarantees and uptime commitments",
       "Custom contract review workflows"
