@@ -15,7 +15,7 @@ export const PricingSection = () => {
 
   const plans = [
     {
-      name: "Starter",
+      name: "Free Plan",
       price: "0",
       period: "",
       description: "Perfect for trying out LegalDeep AI",
@@ -28,16 +28,16 @@ export const PricingSection = () => {
         "PDF export of summaries"
       ],
       highlight: false,
-      badge: "Free Trial"
+      badge: "Free"
     },
     {
-      name: "Professional",
-      price: isAnnual ? "49" : "59",
-      period: isAnnual ? "/month, billed annually" : "/month",
-      originalPrice: isAnnual ? "$59" : "",
+      name: "Starter",
+      price: "20",
+      period: "/month",
+      originalPrice: "",
       description: "For solo practitioners and small firms",
       features: [
-        "100 document analyses/month",
+        "25 document analyses/month",
         "Advanced AI clause analysis",
         "Priority processing (1-4 hours)",
         "Risk assessment & recommendations",
@@ -46,30 +46,31 @@ export const PricingSection = () => {
         "Document version comparison",
         "API access"
       ],
-      highlight: true,
-      popular: true,
-      badge: "Most Popular"
+      highlight: false,
+      popular: false,
+      badge: ""
     },
     {
-      name: "Enterprise",
-      price: isAnnual ? "149" : "179",
-      period: isAnnual ? "/month, billed annually" : "/month",
-      originalPrice: isAnnual ? "$179" : "",
-      description: "For large firms and enterprises",
+      name: "Pro Plan",
+      price: "99",
+      period: "/month",
+      originalPrice: "",
+      description: "For growing law firms and professionals",
       features: [
-        "Unlimited document analyses",
+        "500 document analyses/month",
         "Advanced AI with legal precedents",
         "Instant processing (real-time)",
         "Custom AI model training",
         "Multi-user team collaboration",
-        "White-label solutions",
-        "24/7 phone & chat support",
-        "Custom integrations",
+        "Priority support",
         "Advanced analytics dashboard",
+        "Bulk document processing",
+        "Custom integrations",
         "Dedicated account manager"
       ],
-      highlight: false,
-      badge: "Best Value"
+      highlight: true,
+      popular: true,
+      badge: "Most Popular"
     }
   ];
 

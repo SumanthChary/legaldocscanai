@@ -1,7 +1,7 @@
 
 export const getPricingPlans = (isAnnual: boolean) => [
   {
-    name: "Free Trial",
+    name: "Free Plan",
     price: "0",
     period: "",
     originalPrice: "",
@@ -18,9 +18,9 @@ export const getPricingPlans = (isAnnual: boolean) => [
   },
   {
     name: "Starter",
-    price: isAnnual ? "12" : "20",
-    originalPrice: isAnnual ? "20" : "",
-    period: isAnnual ? "/month (billed annually)" : "/month",
+    price: "20",
+    originalPrice: "",
+    period: "/month",
     description: "Ideal for solo practitioners",
     features: [
       "25 document analyses per month",
@@ -35,10 +35,10 @@ export const getPricingPlans = (isAnnual: boolean) => [
     highlight: false
   },
   {
-    name: "Professional",
-    price: isAnnual ? "79" : "132",
-    originalPrice: isAnnual ? "132" : "",
-    period: isAnnual ? "/month (billed annually)" : "/month",
+    name: "Pro Plan",
+    price: "99",
+    originalPrice: "",
+    period: "/month",
     description: "Built for growing law firms",
     features: [
       "500 document analyses per month",
