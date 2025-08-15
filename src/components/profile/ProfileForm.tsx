@@ -60,7 +60,12 @@ export const ProfileForm = ({ username, email, onUsernameChange, loading = false
 
       // Upload to storage
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/avatar.${fileExt}`;
+      const fileName = `avatars/${user.id}/avatar.${fileExt}`;
+      
+      // Delete old avatar if exists
+      await supabase.storage
+        .from('documents')
+        .remove([`avatars/${user.id}/avatar.jpg`, `avatars/${user.id}/avatar.png`, `avatars/${user.id}/avatar.webp`]);
       
       const { error: uploadError } = await supabase.storage
         .from('documents')
