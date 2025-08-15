@@ -23,9 +23,9 @@ export const UserProfile = ({ profile, handleSignOut }: UserProfileProps) => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center space-x-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200">
           <Avatar className="h-8 w-8 ring-2 ring-gradient-to-r ring-from-blue-200 ring-to-purple-200">
-            <AvatarImage src={profile?.avatar_url} alt={profile?.username || "User"} />
+            <AvatarImage src={profile?.avatar_url} />
             <AvatarFallback className="bg-gradient-to-r from-blue-100 to-purple-100">
-              {profile?.username ? profile.username.charAt(0).toUpperCase() : 'U'}
+              <User className="h-4 w-4 text-blue-600" />
             </AvatarFallback>
           </Avatar>
           <span className="font-medium">{profile?.username || "Profile"}</span>
