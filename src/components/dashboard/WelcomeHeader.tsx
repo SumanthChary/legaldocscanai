@@ -28,7 +28,7 @@ export const WelcomeHeader = ({ session }: WelcomeHeaderProps) => {
     }
   };
 
-  const userName = userProfile?.full_name || session?.user?.email?.split('@')[0] || 'User';
+  const userName = userProfile?.username || userProfile?.full_name || session?.user?.email?.split('@')[0] || 'User';
 
   return (
     <div className="relative">
