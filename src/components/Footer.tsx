@@ -28,16 +28,37 @@ export const Footer = () => {
     }
 
     try {
-      // Call the subscribe-email edge function
-      const { data, error } = await supabase.functions.invoke('subscribe-email', {
-        body: { email }
+      // Send welcome email via our send-email function
+      const { data, error } = await supabase.functions.invoke('send-email', {
+        body: { 
+          to: email,
+          subject: "Welcome to LegalDeep AI Newsletter!",
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <h1 style="color: #2563eb; text-align: center;">Welcome to LegalDeep AI!</h1>
+              <p>Thank you for subscribing to our newsletter.</p>
+              <p>You'll now receive updates about:</p>
+              <ul>
+                <li>New AI-powered legal features</li>
+                <li>Product updates and improvements</li>
+                <li>Legal technology insights</li>
+                <li>Special offers and announcements</li>
+              </ul>
+              <p>Stay tuned for exciting updates!</p>
+              <p style="color: #666; font-size: 14px; margin-top: 30px;">
+                Best regards,<br>
+                The LegalDeep AI Team
+              </p>
+            </div>
+          `
+        }
       });
 
       if (error) throw error;
 
       toast({
         title: "Subscribed!",
-        description: "Thank you for subscribing to our newsletter.",
+        description: "Thank you for subscribing! Check your email for confirmation.",
       });
       setEmail("");
     } catch (error: any) {
