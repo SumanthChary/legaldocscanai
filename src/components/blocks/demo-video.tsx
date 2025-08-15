@@ -1,21 +1,23 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InView } from "@/components/ui/in-view";
 
 export const DemoVideo = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
-  // Updated Vimeo video ID
-  const vimeoVideoId = "1071862312";
-  const privateHash = "e0a6f50161";
+  // Demo video from Supabase storage
+  const videoUrl = "https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/demo%20for%20legaldeepai.mp4";
   
   const togglePlay = () => {
-    const iframe = document.querySelector('iframe');
-    if (iframe) {
-      const message = isPlaying ? '{"method":"pause"}' : '{"method":"play"}';
-      iframe.contentWindow?.postMessage(message, 'https://player.vimeo.com');
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
       setIsPlaying(!isPlaying);
     }
   };
@@ -39,12 +41,15 @@ export const DemoVideo = () => {
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-blue-500/30 opacity-50"></div>
           
           <div className="relative aspect-video rounded-xl overflow-hidden bg-black">
-            <iframe
-              src={`https://player.vimeo.com/video/${vimeoVideoId}?h=${privateHash}&background=1&autoplay=0&loop=1&byline=0&title=0&portrait=0`}
-              className="w-full h-full absolute inset-0"
-              allow="autoplay; fullscreen; picture-in-picture"
-              style={{ border: 0 }}
-            ></iframe>
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              className="w-full h-full absolute inset-0 object-cover"
+              preload="metadata"
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={() => setIsPlaying(false)}
+            />
             
             {/* Professional overlay */}
             <div
