@@ -21,6 +21,7 @@ export default {
         sans: ["Editorial New", "Aeonik", "system-ui", "-apple-system", "sans-serif"],
         editorial: ["Editorial New", "system-ui", "-apple-system", "sans-serif"],
         aeonik: ["Aeonik", "system-ui", "-apple-system", "sans-serif"],
+        "editorial-new-italic": ["Editorial New Italic", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",

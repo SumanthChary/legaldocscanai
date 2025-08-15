@@ -48,6 +48,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Editorial New Italic';
+  src: url('https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/fonts/Editorial%20New%20Font/PPEditorialNew-UltralightItalic.otf') format('opentype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
