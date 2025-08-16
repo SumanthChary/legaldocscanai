@@ -1,6 +1,6 @@
 import { InView } from "@/components/ui/in-view";
 import { SkeumorphicIcon } from "@/components/ui/skeumorphic-icon";
-import { Upload, Cpu, FileText, CheckCircle } from "lucide-react";
+import { Upload, Cpu, FileText, CheckCircle, ArrowRight } from "lucide-react";
 export const HowItWorksSection = () => {
   const steps = [{
     icon: Upload,
@@ -49,56 +49,48 @@ export const HowItWorksSection = () => {
           </div>
         </InView>
 
-        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-          {/* Connecting lines */}
-          <div className="hidden lg:block absolute top-20 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-          
-          {steps.map((step, index) => <InView key={index} variants={{
-          hidden: {
-            opacity: 0,
-            y: 30,
-            scale: 0.9
-          },
-          visible: {
-            opacity: 1,
-            y: 0,
-            scale: 1
-          }
-        }} transition={{
-          duration: 0.8,
-          delay: index * 0.2,
-          ease: [0.25, 0.1, 0.25, 1]
-        }}>
-              <div className="text-center group relative">
-                {/* Step number badge */}
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center z-10">
-                  <span className="text-white text-sm font-bold">{step.number}</span>
-                </div>
-                
-                <div className="relative mb-8 pt-4">
-                  {/* Subtle background glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-3xl group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300"></div>
-                  
-                  {/* 3D Icon container */}
-                  <div className="relative flex justify-center">
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-6">
+          {steps.map((step, index) => (
+            <div key={index} className="flex flex-col items-center relative">
+              <InView 
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  visible: { opacity: 1, y: 0 }
+                }} 
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.1
+                }}
+              >
+                <div className="text-center group">
+                  {/* Clean icon without background */}
+                  <div className="mb-6">
                     <SkeumorphicIcon 
                       icon={step.icon} 
                       variant={step.variant}
                       size="lg"
                     />
                   </div>
+                  
+                  <div className="space-y-3">
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-editorial font-medium text-gray-900 tracking-tight">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm md:text-base text-gray-600 font-editorial font-light leading-relaxed max-w-xs mx-auto">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-                
-                <div className="space-y-3 md:space-y-4 relative z-10">
-                  <h3 className="text-xl md:text-2xl font-editorial font-light text-gray-900 tracking-tight group-hover:text-blue-900 transition-colors duration-300">
-                    {step.title}
-                  </h3>
-                  <p className="text-base md:text-lg text-gray-600 font-editorial font-light leading-relaxed max-w-sm mx-auto">
-                    {step.description}
-                  </p>
+              </InView>
+              
+              {/* Arrow between steps - only show on desktop and not after last step */}
+              {index < steps.length - 1 && (
+                <div className="hidden lg:flex absolute top-10 -right-6 text-gray-400 z-10">
+                  <ArrowRight className="w-5 h-5" />
                 </div>
-              </div>
-            </InView>)}
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </section>;
