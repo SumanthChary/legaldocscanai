@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { MacBookMockup } from "@/components/ui/macbook-mockup";
+import { DemoVideo } from "@/components/blocks/demo-video";
 import { InView } from "@/components/ui/in-view";
 interface HeroProps {
   benefits: string[];
@@ -171,12 +171,8 @@ export const HeroSection = ({
                   <p className="text-xs text-gray-600">"Game-changer for our workflow efficiency."</p>
                 </div>
                 
-                {/* MacBook with demo */}
-                <MacBookMockup 
-                  videoSrc="https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/demo%20for%20legaldeepai.mp4"
-                  thumbnailSrc="https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/Screenshot%20(582).png"
-                  className="transform perspective-1000"
-                />
+                {/* Clean demo video */}
+                <DemoVideo />
                 
                 {/* Performance metrics floating card */}
                 <div className="absolute top-1/2 -right-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-gray-200/50 z-10 hidden xl:block">
