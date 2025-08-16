@@ -179,8 +179,7 @@ export const EnhancedChatPage = ({ user, profile }: EnhancedChatPageProps) => {
   ];
 
   return (
-    <SidebarLayout user={user} profile={profile}>
-      <div className="h-screen bg-gradient-to-br from-slate-50/50 via-white to-blue-50/30 flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-slate-50/50 via-white to-blue-50/30 flex flex-col">
         <div className="flex-1 container mx-auto px-4 lg:px-8 py-6 flex flex-col">
           
           {/* Enhanced Header */}

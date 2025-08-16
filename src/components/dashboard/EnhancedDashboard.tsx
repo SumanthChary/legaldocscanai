@@ -94,9 +94,7 @@ export const EnhancedDashboard = () => {
   }
 
   return (
-    <SidebarLayout user={session?.user} profile={profile}>
-      {/* Enhanced background with professional gradients */}
-      <div className="min-h-screen bg-gradient-to-br from-slate-50/50 via-white to-blue-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50/50 via-white to-blue-50/30">
         <div className="container mx-auto px-4 lg:px-8 py-6 lg:py-8 relative">
           {/* Subtle background elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">

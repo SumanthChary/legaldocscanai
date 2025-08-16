@@ -122,8 +122,7 @@ export const EnhancedESignatures = ({ user, profile }: EnhancedESignaturesProps)
   });
 
   return (
-    <SidebarLayout user={user} profile={profile}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50/50 via-white to-blue-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50/50 via-white to-blue-50/30">
         <div className="container mx-auto px-4 lg:px-8 py-6 lg:py-8">
           {/* Header */}
           <div className="mb-8">
