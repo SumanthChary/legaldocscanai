@@ -3,7 +3,6 @@ import { useState, useRef } from "react";
 import { Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InView } from "@/components/ui/in-view";
-import demoThumbnail from "@/assets/demo-thumbnail.jpg";
 
 export const DemoVideo = () => {
   const [isPlaying, setIsPlaying] = useState(false);
