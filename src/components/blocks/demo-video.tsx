@@ -3,15 +3,16 @@ import { useState, useRef } from "react";
 import { Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InView } from "@/components/ui/in-view";
+import demoThumbnail from "@/assets/demo-thumbnail.jpg";
 
 export const DemoVideo = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   
-  // Demo video from Supabase storage
-  const videoUrl = "https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/demo%20for%20legaldeepai.mp4";
-  // Custom thumbnail to replace Vimeo watermark
-  const thumbnailUrl = "https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/Screenshot%20(582).png";
+  // Clean demo video without watermarks - you need to upload a watermark-free version
+  const videoUrl = "https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/demo-clean.mp4";
+  // Professional thumbnail
+  const thumbnailUrl = demoThumbnail;
   
   const togglePlay = () => {
     if (videoRef.current) {
