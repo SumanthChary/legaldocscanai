@@ -10,9 +10,16 @@ import { HowItWorksSection } from "@/components/blocks/how-it-works-section";
 import { AboutAuthorSection } from "@/components/blocks/about-author-section";
 import { FeaturedSection } from "@/components/blocks/featured-section";
 import { PowerfulFeaturesSection } from "@/components/blocks/powerful-features-section";
-import { useEffect } from "react";
+import { WhopService } from "@/integrations/whop";
+import { WhopWelcomeUpsell } from "@/components/whop";
+import { useEffect, useState } from "react";
 
 const Landing = () => {
+  const [isWhopUser, setIsWhopUser] = useState(false);
+
+  useEffect(() => {
+    setIsWhopUser(WhopService.isWhopUser());
+  }, []);
   const benefits = [
     "Reduce review time by 90%",
     "Improve analysis accuracy", 
@@ -110,12 +117,14 @@ const Landing = () => {
 
   return (
     <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-      <PageLayout withBanner>
-        <HeroSection benefits={benefits} />
+      <PageLayout withBanner={!isWhopUser}>
+        <HeroSection benefits={benefits} isWhopUser={isWhopUser} />
         <FeaturedSection />
         <HowItWorksSection />
         <PowerfulFeaturesSection />
         <TrustSection />
+        {/* Show special Whop upsell for Whop users */}
+        {isWhopUser && <WhopWelcomeUpsell />}
         <div className="bg-gradient-to-br from-gray-50 to-blue-50/50">
           <PricingSection />
         </div>

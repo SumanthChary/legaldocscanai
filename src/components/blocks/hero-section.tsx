@@ -5,9 +5,11 @@ import { DemoVideo } from "./demo-video";
 import { InView } from "@/components/ui/in-view";
 interface HeroProps {
   benefits: string[];
+  isWhopUser?: boolean;
 }
 export const HeroSection = ({
-  benefits
+  benefits,
+  isWhopUser = false
 }: HeroProps) => {
   const navigate = useNavigate();
   return <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30 min-h-screen flex items-center">
@@ -43,10 +45,18 @@ export const HeroSection = ({
             ease: [0.25, 0.1, 0.25, 1]
           }}>
               <div className="space-y-3 md:space-y-4 lg:space-y-6">
-                {/* Premium badge */}
-                <div className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-2 rounded-full bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200/50 backdrop-blur-sm">
-                  <Users className="h-3 w-3 md:h-4 md:w-4 text-green-600" />
-                  <span className="text-xs md:text-sm font-medium text-green-700">2,500+ Active Users</span>
+                {/* Premium badge - special for Whop users */}
+                <div className={`inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-2 rounded-full ${
+                  isWhopUser 
+                    ? 'bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-200/50' 
+                    : 'bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200/50'
+                } backdrop-blur-sm`}>
+                  <Users className={`h-3 w-3 md:h-4 md:w-4 ${isWhopUser ? 'text-blue-600' : 'text-green-600'}`} />
+                  <span className={`text-xs md:text-sm font-medium ${
+                    isWhopUser ? 'text-blue-700' : 'text-green-700'
+                  }`}>
+                    {isWhopUser ? 'Welcome from Whop! 🎉' : '2,500+ Active Users'}
+                  </span>
                 </div>
                 
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-br from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-transparent leading-tight">
@@ -68,7 +78,12 @@ export const HeroSection = ({
             duration: 0.8,
             delay: 0.4
           }}>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">Slash review time, catch hidden risks, and deliver clear answers your clients love. No setup, just upload and go.</p>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">
+                {isWhopUser 
+                  ? 'You\'re all set! Access your premium LegalDeep AI subscription and transform your legal workflow today.' 
+                  : 'Slash review time, catch hidden risks, and deliver clear answers your clients love. No setup, just upload and go.'
+                }
+              </p>
             </InView>
             
             <InView variants={{
@@ -85,13 +100,19 @@ export const HeroSection = ({
             delay: 0.6
           }}>
               <div className="flex flex-col sm:flex-row gap-2 md:gap-3 lg:gap-4">
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 border-0 w-full sm:w-auto" onClick={() => navigate("/dashboard")}>
-                  Get Started Free
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 border-0 w-full sm:w-auto" 
+                  onClick={() => navigate("/dashboard")}
+                >
+                  {isWhopUser ? 'Access Your Dashboard' : 'Get Started Free'}
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5 md:ml-2 md:h-4 md:w-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 w-full sm:w-auto" onClick={() => navigate("/documentation")}>
-                  Watch Demo
-                </Button>
+                {!isWhopUser && (
+                  <Button size="lg" variant="outline" className="border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 w-full sm:w-auto" onClick={() => navigate("/documentation")}>
+                    Watch Demo
+                  </Button>
+                )}
               </div>
             </InView>
             
