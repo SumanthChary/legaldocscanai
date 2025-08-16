@@ -25,6 +25,7 @@ import ChatPage from "./pages/ChatPage";
 import { Dashboard } from "@/components/dashboard";
 import ESignatures from "./pages/ESignatures";
 import Support from "./pages/Support";
+import WhopCallback from "./pages/WhopCallback";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -74,6 +75,7 @@ function App() {
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/esignatures" element={<ESignatures />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/whop/callback" element={<WhopCallback />} />
             </Routes>
             <ChatWidget />
           </BrowserRouter>
