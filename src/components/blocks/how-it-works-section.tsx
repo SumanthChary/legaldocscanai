@@ -76,8 +76,8 @@ export const HowItWorksSection = () => {
                 </div>
                 
                 <div className="relative mb-8 pt-4">
-                  {/* Glow effect background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-xl group-hover:from-blue-500/20 group-hover:to-purple-500/20 transition-all duration-500"></div>
+                  {/* Subtle background glow */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-3xl group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300"></div>
                   
                   {/* 3D Icon container */}
                   <div className="relative flex justify-center">
@@ -85,7 +85,6 @@ export const HowItWorksSection = () => {
                       icon={step.icon} 
                       variant={step.variant}
                       size="lg"
-                      glowing
                     />
                   </div>
                 </div>
@@ -98,10 +97,6 @@ export const HowItWorksSection = () => {
                     {step.description}
                   </p>
                 </div>
-                
-                {/* Floating particles */}
-                <div className="absolute -top-2 -right-2 w-2 h-2 bg-blue-400 rounded-full opacity-60 animate-pulse"></div>
-                <div className="absolute -bottom-4 -left-3 w-1.5 h-1.5 bg-purple-400 rounded-full opacity-40 animate-pulse" style={{ animationDelay: '1s' }}></div>
               </div>
             </InView>)}
         </div>

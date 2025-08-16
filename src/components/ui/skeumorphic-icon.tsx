@@ -6,15 +6,13 @@ interface SkeumorphicIconProps {
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
   variant?: "upload" | "process" | "result" | "action";
-  glowing?: boolean;
 }
 
 export const SkeumorphicIcon = ({
   icon: Icon,
   className,
   size = "md",
-  variant = "upload",
-  glowing = false
+  variant = "upload"
 }: SkeumorphicIconProps) => {
   const sizeClasses = {
     sm: "w-12 h-12",
@@ -61,21 +59,12 @@ export const SkeumorphicIcon = ({
 
   return (
     <div className={cn(
-      "relative rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1",
+      "relative rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-105",
       sizeClasses[size],
       style.bg,
       style.shadow,
-      glowing && "animate-pulse",
       className
     )}>
-      {/* Glow effect when enabled */}
-      {glowing && (
-        <div className={cn(
-          "absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-          style.glow
-        )} />
-      )}
-      
       {/* Inner highlight */}
       <div className="absolute top-1 left-1 right-1 h-1/3 bg-gradient-to-b from-white/30 to-transparent rounded-t-xl" />
       

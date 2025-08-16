@@ -80,7 +80,7 @@ export const PowerfulFeaturesSection = () => {
           delay: index * 0.15,
           ease: [0.25, 0.1, 0.25, 1]
         }}>
-              <div className="group relative p-8 md:p-10 rounded-3xl bg-white/80 backdrop-blur-sm border border-gray-200/50 hover:border-blue-300/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+              <div className="group relative p-8 md:p-10 rounded-3xl bg-white/80 backdrop-blur-sm border border-gray-200/50 hover:border-blue-300/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 {/* Glassmorphism background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-white/30 rounded-3xl backdrop-blur-sm"></div>
                 
@@ -93,17 +93,11 @@ export const PowerfulFeaturesSection = () => {
                 
                 {/* 3D Icon */}
                 <div className="relative z-10 mb-8 flex justify-start">
-                  <div className="relative">
-                    <SkeumorphicIcon 
-                      icon={feature.icon} 
-                      variant={feature.variant}
-                      size="md"
-                      glowing
-                    />
-                    
-                    {/* Pulse ring animation */}
-                    <div className="absolute inset-0 rounded-2xl border-2 border-blue-400/30 group-hover:animate-ping"></div>
-                  </div>
+                  <SkeumorphicIcon 
+                    icon={feature.icon} 
+                    variant={feature.variant}
+                    size="md"
+                  />
                 </div>
                 
                 <div className="relative z-10">
@@ -116,7 +110,6 @@ export const PowerfulFeaturesSection = () => {
                         <span className="text-xs px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border border-amber-200/50 font-medium">
                           Coming Soon
                         </span>
-                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
                       </div>
                     )}
                   </div>
@@ -125,12 +118,8 @@ export const PowerfulFeaturesSection = () => {
                   </p>
                 </div>
                 
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Floating elements */}
-                <div className="absolute -top-2 -right-2 w-3 h-3 bg-blue-400/60 rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300"></div>
-                <div className="absolute -bottom-3 -left-3 w-2 h-2 bg-purple-400/60 rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" style={{ animationDelay: '0.5s' }}></div>
+                {/* Subtle hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/3 to-purple-500/3 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
             </InView>)}
         </div>

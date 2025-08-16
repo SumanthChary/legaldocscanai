@@ -82,10 +82,10 @@ export const MacBookMockup = ({ videoSrc, thumbnailSrc, className }: MacBookMock
         </div>
       </div>
 
-      {/* Floating elements around MacBook */}
-      <div className="absolute -top-4 -right-4 w-12 h-12 bg-blue-500 rounded-full opacity-20 animate-pulse"></div>
-      <div className="absolute -bottom-6 -left-6 w-8 h-8 bg-purple-500 rounded-full opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
-      <div className="absolute top-1/2 -right-8 w-6 h-6 bg-emerald-500 rounded-full opacity-25 animate-pulse" style={{ animationDelay: '2s' }}></div>
+      {/* Subtle accent elements */}
+      <div className="absolute -top-4 -right-4 w-12 h-12 bg-blue-500/10 rounded-full"></div>
+      <div className="absolute -bottom-6 -left-6 w-8 h-8 bg-purple-500/10 rounded-full"></div>
+      <div className="absolute top-1/2 -right-8 w-6 h-6 bg-emerald-500/10 rounded-full"></div>
     </div>
   );
 };

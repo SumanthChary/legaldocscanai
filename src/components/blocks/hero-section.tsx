@@ -175,11 +175,11 @@ export const HeroSection = ({
                 <MacBookMockup 
                   videoSrc="https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/demo%20for%20legaldeepai.mp4"
                   thumbnailSrc="https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/Screenshot%20(582).png"
-                  className="transform perspective-1000 rotate-y-5"
+                  className="transform perspective-1000"
                 />
                 
                 {/* Performance metrics floating card */}
-                <div className="absolute top-1/2 -right-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-gray-200/50 z-10 hidden xl:block">
+                <div className="absolute top-1/2 -right-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-gray-200/50 z-10 hidden xl:block">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">90%</div>
                     <div className="text-xs text-gray-600">Faster Reviews</div>
