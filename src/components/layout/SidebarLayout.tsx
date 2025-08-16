@@ -32,11 +32,11 @@ export const SidebarLayout = ({ children, className = "", user, profile }: Sideb
           <header className="lg:hidden border-b bg-background/95 backdrop-blur-md sticky top-0 z-40 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <SidebarTrigger asChild>
-                  <Button variant="ghost" size="sm" className="p-2">
+                <Button variant="ghost" size="sm" className="p-2" asChild>
+                  <SidebarTrigger>
                     <Menu className="h-5 w-5" />
-                  </Button>
-                </SidebarTrigger>
+                  </SidebarTrigger>
+                </Button>
                 <div className="flex items-center space-x-2">
                   <div className="h-6 w-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded-md flex items-center justify-center">
                     <span className="text-white text-xs font-bold">L</span>

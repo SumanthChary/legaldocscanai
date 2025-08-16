@@ -171,8 +171,8 @@ export function AppSidebar({ user, profile }: AppSidebarProps) {
             <SidebarMenu>
               {mainNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-11">
-                    <NavLink to={item.url} className={getNavClassName(item.url)}>
+                  <SidebarMenuButton className="h-11 p-0">
+                    <NavLink to={item.url} className={`${getNavClassName(item.url)} flex items-center w-full h-full px-3 py-2 rounded-md`}>
                       <item.icon className={`${collapsed ? "h-5 w-5" : "h-5 w-5 mr-3"}`} />
                       {!collapsed && <span className="font-medium">{item.title}</span>}
                     </NavLink>
@@ -193,8 +193,8 @@ export function AppSidebar({ user, profile }: AppSidebarProps) {
             <SidebarMenu>
               {accountItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-10">
-                    <NavLink to={item.url} className={getNavClassName(item.url)}>
+                  <SidebarMenuButton className="h-10 p-0">
+                    <NavLink to={item.url} className={`${getNavClassName(item.url)} flex items-center w-full h-full px-3 py-2 rounded-md`}>
                       <item.icon className={`${collapsed ? "h-4 w-4" : "h-4 w-4 mr-3"}`} />
                       {!collapsed && <span>{item.title}</span>}
                     </NavLink>
@@ -215,8 +215,8 @@ export function AppSidebar({ user, profile }: AppSidebarProps) {
             <SidebarMenu>
               {enterpriseItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-10">
-                    <NavLink to={item.url} className={getNavClassName(item.url)}>
+                  <SidebarMenuButton className="h-10 p-0">
+                    <NavLink to={item.url} className={`${getNavClassName(item.url)} flex items-center w-full h-full px-3 py-2 rounded-md`}>
                       <item.icon className={`${collapsed ? "h-4 w-4" : "h-4 w-4 mr-3"}`} />
                       {!collapsed && <span>{item.title}</span>}
                     </NavLink>
@@ -233,8 +233,8 @@ export function AppSidebar({ user, profile }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className="h-10">
-                  <NavLink to="/pricing" className="text-amber-600 hover:text-amber-700 hover:bg-amber-50">
+                <SidebarMenuButton className="h-10 p-0">
+                  <NavLink to="/pricing" className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 flex items-center w-full h-full px-3 py-2 rounded-md">
                     <Star className={`${collapsed ? "h-4 w-4" : "h-4 w-4 mr-3"}`} />
                     {!collapsed && <span>Upgrade to Pro</span>}
                   </NavLink>
