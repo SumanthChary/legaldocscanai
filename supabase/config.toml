@@ -49,3 +49,11 @@ system_import = true
 [functions."check-expiring-trials"]
 verify_jwt = true
 system_import = true
+
+[functions."whop-webhooks"]
+verify_jwt = false
+system_import = true
+
+[functions."whop-auth"]
+verify_jwt = false
+system_import = true

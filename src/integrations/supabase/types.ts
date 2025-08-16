@@ -90,8 +90,12 @@ export type Database = {
           document_limit: number | null
           email: string
           id: string
+          source: string | null
           updated_at: string
           username: string
+          whop_plan_id: string | null
+          whop_subscription_id: string | null
+          whop_user_id: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -100,8 +104,12 @@ export type Database = {
           document_limit?: number | null
           email: string
           id: string
+          source?: string | null
           updated_at?: string
           username: string
+          whop_plan_id?: string | null
+          whop_subscription_id?: string | null
+          whop_user_id?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -110,8 +118,12 @@ export type Database = {
           document_limit?: number | null
           email?: string
           id?: string
+          source?: string | null
           updated_at?: string
           username?: string
+          whop_plan_id?: string | null
+          whop_subscription_id?: string | null
+          whop_user_id?: string | null
         }
         Relationships: []
       }
@@ -293,9 +305,13 @@ export type Database = {
           current_period_start: string
           id: string
           plan_type: Database["public"]["Enums"]["subscription_tier"]
+          source: string | null
           status: string
           updated_at: string
           user_id: string
+          whop_plan_id: string | null
+          whop_subscription_id: string | null
+          whop_user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -303,9 +319,13 @@ export type Database = {
           current_period_start: string
           id?: string
           plan_type: Database["public"]["Enums"]["subscription_tier"]
+          source?: string | null
           status: string
           updated_at?: string
           user_id: string
+          whop_plan_id?: string | null
+          whop_subscription_id?: string | null
+          whop_user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -313,9 +333,13 @@ export type Database = {
           current_period_start?: string
           id?: string
           plan_type?: Database["public"]["Enums"]["subscription_tier"]
+          source?: string | null
           status?: string
           updated_at?: string
           user_id?: string
+          whop_plan_id?: string | null
+          whop_subscription_id?: string | null
+          whop_user_id?: string | null
         }
         Relationships: []
       }
@@ -357,6 +381,84 @@ export type Database = {
           },
         ]
       }
+      whop_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          status: string
+          transaction_type: string
+          updated_at: string
+          user_id: string
+          whop_plan_id: string
+          whop_subscription_id: string
+          whop_user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          status: string
+          transaction_type: string
+          updated_at?: string
+          user_id: string
+          whop_plan_id: string
+          whop_subscription_id: string
+          whop_user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          status?: string
+          transaction_type?: string
+          updated_at?: string
+          user_id?: string
+          whop_plan_id?: string
+          whop_subscription_id?: string
+          whop_user_id?: string
+        }
+        Relationships: []
+      }
+      whop_webhooks: {
+        Row: {
+          created_at: string
+          event_data: Json
+          event_type: string
+          id: string
+          processed: boolean | null
+          processed_at: string | null
+          whop_plan_id: string | null
+          whop_subscription_id: string | null
+          whop_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data: Json
+          event_type: string
+          id?: string
+          processed?: boolean | null
+          processed_at?: string | null
+          whop_plan_id?: string | null
+          whop_subscription_id?: string | null
+          whop_user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json
+          event_type?: string
+          id?: string
+          processed?: boolean | null
+          processed_at?: string | null
+          whop_plan_id?: string | null
+          whop_subscription_id?: string | null
+          whop_user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -371,6 +473,19 @@ export type Database = {
         Returns: {
           username: string
         }[]
+      }
+      sync_whop_subscription: {
+        Args: {
+          p_current_period_end: string
+          p_current_period_start: string
+          p_plan_type: string
+          p_status: string
+          p_user_id: string
+          p_whop_plan_id: string
+          p_whop_subscription_id: string
+          p_whop_user_id: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

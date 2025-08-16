@@ -9,11 +9,14 @@ import { PricingPlans } from "@/components/pricing/PricingPlans";
 import { AddOns } from "@/components/pricing/AddOns";
 import { RedeemCodeModal } from "@/components/pricing/RedeemCodeModal";
 import { getPricingPlans } from "@/components/pricing/pricingData";
+import { WhopPricingPlans } from "@/components/whop";
+import { WhopService } from "@/integrations/whop";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
   
+  const isWhopUser = WhopService.isWhopUser();
   const plans = getPricingPlans(isAnnual);
   const addOns: any[] = [];
 
@@ -30,8 +33,17 @@ const Pricing = () => {
             </div>
           )}
           <PricingHeader onRedeemClick={() => setIsRedeemModalOpen(true)} />
-          <PricingToggle isAnnual={isAnnual} setIsAnnual={setIsAnnual} />
-          <PricingPlans plans={plans} isAnnual={isAnnual} />
+          
+          {/* Show Whop pricing for Whop users, regular pricing for others */}
+          {isWhopUser ? (
+            <WhopPricingPlans />
+          ) : (
+            <>
+              <PricingToggle isAnnual={isAnnual} setIsAnnual={setIsAnnual} />
+              <PricingPlans plans={plans} isAnnual={isAnnual} />
+            </>
+          )}
+          
           {addOns.length > 0 && <AddOns addOns={addOns} />}
           
           {/* Trust and Social Proof Section */}

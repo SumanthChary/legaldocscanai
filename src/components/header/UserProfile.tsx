@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { WhopUserBadge } from "@/components/whop";
 
 type UserProfileProps = {
   profile: any | null;
@@ -28,7 +29,10 @@ export const UserProfile = ({ profile, handleSignOut }: UserProfileProps) => {
               <User className="h-4 w-4 text-blue-600" />
             </AvatarFallback>
           </Avatar>
-          <span className="font-medium">{profile?.username || "Profile"}</span>
+          <div className="flex flex-col items-start">
+            <span className="font-medium">{profile?.username || "Profile"}</span>
+            <WhopUserBadge />
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-md border border-gray-200/50 shadow-xl">
