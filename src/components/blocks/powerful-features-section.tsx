@@ -1,31 +1,44 @@
 import { InView } from "@/components/ui/in-view";
+import { SkeumorphicIcon } from "@/components/ui/skeumorphic-icon";
 import { FileText, Cpu, Shield, Clock, Search, Users } from "lucide-react";
 export const PowerfulFeaturesSection = () => {
   const features = [{
     icon: Search,
     title: "Risk & Clause Detection",
-    description: "Spot hidden risks, obligations, and renewal traps before they cost you."
+    description: "Spot hidden risks, obligations, and renewal traps before they cost you.",
+    variant: "process" as const,
+    category: "AI Analysis"
   }, {
     icon: Clock,
     title: "90% Faster Reviews",
-    description: "Ship decisions in minutes and reclaim billable hours."
+    description: "Ship decisions in minutes and reclaim billable hours.",
+    variant: "action" as const,
+    category: "Performance"
   }, {
     icon: FileText,
     title: "One‑Click Summaries",
-    description: "Export clean briefs your clients actually understand."
+    description: "Export clean briefs your clients actually understand.",
+    variant: "result" as const,
+    category: "Output"
   }, {
     icon: Shield,
     title: "Privacy by Default",
-    description: "Your documents stay protected with enterprise‑grade controls."
+    description: "Your documents stay protected with enterprise‑grade controls.",
+    variant: "upload" as const,
+    category: "Security"
   }, {
     icon: Users,
     title: "Collaboration",
     description: "Assign, comment, and align as a team.",
+    variant: "action" as const,
+    category: "Workflow",
     comingSoon: true
   }, {
     icon: Cpu,
     title: "Cloud Integrations",
     description: "Connect with your drive and DMS.",
+    variant: "upload" as const,
+    category: "Integration",
     comingSoon: true
   }];
   return <section className="py-20 md:py-28 lg:py-32 bg-white">
@@ -54,29 +67,70 @@ export const PowerfulFeaturesSection = () => {
           {features.map((feature, index) => <InView key={index} variants={{
           hidden: {
             opacity: 0,
-            y: 20
+            y: 30,
+            rotateX: 15
           },
           visible: {
             opacity: 1,
-            y: 0
+            y: 0,
+            rotateX: 0
           }
         }} transition={{
-          duration: 0.6,
-          delay: index * 0.1
+          duration: 0.8,
+          delay: index * 0.15,
+          ease: [0.25, 0.1, 0.25, 1]
         }}>
-              <div className="group p-8 md:p-10 rounded-2xl bg-gradient-to-br from-gray-50/50 to-white border border-gray-100 hover:border-blue-200/50 hover:shadow-xl transition-all duration-300">
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white shadow-lg border border-gray-100 flex items-center justify-center mb-6 group-hover:shadow-xl transition-all duration-300">
-                  <feature.icon className="w-6 h-6 md:w-7 md:h-7 text-blue-600" strokeWidth={1.5} />
+              <div className="group relative p-8 md:p-10 rounded-3xl bg-white/80 backdrop-blur-sm border border-gray-200/50 hover:border-blue-300/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                {/* Glassmorphism background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-white/30 rounded-3xl backdrop-blur-sm"></div>
+                
+                {/* Category badge */}
+                <div className="relative z-10 mb-4">
+                  <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-100/80 text-blue-700 rounded-full border border-blue-200/50">
+                    {feature.category}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="text-xl md:text-2xl font-editorial font-light text-gray-900 tracking-tight">
-                    {feature.title}
-                  </h3>
-                  {'comingSoon' in feature && (feature as any).comingSoon && <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">Coming Soon</span>}
+                
+                {/* 3D Icon */}
+                <div className="relative z-10 mb-8 flex justify-start">
+                  <div className="relative">
+                    <SkeumorphicIcon 
+                      icon={feature.icon} 
+                      variant={feature.variant}
+                      size="md"
+                      glowing
+                    />
+                    
+                    {/* Pulse ring animation */}
+                    <div className="absolute inset-0 rounded-2xl border-2 border-blue-400/30 group-hover:animate-ping"></div>
+                  </div>
                 </div>
-                <p className="text-gray-600 text-base md:text-lg font-editorial font-light leading-relaxed">
-                  {feature.description}
-                </p>
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <h3 className="text-xl md:text-2xl font-editorial font-light text-gray-900 tracking-tight group-hover:text-blue-900 transition-colors duration-300">
+                      {feature.title}
+                    </h3>
+                    {'comingSoon' in feature && (feature as any).comingSoon && (
+                      <div className="relative">
+                        <span className="text-xs px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border border-amber-200/50 font-medium">
+                          Coming Soon
+                        </span>
+                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-gray-600 text-base md:text-lg font-editorial font-light leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+                
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                {/* Floating elements */}
+                <div className="absolute -top-2 -right-2 w-3 h-3 bg-blue-400/60 rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300"></div>
+                <div className="absolute -bottom-3 -left-3 w-2 h-2 bg-purple-400/60 rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" style={{ animationDelay: '0.5s' }}></div>
               </div>
             </InView>)}
         </div>

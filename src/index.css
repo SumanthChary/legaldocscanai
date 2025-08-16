@@ -93,6 +93,13 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    
+    /* 3D and animation properties */
+    --skeumorphic-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --glow-blue: 0 0 40px rgba(59, 130, 246, 0.4);
+    --glow-purple: 0 0 40px rgba(147, 51, 234, 0.4);
+    --glow-emerald: 0 0 40px rgba(16, 185, 129, 0.4);
+    --glow-orange: 0 0 40px rgba(249, 115, 22, 0.4);
   }
 
   .dark {

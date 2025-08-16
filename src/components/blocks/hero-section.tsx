@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { DemoVideo } from "./demo-video";
+import { MacBookMockup } from "@/components/ui/macbook-mockup";
 import { InView } from "@/components/ui/in-view";
 interface HeroProps {
   benefits: string[];
@@ -141,9 +141,52 @@ export const HeroSection = ({
           </div>
           
           <div className="lg:col-span-7 mt-6 lg:mt-0">
-            <div className="relative">
-              <DemoVideo />
-            </div>
+            <InView variants={{
+              hidden: { opacity: 0, x: 40, scale: 0.95 },
+              visible: { opacity: 1, x: 0, scale: 1 }
+            }} transition={{
+              duration: 1,
+              delay: 0.6,
+              ease: [0.25, 0.1, 0.25, 1]
+            }}>
+              <div className="relative">
+                {/* Floating testimonial cards */}
+                <div className="absolute -top-8 -left-8 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-gray-200/50 max-w-48 z-10 hidden lg:block">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">Sarah K.</span>
+                  </div>
+                  <p className="text-xs text-gray-600">"Saved 5 hours on my last contract review!"</p>
+                </div>
+                
+                <div className="absolute -bottom-6 -right-6 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-gray-200/50 max-w-52 z-10 hidden lg:block">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">Legal Team</span>
+                  </div>
+                  <p className="text-xs text-gray-600">"Game-changer for our workflow efficiency."</p>
+                </div>
+                
+                {/* MacBook with demo */}
+                <MacBookMockup 
+                  videoSrc="https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/demo%20for%20legaldeepai.mp4"
+                  thumbnailSrc="https://nhmhqhhxlcmhufxxifbn.supabase.co/storage/v1/object/public/Videos/Screenshot%20(582).png"
+                  className="transform perspective-1000 rotate-y-5"
+                />
+                
+                {/* Performance metrics floating card */}
+                <div className="absolute top-1/2 -right-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-gray-200/50 z-10 hidden xl:block">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600 mb-1">90%</div>
+                    <div className="text-xs text-gray-600">Faster Reviews</div>
+                  </div>
+                </div>
+              </div>
+            </InView>
           </div>
         </div>
       </div>
