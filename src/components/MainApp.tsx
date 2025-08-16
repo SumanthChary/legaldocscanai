@@ -1,26 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { SidebarLayout } from "./layout";
 import { EnhancedDashboard } from "./dashboard/EnhancedDashboard";
 import { EnhancedChatPage } from "./chat/EnhancedChatPage";
 import { EnhancedESignatures } from "./esignatures/EnhancedESignatures";
+import { useAuthSession } from "./header";
 
-type MainAppProps = {
-  user?: {
-    id: string;
-    email?: string;
-    user_metadata?: {
-      full_name?: string;
-      avatar_url?: string;
-    };
+export const MainApp = () => {
+  const location = useLocation();
+  const { session, profile } = useAuthSession();
+  
+  const getActiveTabFromPath = () => {
+    const path = location.pathname;
+    switch (path) {
+      case "/chat":
+        return "chat";
+      case "/esignatures":
+        return "esignatures";
+      case "/profile":
+        return "profile";
+      default:
+        return "dashboard";
+    }
   };
-  profile?: {
-    full_name?: string;
-    avatar_url?: string;
-  };
-};
 
-export const MainApp = ({ user, profile }: MainAppProps) => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState(getActiveTabFromPath());
+
+  
+  useEffect(() => {
+    setActiveTab(getActiveTabFromPath());
+  }, [location.pathname]);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -117,7 +126,7 @@ export const MainApp = ({ user, profile }: MainAppProps) => {
 
   return (
     <SidebarLayout
-      user={user}
+      user={session?.user}
       profile={profile}
       activeTab={activeTab}
       onTabChange={setActiveTab}

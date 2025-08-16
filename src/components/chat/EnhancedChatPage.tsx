@@ -23,10 +23,8 @@ import {
   Building,
   Home
 } from "lucide-react";
-import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { ChatHeader } from "./ChatHeader";
 import { ChatMessage } from "./ChatMessage";
-import { ModernChatInput } from "./ModernChatInput";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,53 +47,38 @@ type ChatSession = {
   messageCount: number;
 };
 
-type EnhancedChatPageProps = {
-  user?: any;
-  profile?: any;
-};
-
-export const EnhancedChatPage = ({ user, profile }: EnhancedChatPageProps) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      text: "Hello! I'm your AI Legal Assistant. I can help you with legal research, document analysis, case law lookup, and more. How can I assist you today?",
-      isBot: true,
-      timestamp: new Date(),
-    }
-  ]);
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([
-    {
-      id: "1",
-      title: "Contract Review Discussion",
-      lastMessage: "What are the key risks in this agreement?",
-      timestamp: new Date(Date.now() - 3600000),
-      messageCount: 15
-    },
-    {
-      id: "2", 
-      title: "Employment Law Query",
-      lastMessage: "Can you explain wrongful termination laws?",
-      timestamp: new Date(Date.now() - 7200000),
-      messageCount: 8
-    }
-  ]);
+export const EnhancedChatPage = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
-  const [searchQuery, setSearchQuery] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
   const { toast } = useToast();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const legalCategories = [
+    { name: "Contract Analysis", icon: FileText, description: "Review and analyze legal contracts" },
+    { name: "Legal Research", icon: BookOpen, description: "Find relevant case law and statutes" },
+    { name: "Document Drafting", icon: FileUp, description: "Generate legal documents and templates" },
+    { name: "Compliance Check", icon: Gavel, description: "Verify regulatory compliance" },
+    { name: "Business Formation", icon: Building, description: "Corporate structure and compliance" },
+    { name: "Intellectual Property", icon: Zap, description: "Patents, trademarks, copyrights" },
+    { name: "Real Estate", icon: Home, description: "Property transactions and disputes" },
+    { name: "Litigation Support", icon: Gavel, description: "Court procedures and strategies" }
+  ];
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (message: string, files?: File[]) => {
-    if (!message.trim() && (!files || files.length === 0)) return;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleSendMessage = async (message: string) => {
+    if (!message.trim()) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -105,301 +88,279 @@ export const EnhancedChatPage = ({ user, profile }: EnhancedChatPageProps) => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    setInputMessage("");
     setIsLoading(true);
 
     try {
-      // Simulate AI processing
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const botResponse: Message = {
+      const { data, error } = await supabase.functions.invoke('ai-chat', {
+        body: { message, context: "legal" }
+      });
+
+      if (error) throw error;
+
+      const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: getBotResponse(message),
+        text: data.response || "I apologize, but I couldn't process your request at the moment.",
         isBot: true,
         timestamp: new Date(),
-        sources: ["Civil Code Section 1542", "Case Law: Smith v. Jones (2023)", "Federal Regulation 29 CFR 1630"],
-        documentRef: files && files.length > 0 ? files[0].name : undefined
+        sources: data.sources || []
       };
 
-      setMessages(prev => [...prev, botResponse]);
+      setMessages(prev => [...prev, botMessage]);
     } catch (error) {
+      console.error('Error sending message:', error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to get AI response. Please try again.",
+        description: "Failed to send message. Please try again."
       });
+
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I apologize, but I'm experiencing some technical difficulties. Please try again in a moment.",
+        isBot: true,
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getBotResponse = (userMessage: string): string => {
-    const message = userMessage.toLowerCase();
-    
-    if (message.includes("contract") || message.includes("agreement")) {
-      return "I can help you analyze contracts and agreements. Key elements to review include: 1) Terms and conditions, 2) Payment clauses, 3) Termination provisions, 4) Liability limitations, 5) Dispute resolution mechanisms. Would you like me to review a specific contract section or explain any of these elements in detail?";
-    }
-    
-    if (message.includes("employment") || message.includes("job") || message.includes("workplace")) {
-      return "Employment law covers various aspects including hiring practices, workplace safety, discrimination, wrongful termination, and wage and hour laws. The key federal laws include Title VII, ADA, FMLA, and FLSA. What specific employment law question can I help you with?";
-    }
-    
-    if (message.includes("lawsuit") || message.includes("litigation") || message.includes("court")) {
-      return "Litigation involves several stages: 1) Pleading phase (complaint, answer, motions), 2) Discovery (depositions, interrogatories, document requests), 3) Pre-trial motions, 4) Trial, and 5) Post-trial motions/appeals. The timeline can vary significantly based on case complexity and jurisdiction. What aspect of litigation would you like to explore?";
-    }
-    
-    return "I understand you're looking for legal guidance. Could you provide more specific details about your situation? I can help with contract review, employment law, business formation, intellectual property, real estate transactions, and general legal research. The more context you provide, the better I can assist you.";
+  const startNewChat = () => {
+    setMessages([]);
+    setSelectedSession(null);
+    toast({
+      title: "New chat started",
+      description: "Ready for your legal questions!"
+    });
   };
 
-  const handleVoiceToggle = () => {
-    setIsListening(!isListening);
-    if (!isListening) {
-      toast({
-        title: "Voice input activated",
-        description: "Speak now to dictate your message",
-      });
-    }
-  };
+  const renderWelcomeScreen = () => (
+    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+      <div className="max-w-2xl mx-auto">
+        <div className="h-20 w-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <Bot className="h-10 w-10 text-white" />
+        </div>
+        
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+          Law AI Genius
+        </h1>
+        
+        <p className="text-xl text-muted-foreground mb-8">
+          Your intelligent legal assistant for research, analysis, and document review
+        </p>
 
-  const quickPrompts = [
-    "Review this contract for potential risks",
-    "Explain employment at-will doctrine",
-    "What are the elements of a valid contract?",
-    "Help me understand intellectual property basics",
-    "Guide me through forming an LLC",
-    "What should I know about data privacy laws?"
-  ];
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {legalCategories.map((category) => (
+            <Card 
+              key={category.name} 
+              className="p-4 hover:bg-muted/50 cursor-pointer transition-all group border-2 hover:border-primary/20"
+              onClick={() => handleSendMessage(`I need help with ${category.name.toLowerCase()}`)}
+            >
+              <category.icon className="h-8 w-8 text-primary mb-3 group-hover:scale-110 transition-transform" />
+              <h3 className="font-semibold mb-2 group-hover:text-primary">{category.name}</h3>
+              <p className="text-sm text-muted-foreground">{category.description}</p>
+            </Card>
+          ))}
+        </div>
 
-  const legalAreas = [
-    { name: "Contract Law", icon: FileText, description: "Agreement analysis and review" },
-    { name: "Employment Law", icon: Users, description: "Workplace rights and regulations" },
-    { name: "Business Formation", icon: Building, description: "Corporate structure and compliance" },
-    { name: "Intellectual Property", icon: Zap, description: "Patents, trademarks, copyrights" },
-    { name: "Real Estate", icon: Home, description: "Property transactions and disputes" },
-    { name: "Litigation Support", icon: Gavel, description: "Court procedures and strategies" }
-  ];
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button size="lg" onClick={() => handleSendMessage("What legal services can you help me with?")}>
+            <MessageSquare className="h-5 w-5 mr-2" />
+            Ask a Legal Question
+          </Button>
+          <Button variant="outline" size="lg" onClick={() => setActiveTab("research")}>
+            <Search className="h-5 w-5 mr-2" />
+            Legal Research
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderChatContent = () => (
+    <div className="flex-1 flex flex-col bg-card/50 rounded-lg border">
+      <div className="p-4 border-b flex items-center justify-between">
+        <h2 className="font-semibold">AI Chat Assistant</h2>
+        <Button variant="outline" size="sm" onClick={startNewChat}>
+          New Chat
+        </Button>
+      </div>
+      
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 ? renderWelcomeScreen() : (
+          <>
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} mb-4`}
+              >
+                <div className={`max-w-[80%] p-3 rounded-lg ${
+                  message.isBot 
+                    ? 'bg-muted text-foreground' 
+                    : 'bg-primary text-primary-foreground'
+                }`}>
+                  <p className="text-sm">{message.text}</p>
+                  <p className="text-xs opacity-70 mt-1">
+                    {message.timestamp.toLocaleTimeString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex items-center space-x-2 text-muted-foreground">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                <span>AI is thinking...</span>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </>
+        )}
+      </div>
+      
+      <div className="p-4 border-t bg-background/95">
+        <div className="flex space-x-2">
+          <div className="flex-1">
+            <Textarea
+              placeholder="Ask me anything about legal matters..."
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(inputMessage);
+                }
+              }}
+              className="min-h-[60px] resize-none"
+              disabled={isLoading}
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <Button
+              onClick={() => handleSendMessage(inputMessage)}
+              disabled={!inputMessage.trim() || isLoading}
+              size="sm"
+            >
+              <MessageSquare className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsListening(!isListening)}
+            >
+              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-50/50 via-white to-blue-50/30 flex flex-col">
       <div className="flex-1 container mx-auto px-4 lg:px-8 py-6 flex flex-col">
-          
-          {/* Enhanced Header */}
-          <div className="mb-6">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                  Law AI Genius
-                </h1>
-                <p className="text-muted-foreground">
-                  Advanced legal research and document analysis assistant
-                </p>
-              </div>
-              <div className="flex items-center space-x-3 mt-4 lg:mt-0">
-                <Button variant="outline" size="sm">
-                  <History className="h-4 w-4 mr-2" />
-                  Chat History
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export Chat
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
-              </div>
+        
+        {/* Enhanced Header */}
+        <div className="mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                Law AI Genius
+              </h1>
+              <p className="text-muted-foreground">
+                Advanced legal research and document analysis assistant
+              </p>
             </div>
-
-            {/* Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <Card className="p-4 border-0 shadow-sm bg-white/80 backdrop-blur-sm">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Bot className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">AI Responses</p>
-                    <p className="text-xl font-bold">1,247</p>
-                  </div>
-                </div>
-              </Card>
-              <Card className="p-4 border-0 shadow-sm bg-white/80 backdrop-blur-sm">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Search className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Research Queries</p>
-                    <p className="text-xl font-bold">342</p>
-                  </div>
-                </div>
-              </Card>
-              <Card className="p-4 border-0 shadow-sm bg-white/80 backdrop-blur-sm">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <FileText className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Documents Analyzed</p>
-                    <p className="text-xl font-bold">89</p>
-                  </div>
-                </div>
-              </Card>
+            <div className="flex space-x-2 mt-4 lg:mt-0">
+              <Button variant="outline" size="sm">
+                <History className="h-4 w-4 mr-2" />
+                Chat History
+              </Button>
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
             </div>
           </div>
+        </div>
 
-          {/* Main Chat Interface */}
-          <Card className="flex-1 border-0 shadow-lg bg-white/80 backdrop-blur-sm flex flex-col">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-              <div className="p-4 border-b">
-                <TabsList className="grid grid-cols-4 bg-muted/50 p-1 h-12">
-                  <TabsTrigger value="chat" className="data-[state=active]:bg-white">
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Chat
-                  </TabsTrigger>
-                  <TabsTrigger value="research" className="data-[state=active]:bg-white">
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    Research
-                  </TabsTrigger>
-                  <TabsTrigger value="documents" className="data-[state=active]:bg-white">
-                    <FileText className="h-4 w-4 mr-2" />
-                    Documents
-                  </TabsTrigger>
-                  <TabsTrigger value="sessions" className="data-[state=active]:bg-white">
-                    <History className="h-4 w-4 mr-2" />
-                    Sessions
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+        {/* Main Content */}
+        <Card className="flex-1 flex flex-col bg-white/80 backdrop-blur-sm border-2">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+            <div className="border-b p-4">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="chat" className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  AI Chat
+                </TabsTrigger>
+                <TabsTrigger value="research" className="flex items-center gap-2">
+                  <Search className="h-4 w-4" />
+                  Research
+                </TabsTrigger>
+                <TabsTrigger value="analysis" className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Analysis
+                </TabsTrigger>
+                <TabsTrigger value="tools" className="flex items-center gap-2">
+                  <Gavel className="h-4 w-4" />
+                  Tools
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-              <TabsContent value="chat" className="flex-1 flex flex-col p-0">
-                {/* Chat Messages */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                  {messages.map((message) => (
-                    <ChatMessage key={message.id} message={{
-                      id: message.id,
-                      content: message.text,
-                      sender: message.isBot ? "ai" : "user",
-                      timestamp: message.timestamp
-                    }} />
-                  ))}
-                  {isLoading && (
-                    <div className="flex items-center space-x-3 p-4 rounded-lg bg-muted/50">
-                      <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                        <Bot className="h-4 w-4 text-white animate-pulse" />
-                      </div>
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: "0.1s"}}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: "0.2s"}}></div>
-                      </div>
-                    </div>
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
+            <TabsContent value="chat" className="flex-1 flex flex-col p-0 m-0">
+              {renderChatContent()}
+            </TabsContent>
 
-                {/* Quick Prompts */}
-                <div className="px-6 py-3 border-t bg-muted/20">
-                  <p className="text-sm font-medium mb-3">Quick Legal Questions:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {quickPrompts.slice(0, 3).map((prompt, index) => (
-                      <Button 
-                        key={index} 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleSendMessage(prompt)}
-                        className="text-xs"
-                      >
-                        {prompt}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Chat Input */}
-                <div className="p-6 border-t">
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3 p-4 rounded-lg bg-muted/50">
-                      <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                        <Bot className="h-4 w-4 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">AI Legal Assistant</p>
-                        <p className="text-xs text-muted-foreground">Ready to help with legal questions and document analysis</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="research" className="flex-1 p-6">
-                <div className="space-y-6">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Input 
-                      placeholder="Search legal cases, statutes, regulations..." 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
-                      <Search className="h-4 w-4 mr-2" />
-                      Research
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {legalAreas.map((area, index) => (
-                      <Card key={index} className="p-4 hover:shadow-md transition-shadow cursor-pointer">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            <area.icon className="h-5 w-5 text-blue-600" />
-                          </div>
-                          <h3 className="font-semibold">{area.name}</h3>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{area.description}</p>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="documents" className="flex-1 p-6">
-                <div className="text-center py-12">
-                  <div className="p-4 bg-blue-100 rounded-full w-16 h-16 mx-auto mb-4">
-                    <FileUp className="h-8 w-8 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Document Analysis</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Upload documents for AI-powered legal analysis and insights
-                  </p>
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload Document
+            <TabsContent value="research" className="flex-1 p-6">
+              <div className="text-center py-12">
+                <Search className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Legal Research Portal</h3>
+                <p className="text-muted-foreground mb-6">
+                  Search through legal databases, case law, and statutes
+                </p>
+                <div className="max-w-md mx-auto">
+                  <Input placeholder="Search legal cases, statutes, regulations..." className="mb-4" />
+                  <Button className="w-full">
+                    <Search className="h-4 w-4 mr-2" />
+                    Search Legal Database
                   </Button>
                 </div>
-              </TabsContent>
+              </div>
+            </TabsContent>
 
-              <TabsContent value="sessions" className="flex-1 p-6">
-                <div className="space-y-4">
-                  {chatSessions.map((session) => (
-                    <Card key={session.id} className="p-4 hover:shadow-md transition-shadow cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold mb-1">{session.title}</h3>
-                          <p className="text-sm text-muted-foreground mb-2">{session.lastMessage}</p>
-                          <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                            <span>{session.messageCount} messages</span>
-                            <span>{session.timestamp.toLocaleDateString()}</span>
-                          </div>
-                        </div>
-                        <Badge variant="secondary">{session.messageCount}</Badge>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </Card>
-        </div>
+            <TabsContent value="analysis" className="flex-1 p-6">
+              <div className="text-center py-12">
+                <FileText className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Document Analysis</h3>
+                <p className="text-muted-foreground mb-6">
+                  Upload legal documents for AI-powered analysis and insights
+                </p>
+                <Button>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Document
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="tools" className="flex-1 p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {legalCategories.map((category) => (
+                  <Card key={category.name} className="p-6 hover:bg-muted/50 cursor-pointer transition-all">
+                    <category.icon className="h-8 w-8 text-primary mb-4" />
+                    <h3 className="font-semibold mb-2">{category.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{category.description}</p>
+                    <Button size="sm" variant="outline" className="w-full">
+                      Access Tool
+                    </Button>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </Card>
       </div>
     </div>
   );
