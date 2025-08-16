@@ -276,7 +276,12 @@ export const EnhancedChatPage = ({ user, profile }: EnhancedChatPageProps) => {
                 {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
                   {messages.map((message) => (
-                    <ChatMessage key={message.id} message={message.text} isBot={message.isBot} timestamp={message.timestamp} />
+                    <ChatMessage key={message.id} message={{
+                      id: message.id,
+                      content: message.text,
+                      sender: message.isBot ? "ai" : "user",
+                      timestamp: message.timestamp
+                    }} />
                   ))}
                   {isLoading && (
                     <div className="flex items-center space-x-3 p-4 rounded-lg bg-muted/50">
@@ -313,9 +318,17 @@ export const EnhancedChatPage = ({ user, profile }: EnhancedChatPageProps) => {
 
                 {/* Chat Input */}
                 <div className="p-6 border-t">
-                  <ModernChatInput 
-                    placeholder="Ask your legal question or upload a document for analysis..."
-                  />
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3 p-4 rounded-lg bg-muted/50">
+                      <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                        <Bot className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">AI Legal Assistant</p>
+                        <p className="text-xs text-muted-foreground">Ready to help with legal questions and document analysis</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </TabsContent>
 
