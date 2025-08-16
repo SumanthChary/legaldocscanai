@@ -95,7 +95,7 @@ export const EnhancedDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50/50 via-white to-blue-50/30">
-        <div className="container mx-auto px-4 lg:px-8 py-6 lg:py-8 relative">
+      <div className="container mx-auto px-4 lg:px-8 py-6 lg:py-8 relative">
           {/* Subtle background elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-20 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-400/5 to-purple-600/5 rounded-full filter blur-3xl"></div>
@@ -134,6 +134,6 @@ export const EnhancedDashboard = () => {
           </div>
         </div>
       </div>
-    </SidebarLayout>
+    </div>
   );
 };

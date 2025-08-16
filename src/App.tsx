@@ -73,9 +73,9 @@ function App() {
               <Route path="/document/:id/summary" element={<DocumentSummary />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/documentation" element={<Documentation />} />
-              <Route path="/dashboard" element={<EnhancedDashboard />} />
-              <Route path="/chat" element={<EnhancedChatPage />} />
-              <Route path="/esignatures" element={<EnhancedESignatures />} />
+              <Route path="/dashboard" element={<MainApp />} />
+              <Route path="/chat" element={<MainApp />} />
+              <Route path="/esignatures" element={<MainApp />} />
               <Route path="/support" element={<Support />} />
               <Route path="/whop/callback" element={<WhopCallback />} />
             </Routes>
