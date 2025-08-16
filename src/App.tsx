@@ -21,7 +21,9 @@ import DocumentSummary from "./pages/DocumentSummary";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Documentation from "./pages/Documentation";
-import { MainApp } from "@/components/MainApp";
+import ChatPage from "./pages/ChatPage";
+import { Dashboard } from "@/components/dashboard";
+import ESignatures from "./pages/ESignatures";
 import Support from "./pages/Support";
 import WhopCallback from "./pages/WhopCallback";
 
@@ -45,9 +47,6 @@ const paypalOptions = {
 };
 
 function App() {
-  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    return <>{children}</>;
-  };
   return (
     <PayPalScriptProvider 
       options={paypalOptions}
@@ -72,9 +71,9 @@ function App() {
               <Route path="/document/:id/summary" element={<DocumentSummary />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/documentation" element={<Documentation />} />
-              <Route path="/dashboard" element={<ProtectedRoute><MainApp /></ProtectedRoute>} />
-              <Route path="/chat" element={<ProtectedRoute><MainApp /></ProtectedRoute>} />
-              <Route path="/esignatures" element={<ProtectedRoute><MainApp /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/esignatures" element={<ESignatures />} />
               <Route path="/support" element={<Support />} />
               <Route path="/whop/callback" element={<WhopCallback />} />
             </Routes>
