@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { MainFeatures } from "@/components/features/MainFeatures";
-import { BetaProgram } from "@/components/features/BetaProgram";
+
 import { FeatureHighlight } from "@/components/features/FeatureHighlight";
 import { PreviewFeatures } from "@/components/features/PreviewFeatures";
 import { WaitlistForm } from "@/components/features/WaitlistForm";
@@ -168,9 +168,8 @@ const Features = () => {
           </div>
 
           <MainFeatures features={features} />
-          <BetaProgram />
           
-          <FeatureHighlight 
+          <FeatureHighlight
             title="Key Upcoming Features"
             description="Get a glimpse of the innovations we're developing to enhance your legal workflow"
             features={highlightedUpcomingFeatures}
