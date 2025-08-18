@@ -8,8 +8,10 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 // Lazy load heavy components for better performance
 const DashboardOverview = lazy(() => import("./DashboardOverview"));
 const DocumentGallery = lazy(() => import("@/components/DocumentGallery").then(m => ({ default: m.DocumentGallery })));
-const DocumentAnalysis = lazy(() => import("@/components/DocumentAnalysis").then(m => ({ default: m.DocumentAnalysis })));
+const UploadSection = lazy(() => import("./UploadSection").then(m => ({ default: m.UploadSection })));
 const EnhancedInsightsSection = lazy(() => import("./EnhancedInsightsSection").then(m => ({ default: m.EnhancedInsightsSection })));
+const ChatPage = lazy(() => import("@/pages/ChatPage"));
+const ESignatures = lazy(() => import("@/pages/ESignatures"));
 
 export const EnhancedDashboard = () => {
   const navigate = useNavigate();
@@ -67,7 +69,19 @@ export const EnhancedDashboard = () => {
       case "upload":
         return (
           <Suspense fallback={<DashboardSkeleton />}>
-            <DocumentAnalysis />
+            <UploadSection onSuccess={() => navigate('/dashboard?tab=documents')} />
+          </Suspense>
+        );
+      case "chat":
+        return (
+          <Suspense fallback={<DashboardSkeleton />}>
+            <ChatPage />
+          </Suspense>
+        );
+      case "esignatures":
+        return (
+          <Suspense fallback={<DashboardSkeleton />}>
+            <ESignatures />
           </Suspense>
         );
       case "insights":

@@ -15,7 +15,7 @@ import {
   TrendingUp,
   Brain
 } from "lucide-react";
-import { NavLink, useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 import {
   Sidebar,
@@ -38,37 +38,37 @@ import { useNavigate } from "react-router-dom";
 const mainNavItems = [
   { 
     title: "Dashboard", 
-    url: "/dashboard", 
+    tab: "overview",
     icon: LayoutDashboard,
     badge: null
   },
   { 
     title: "Upload Documents", 
-    url: "/document-analysis", 
+    tab: "upload",
     icon: Upload,
     badge: "NEW"
   },
   { 
     title: "Document Gallery", 
-    url: "/dashboard?tab=documents", 
+    tab: "documents",
     icon: FolderOpen,
     badge: null
   },
   { 
     title: "AI Law Genius", 
-    url: "/chat", 
+    tab: "chat",
     icon: Brain,
     badge: "SMART"
   },
   { 
     title: "E-Signatures", 
-    url: "/esignatures", 
+    tab: "esignatures",
     icon: FileSignature,
     badge: "BETA"
   },
   { 
     title: "Analytics & Insights", 
-    url: "/dashboard?tab=insights", 
+    tab: "insights",
     icon: BarChart3,
     badge: null
   },
@@ -109,19 +109,21 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const navigate = useNavigate();
-  const currentPath = location.pathname + location.search;
+  const [searchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || "overview";
 
-  const isActive = (path: string) => {
-    if (path === "/dashboard" && location.pathname === "/dashboard" && !location.search) {
-      return true;
-    }
-    return currentPath === path || location.pathname === path;
+  const handleTabChange = (tab: string) => {
+    navigate(`/dashboard?tab=${tab}`, { replace: true });
   };
 
-  const getNavClassName = (path: string) => {
-    const active = isActive(path);
+  const isActive = (tab: string) => {
+    return activeTab === tab;
+  };
+
+  const getNavClassName = (tab: string) => {
+    const active = isActive(tab);
     return `
-      flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
+      flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer
       ${active 
         ? "bg-primary text-primary-foreground shadow-sm" 
         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -131,7 +133,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`transition-all duration-300 ${collapsed ? "w-16" : "w-64"}`}
+      className={`transition-all duration-300 border-r ${collapsed ? "w-16" : "w-64"} hidden md:flex`}
       collapsible="icon"
     >
       {/* Logo Section */}
@@ -163,7 +165,10 @@ export function AppSidebar() {
               {mainNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavClassName(item.url)}>
+                    <div 
+                      onClick={() => handleTabChange(item.tab)} 
+                      className={getNavClassName(item.tab)}
+                    >
                       <item.icon className="h-5 w-5 flex-shrink-0" />
                       {!collapsed && (
                         <div className="flex items-center justify-between w-full">
@@ -178,7 +183,7 @@ export function AppSidebar() {
                           )}
                         </div>
                       )}
-                    </NavLink>
+                    </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -196,12 +201,15 @@ export function AppSidebar() {
               {accountItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavClassName(item.url)}>
+                    <div 
+                      onClick={() => navigate(item.url)}
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer text-muted-foreground hover:bg-muted hover:text-foreground"
+                    >
                       <item.icon className="h-5 w-5 flex-shrink-0" />
                       {!collapsed && (
                         <span className="text-sm font-medium">{item.title}</span>
                       )}
-                    </NavLink>
+                    </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
