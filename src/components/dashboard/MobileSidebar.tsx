@@ -11,7 +11,11 @@ import {
   Crown,
   Brain,
   Menu,
-  X
+  X,
+  Users,
+  Building,
+  Shield,
+  Key
 } from "lucide-react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { useState } from "react";
@@ -55,6 +59,33 @@ const mainNavItems = [
     tab: "insights",
     icon: BarChart3,
     badge: null
+  },
+];
+
+const enterpriseItems = [
+  { 
+    title: "Team Management", 
+    tab: "team",
+    icon: Users,
+    badge: "SOON"
+  },
+  { 
+    title: "Organization", 
+    tab: "organization",
+    icon: Building,
+    badge: "SOON"
+  },
+  { 
+    title: "Security", 
+    tab: "security",
+    icon: Shield,
+    badge: "SOON"
+  },
+  { 
+    title: "API Access", 
+    tab: "api",
+    icon: Key,
+    badge: "SOON"
   },
 ];
 
@@ -127,7 +158,7 @@ export function MobileSidebar() {
 
       {/* Mobile Sidebar */}
       <div className={`
-        md:hidden fixed left-0 top-0 h-full w-80 bg-background border-r z-50 transform transition-transform duration-300
+        md:hidden fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-background border-r z-50 transform transition-transform duration-300
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* Header */}
@@ -170,6 +201,33 @@ export function MobileSidebar() {
                       <Badge 
                         variant={item.badge === "NEW" ? "default" : "secondary"} 
                         className="text-xs px-1.5 py-0.5"
+                      >
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Enterprise Section */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-3">Enterprise</h3>
+            <div className="space-y-1">
+              {enterpriseItems.map((item) => (
+                <div 
+                  key={item.title}
+                  onClick={() => handleTabChange(item.tab)} 
+                  className={getNavClassName(item.tab)}
+                >
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-sm font-medium">{item.title}</span>
+                    {item.badge && (
+                      <Badge 
+                        variant="outline" 
+                        className="text-xs px-1.5 py-0.5 text-muted-foreground"
                       >
                         {item.badge}
                       </Badge>

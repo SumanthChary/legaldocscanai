@@ -90,6 +90,42 @@ export const EnhancedDashboard = () => {
             <EnhancedInsightsSection userId={session.user.id} />
           </Suspense>
         );
+      case "team":
+        return (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">Team Management</h2>
+              <p className="text-muted-foreground">Team management features coming soon...</p>
+            </div>
+          </div>
+        );
+      case "organization":
+        return (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">Organization</h2>
+              <p className="text-muted-foreground">Organization management coming soon...</p>
+            </div>
+          </div>
+        );
+      case "security":
+        return (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">Security</h2>
+              <p className="text-muted-foreground">Security settings coming soon...</p>
+            </div>
+          </div>
+        );
+      case "api":
+        return (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">API Access</h2>
+              <p className="text-muted-foreground">API access management coming soon...</p>
+            </div>
+          </div>
+        );
       default:
         return (
           <Suspense fallback={<DashboardSkeleton />}>

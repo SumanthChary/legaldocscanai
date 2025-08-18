@@ -13,7 +13,11 @@ import {
   FileText,
   Target,
   TrendingUp,
-  Brain
+  Brain,
+  Users,
+  Building,
+  Shield,
+  Key
 } from "lucide-react";
 import { useLocation, useSearchParams } from "react-router-dom";
 
@@ -95,6 +99,33 @@ const accountItems = [
   },
 ];
 
+const enterpriseItems = [
+  { 
+    title: "Team Management", 
+    tab: "team",
+    icon: Users,
+    badge: "SOON"
+  },
+  { 
+    title: "Organization", 
+    tab: "organization",
+    icon: Building,
+    badge: "SOON"
+  },
+  { 
+    title: "Security", 
+    tab: "security",
+    icon: Shield,
+    badge: "SOON"
+  },
+  { 
+    title: "API Access", 
+    tab: "api",
+    icon: Key,
+    badge: "SOON"
+  },
+];
+
 const upgradeItems = [
   { 
     title: "Upgrade to Pro", 
@@ -133,7 +164,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`transition-all duration-300 border-r ${collapsed ? "w-16" : "w-64"} hidden md:flex`}
+      className={`transition-all duration-300 border-r ${collapsed ? "w-16" : "w-64"} hidden md:flex flex-shrink-0`}
       collapsible="icon"
     >
       {/* Logo Section */}
@@ -177,6 +208,42 @@ export function AppSidebar() {
                             <Badge 
                               variant={item.badge === "NEW" ? "default" : "secondary"} 
                               className="text-xs px-1.5 py-0.5"
+                            >
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Enterprise Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel className={collapsed ? "sr-only" : ""}>
+            Enterprise
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {enterpriseItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <div 
+                      onClick={() => handleTabChange(item.tab)} 
+                      className={getNavClassName(item.tab)}
+                    >
+                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      {!collapsed && (
+                        <div className="flex items-center justify-between w-full">
+                          <span className="text-sm font-medium">{item.title}</span>
+                          {item.badge && (
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs px-1.5 py-0.5 text-muted-foreground"
                             >
                               {item.badge}
                             </Badge>
