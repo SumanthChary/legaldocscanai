@@ -29,12 +29,9 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending email to:", to);
     console.log("Subject:", subject);
 
-    // Always send to specified email address
-    const targetEmail = "sumanthchary.startup@gmail.com";
-    
     const emailResponse = await resend.emails.send({
       from: from || "LegalDeep AI <noreply@resend.dev>",
-      to: [targetEmail],
+      to: [to],
       subject: subject,
       html: html,
       replyTo: replyTo,

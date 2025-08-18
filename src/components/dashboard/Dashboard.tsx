@@ -83,22 +83,16 @@ export const Dashboard = () => {
               </div>
             )}
 
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 lg:mb-8 space-y-4 lg:space-y-0">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
               <WelcomeHeader session={session} />
               <QuickActions onTabChange={setActiveTab} />
             </div>
 
-            <div className="mb-6 lg:mb-8">
-              <EnhancedInsights userId={session?.user?.id || ""} />
-            </div>
+            <EnhancedInsights userId={session?.user?.id || ""} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
-              <div className="lg:col-span-2 xl:col-span-1">
-                <RecentActivity isLoading={statsLoading} />
-              </div>
-              <div className="xl:col-span-1">
-                <PerformanceMetrics isLoading={statsLoading} />
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <RecentActivity isLoading={statsLoading} />
+              <PerformanceMetrics isLoading={statsLoading} />
             </div>
 
             <MainContent 

@@ -1,3 +1,4 @@
 
 export { PageLayout } from "./PageLayout";
-export { DashboardLayout } from "./DashboardLayout";
+export { SidebarLayout } from "./SidebarLayout";
+export { AppSidebar } from "./AppSidebar";
