@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { PageLayout } from "@/components/layout";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatHeader } from "@/components/chat/ChatHeader";
@@ -129,33 +128,31 @@ const ChatPage = () => {
   };
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/10">
-        <div className="flex flex-col h-screen">
-          <div className="flex-shrink-0 px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 md:pt-6">
-            <div className="max-w-4xl mx-auto">
-              <ChatHeader />
-            </div>
+    <div className="h-full bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/10">
+      <div className="flex flex-col h-full">
+        <div className="flex-shrink-0 px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 md:pt-6">
+          <div className="max-w-4xl mx-auto">
+            <ChatHeader />
           </div>
-          
-          <div className="flex-1 flex flex-col min-h-0 px-3 sm:px-4 md:px-6">
-            <div className="max-w-4xl mx-auto w-full flex flex-col h-full">
-              <MessageList messages={messages} isLoading={isLoading} />
-            </div>
-          </div>
-          
-          <ModernChatInput 
-            input={input}
-            setInput={setInput}
-            onSend={handleSend}
-            isLoading={isLoading}
-            file={file}
-            onFileChange={handleFileChange}
-            onFileRemove={removeFile}
-          />
         </div>
+        
+        <div className="flex-1 flex flex-col min-h-0 px-3 sm:px-4 md:px-6">
+          <div className="max-w-4xl mx-auto w-full flex flex-col h-full">
+            <MessageList messages={messages} isLoading={isLoading} />
+          </div>
+        </div>
+        
+        <ModernChatInput 
+          input={input}
+          setInput={setInput}
+          onSend={handleSend}
+          isLoading={isLoading}
+          file={file}
+          onFileChange={handleFileChange}
+          onFileRemove={removeFile}
+        />
       </div>
-    </PageLayout>
+    </div>
   );
 };
 
