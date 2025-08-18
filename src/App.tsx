@@ -22,7 +22,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Documentation from "./pages/Documentation";
 import ChatPage from "./pages/ChatPage";
-import { Dashboard } from "@/components/dashboard";
+import { EnhancedDashboard } from "@/components/dashboard/EnhancedDashboard";
 import ESignatures from "./pages/ESignatures";
 import Support from "./pages/Support";
 import WhopCallback from "./pages/WhopCallback";
@@ -71,7 +71,7 @@ function App() {
               <Route path="/document/:id/summary" element={<DocumentSummary />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/documentation" element={<Documentation />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<EnhancedDashboard />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/esignatures" element={<ESignatures />} />
               <Route path="/support" element={<Support />} />

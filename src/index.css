@@ -160,13 +160,38 @@
     }
   }
   
-  /* Hide all scrollbars completely */
-  * {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
+  /* Performance optimizations */
+  .will-change-transform {
+    will-change: transform;
   }
   
-  *::-webkit-scrollbar {
-    display: none; /* WebKit */
+  .gpu-acceleration {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Hide scrollbars but keep functionality */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(155, 155, 155, 0.3) transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.3);
+    border-radius: 3px;
   }
 }
