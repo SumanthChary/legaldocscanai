@@ -99,10 +99,10 @@ export function UploadForm({ user, fetchRequests }: Props) {
   };
 
   return (
-    <Card className="flex-1 rounded-2xl shadow-xl p-6 md:p-10 bg-white/75 backdrop-blur-md border border-purple-100">
+    <Card className="flex-1 rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 xl:p-10 bg-white/75 backdrop-blur-md border border-purple-100">
       <div className="flex items-center gap-2 mb-6">
         <Upload className="text-purple-700 w-6 h-6" />
-        <h2 className="font-bold text-lg md:text-2xl text-purple-900 tracking-tight">
+        <h2 className="font-bold text-base sm:text-lg md:text-xl xl:text-2xl text-purple-900 tracking-tight">
           New E-Signature Request
         </h2>
       </div>
@@ -117,13 +117,13 @@ export function UploadForm({ user, fetchRequests }: Props) {
             value={signerEmail}
             onChange={e => setSignerEmail(e.target.value)}
             disabled={uploading}
-            className="bg-purple-50 border-purple-200 text-purple-900 placeholder-purple-400 transition-colors duration-200"
+            className="bg-purple-50 border-purple-200 text-purple-900 placeholder-purple-400 transition-colors duration-200 h-10 sm:h-11 text-sm sm:text-base"
           />
         </div>
         <Button
           type="submit"
           disabled={uploading || !file || !signerEmail}
-          className="w-full bg-gradient-to-tr from-purple-600 to-blue-400 hover:from-purple-700 hover:to-blue-500 text-white font-bold py-2 rounded-lg shadow-lg transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-purple-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="w-full bg-gradient-to-tr from-purple-600 to-blue-400 hover:from-purple-700 hover:to-blue-500 text-white font-bold py-3 sm:py-4 rounded-lg shadow-lg transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-purple-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm sm:text-base"
         >
           {uploading ? (
             <span className="flex items-center justify-center gap-2">

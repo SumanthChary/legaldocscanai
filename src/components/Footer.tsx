@@ -83,9 +83,9 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="border-t bg-background">
-      <div className="container mx-auto px-3 py-6 sm:px-4 sm:py-8 md:py-12">
-        <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="border-t bg-background mt-auto">
+      <div className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 md:py-8 xl:py-10">
+        <div className="grid gap-3 sm:gap-4 md:gap-6 xl:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <h3 className="mb-2 sm:mb-3 md:mb-4 text-base sm:text-lg font-semibold">Stay Connected</h3>
             <p className="mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm text-muted-foreground">
@@ -160,7 +160,7 @@ export const Footer = () => {
           </div>
         </div>
         
-        <div className="mt-4 sm:mt-6 md:mt-8 border-t pt-4 sm:pt-6 md:pt-8 text-center text-xs sm:text-sm text-muted-foreground">
+        <div className="mt-3 sm:mt-4 md:mt-6 xl:mt-8 border-t pt-3 sm:pt-4 md:pt-6 xl:pt-8 text-center text-xs sm:text-sm text-muted-foreground">
           <p>© 2024 LegalAI. All rights reserved.</p>
         </div>
       </div>

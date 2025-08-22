@@ -164,7 +164,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`transition-all duration-300 border-r ${collapsed ? "w-14" : "w-72"} hidden lg:flex flex-shrink-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}
+      className={`transition-all duration-300 border-r ${collapsed ? "w-14" : "w-72"} flex flex-shrink-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}
       collapsible="icon"
     >
       {/* Logo Section */}

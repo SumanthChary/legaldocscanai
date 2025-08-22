@@ -23,11 +23,11 @@ export function SignatureRequestsList({ requests, loading, onRefresh }: Signatur
       <section className="animate-fade-in">
         <div className="flex items-center gap-2 mb-6 pl-1">
           <FileText className="text-blue-500 w-5 h-5" />
-          <h3 className="text-lg md:text-xl font-semibold text-purple-800">
+        <h3 className="text-base sm:text-lg md:text-xl font-semibold text-purple-800">
             My Signature Requests
           </h3>
         </div>
-        <div className="grid gap-4 md:gap-6 sm:grid-cols-2">
+        <div className="grid gap-3 sm:gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
@@ -53,15 +53,15 @@ export function SignatureRequestsList({ requests, loading, onRefresh }: Signatur
     <section className="animate-fade-in">
       <div className="flex items-center gap-2 mb-6 pl-1">
         <FileText className="text-blue-500 w-5 h-5" />
-        <h3 className="text-lg md:text-xl font-semibold text-purple-800">
+        <h3 className="text-base sm:text-lg md:text-xl font-semibold text-purple-800">
           My Signature Requests
         </h3>
       </div>
-      <div className="grid gap-4 md:gap-6 sm:grid-cols-2">
+      <div className="grid gap-3 sm:gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {requests.map(r => (
           <div
             key={r.id}
-            className={"bg-gradient-to-br from-purple-50 to-white border border-purple-100 p-5 rounded-xl flex flex-col gap-3 shadow hover:shadow-lg transition-all duration-200 shadow-purple-100/30 " +
+            className={"bg-gradient-to-br from-purple-50 to-white border border-purple-100 p-4 sm:p-5 rounded-xl flex flex-col gap-3 shadow hover:shadow-lg transition-all duration-200 shadow-purple-100/30 " +
               (r.status === "completed" ? "ring-2 ring-green-200" : "")}
           >
             <div className="flex items-center gap-2 mb-1">

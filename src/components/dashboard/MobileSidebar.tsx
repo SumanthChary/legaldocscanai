@@ -140,7 +140,7 @@ export function MobileSidebar() {
   return (
     <>
       {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+      <div className="xl:hidden fixed top-4 left-4 z-50">
         <Button
           variant="outline"
           size="icon"
@@ -153,12 +153,12 @@ export function MobileSidebar() {
 
       {/* Mobile Sidebar Overlay */}
       {isOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+        <div className="xl:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
       )}
 
       {/* Mobile Sidebar */}
       <div className={`
-        lg:hidden fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-background/95 backdrop-blur-md border-r border-border/50 z-50 transform transition-transform duration-300 shadow-2xl
+        xl:hidden fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-background/95 backdrop-blur-md border-r border-border/50 z-50 transform transition-transform duration-300 shadow-2xl
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* Header */}
