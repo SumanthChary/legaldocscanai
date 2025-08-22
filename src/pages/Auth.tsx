@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Github, FileText, Shield, Users, AlertCircle, CheckCircle, Mail } from "lucide-react";
+import { Github, FileText, Shield, Users, AlertCircle, CheckCircle, Chrome } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -356,7 +356,7 @@ const Auth = () => {
                 onClick={handleGoogleAuth}
                 disabled={loading}
               >
-                <Mail className="mr-2 h-5 w-5 text-red-500" />
+                <Chrome className="mr-2 h-5 w-5 text-red-500" />
                 Google
               </Button>
               
