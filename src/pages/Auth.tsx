@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Github, FileText, Shield, Users, AlertCircle, CheckCircle } from "lucide-react";
+import { Github, FileText, Shield, Users, AlertCircle, CheckCircle, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -188,6 +188,28 @@ const Auth = () => {
     }
   };
 
+  const handleGoogleAuth = async () => {
+    try {
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+        },
+      });
+      
+      if (error) throw error;
+    } catch (error: any) {
+      console.error("Google auth error:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign in with Google. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (checkingSession) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 flex items-center justify-center">
@@ -326,16 +348,29 @@ const Auth = () => {
               </div>
             </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-12 border-gray-200 hover:bg-gray-50 transition-all duration-200"
-              onClick={handleGithubAuth}
-              disabled={loading}
-            >
-              <Github className="mr-3 h-5 w-5" />
-              GitHub
-            </Button>
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-12 border-gray-200 hover:bg-gray-50 transition-all duration-200"
+                onClick={handleGoogleAuth}
+                disabled={loading}
+              >
+                <Mail className="mr-2 h-5 w-5 text-red-500" />
+                Google
+              </Button>
+              
+              <Button
+                type="button"
+                variant="outline"
+                className="h-12 border-gray-200 hover:bg-gray-50 transition-all duration-200"
+                onClick={handleGithubAuth}
+                disabled={loading}
+              >
+                <Github className="mr-2 h-5 w-5" />
+                GitHub
+              </Button>
+            </div>
 
             <div className="text-center">
               <button
