@@ -11,7 +11,7 @@ type DashboardLayoutProps = {
 export const DashboardLayout = ({ children, className = "" }: DashboardLayoutProps) => {
   return (
     <SidebarProvider>
-      <div className={`min-h-screen flex w-full ${className}`}>
+      <div className={`min-h-screen flex w-full overflow-hidden ${className}`}>
         {/* Desktop Sidebar - Only show on xl screens and up */}
         <div className="hidden xl:block">
           <AppSidebar />
@@ -23,14 +23,14 @@ export const DashboardLayout = ({ children, className = "" }: DashboardLayoutPro
         </div>
         
         <div className="flex-1 flex flex-col min-w-0">
-          <main className="flex-1 overflow-auto bg-background">
-            <div className="p-3 sm:p-4 md:p-6 xl:p-8 pb-20">
-              {children}
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-background">
+            <div className="p-3 sm:p-4 md:p-6 xl:p-8 max-w-full">
+              <div className="max-w-full overflow-hidden">
+                {children}
+              </div>
             </div>
           </main>
-          <div className="mt-auto">
-            <Footer />
-          </div>
+          <Footer />
         </div>
       </div>
     </SidebarProvider>

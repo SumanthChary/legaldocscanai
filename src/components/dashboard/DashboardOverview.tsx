@@ -62,7 +62,7 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 w-full max-w-full overflow-hidden">
       {/* Upgrade Banner */}
       {showUpgradeBanner && (
         <InView
@@ -72,12 +72,14 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
           }}
           transition={{ duration: 0.3 }}
         >
-          <UpgradeBanner
-            buttonText="Upgrade Now"
-            description="for unlimited document analysis and advanced features"
-            onClose={() => setShowUpgradeBanner(false)}
-            onClick={() => navigate("/pricing")}
-          />
+          <div className="w-full max-w-full">
+            <UpgradeBanner
+              buttonText="Upgrade Now"
+              description="for unlimited document analysis and advanced features"
+              onClose={() => setShowUpgradeBanner(false)}
+              onClick={() => navigate("/pricing")}
+            />
+          </div>
         </InView>
       )}
 
@@ -89,9 +91,13 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
         }}
         transition={{ duration: 0.4 }}
       >
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <WelcomeHeader session={session} />
-          <QuickActions onTabChange={onTabChange} />
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 md:gap-6 w-full max-w-full">
+          <div className="flex-1 min-w-0">
+            <WelcomeHeader session={session} />
+          </div>
+          <div className="flex-shrink-0">
+            <QuickActions onTabChange={onTabChange} />
+          </div>
         </div>
       </InView>
 
@@ -103,13 +109,13 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
         }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 w-full max-w-full">
           {quickStatsCards.map((stat, index) => (
-            <Card key={stat.title} className="p-6 hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/80 backdrop-blur">
+            <Card key={stat.title} className="p-4 md:p-6 hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/80 backdrop-blur min-w-0">
               <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                <div className="space-y-2 flex-1 min-w-0">
+                  <p className="text-xs md:text-sm font-medium text-muted-foreground truncate">{stat.title}</p>
+                  <p className="text-xl md:text-2xl font-bold text-foreground">{stat.value}</p>
                   <div className="flex items-center gap-1">
                     <TrendingUp className={`h-3 w-3 ${stat.trendUp ? 'text-green-600' : 'text-red-600'}`} />
                     <span className={`text-xs font-medium ${stat.trendUp ? 'text-green-600' : 'text-red-600'}`}>
@@ -117,8 +123,8 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
                     </span>
                   </div>
                 </div>
-                <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                <div className={`p-2 md:p-3 rounded-xl ${stat.bgColor} flex-shrink-0`}>
+                  <stat.icon className={`h-5 w-5 md:h-6 md:w-6 ${stat.color}`} />
                 </div>
               </div>
             </Card>
@@ -145,11 +151,11 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
         }}
         transition={{ duration: 0.6, delay: 0.4 }}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          <div className="lg:col-span-1 xl:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 w-full max-w-full">
+          <div className="lg:col-span-1 xl:col-span-2 min-w-0">
             <RecentActivity isLoading={statsLoading} />
           </div>
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 min-w-0">
             <PerformanceMetrics isLoading={statsLoading} />
           </div>
         </div>
@@ -163,10 +169,16 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
         }}
         transition={{ duration: 0.6, delay: 0.5 }}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          <WeeklyTrendChart />
-          <RiskDistributionChart />
-          <PerformanceChart />
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 w-full max-w-full">
+          <div className="min-w-0">
+            <WeeklyTrendChart />
+          </div>
+          <div className="min-w-0">
+            <RiskDistributionChart />
+          </div>
+          <div className="min-w-0">
+            <PerformanceChart />
+          </div>
         </div>
       </InView>
     </div>

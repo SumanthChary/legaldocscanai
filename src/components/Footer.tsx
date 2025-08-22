@@ -83,8 +83,8 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="border-t bg-background mt-auto">
-      <div className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 md:py-8 xl:py-10">
+    <footer className="border-t bg-background w-full flex-shrink-0">
+      <div className="max-w-full px-3 py-4 sm:px-4 sm:py-6 md:py-8 xl:px-8 xl:py-10">
         <div className="grid gap-3 sm:gap-4 md:gap-6 xl:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <h3 className="mb-2 sm:mb-3 md:mb-4 text-base sm:text-lg font-semibold">Stay Connected</h3>
