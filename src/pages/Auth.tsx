@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Github, FileText, Shield, Users, AlertCircle, CheckCircle, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
