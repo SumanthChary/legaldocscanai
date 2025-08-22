@@ -129,10 +129,10 @@ export function MobileSidebar() {
   const getNavClassName = (tab: string) => {
     const active = isActive(tab);
     return `
-      flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer w-full
+      flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer w-full
       ${active 
-        ? "bg-primary text-primary-foreground shadow-sm" 
-        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+        ? "bg-primary text-primary-foreground shadow-md" 
+        : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
       }
     `;
   };
@@ -140,12 +140,12 @@ export function MobileSidebar() {
   return (
     <>
       {/* Mobile Menu Button */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <div className="lg:hidden fixed top-4 left-4 z-50">
         <Button
           variant="outline"
           size="icon"
           onClick={() => setIsOpen(true)}
-          className="bg-background/90 backdrop-blur-sm"
+          className="bg-background/95 backdrop-blur-sm border-border/50 shadow-lg"
         >
           <Menu className="h-4 w-4" />
         </Button>
@@ -153,22 +153,24 @@ export function MobileSidebar() {
 
       {/* Mobile Sidebar Overlay */}
       {isOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-black/50" onClick={() => setIsOpen(false)} />
+        <div className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
       )}
 
       {/* Mobile Sidebar */}
       <div className={`
-        md:hidden fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-background border-r z-50 transform transition-transform duration-300
+        lg:hidden fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-background/95 backdrop-blur-md border-r border-border/50 z-50 transform transition-transform duration-300 shadow-2xl
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-2">
-            <img 
-              alt="LegalDeep AI" 
-              className="h-8 w-8 object-contain rounded-lg" 
-              src="/lovable-uploads/dd1d70eb-890d-405e-af4a-dab180dc4bf5.png" 
-            />
+        <div className="flex items-center justify-between p-4 border-b border-border/50">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <img 
+                alt="LegalDeep AI" 
+                className="h-8 w-8 object-contain rounded-lg" 
+                src="/lovable-uploads/dd1d70eb-890d-405e-af4a-dab180dc4bf5.png" 
+              />
+            </div>
             <span className="text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
               LegalDeep AI
             </span>
@@ -177,17 +179,18 @@ export function MobileSidebar() {
             variant="ghost"
             size="icon"
             onClick={() => setIsOpen(false)}
+            className="hover:bg-muted"
           >
             <X className="h-4 w-4" />
           </Button>
         </div>
 
         {/* Content */}
-        <div className="flex flex-col gap-4 p-4 h-full overflow-auto">
+        <div className="flex flex-col gap-6 p-4 h-full overflow-y-auto">
           {/* Main Navigation */}
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">Main Navigation</h3>
-            <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-2">Main Navigation</h3>
+            <div className="space-y-2">
               {mainNavItems.map((item) => (
                 <div 
                   key={item.title}
@@ -195,12 +198,12 @@ export function MobileSidebar() {
                   className={getNavClassName(item.tab)}
                 >
                   <item.icon className="h-5 w-5 flex-shrink-0" />
-                  <div className="flex items-center justify-between w-full">
-                    <span className="text-sm font-medium">{item.title}</span>
+                  <div className="flex items-center justify-between w-full min-w-0">
+                    <span className="text-sm font-medium truncate">{item.title}</span>
                     {item.badge && (
                       <Badge 
                         variant={item.badge === "NEW" ? "default" : "secondary"} 
-                        className="text-xs px-1.5 py-0.5"
+                        className="text-xs px-2 py-0.5 flex-shrink-0"
                       >
                         {item.badge}
                       </Badge>
@@ -213,8 +216,8 @@ export function MobileSidebar() {
 
           {/* Enterprise Section */}
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">Enterprise</h3>
-            <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-2">Enterprise</h3>
+            <div className="space-y-2">
               {enterpriseItems.map((item) => (
                 <div 
                   key={item.title}
@@ -222,12 +225,12 @@ export function MobileSidebar() {
                   className={getNavClassName(item.tab)}
                 >
                   <item.icon className="h-5 w-5 flex-shrink-0" />
-                  <div className="flex items-center justify-between w-full">
-                    <span className="text-sm font-medium">{item.title}</span>
+                  <div className="flex items-center justify-between w-full min-w-0">
+                    <span className="text-sm font-medium truncate">{item.title}</span>
                     {item.badge && (
                       <Badge 
                         variant="outline" 
-                        className="text-xs px-1.5 py-0.5 text-muted-foreground"
+                        className="text-xs px-2 py-0.5 text-muted-foreground flex-shrink-0"
                       >
                         {item.badge}
                       </Badge>
@@ -240,8 +243,8 @@ export function MobileSidebar() {
 
           {/* Account Section */}
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">Account</h3>
-            <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-2">Account</h3>
+            <div className="space-y-2">
               {accountItems.map((item) => (
                 <div 
                   key={item.title}
@@ -249,28 +252,28 @@ export function MobileSidebar() {
                     navigate(item.url);
                     setIsOpen(false);
                   }}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer text-muted-foreground hover:bg-muted hover:text-foreground"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer text-muted-foreground hover:bg-muted/80 hover:text-foreground w-full"
                 >
                   <item.icon className="h-5 w-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">{item.title}</span>
+                  <span className="text-sm font-medium truncate">{item.title}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Upgrade Section */}
-          <div className="mt-auto">
+          <div className="mt-auto pt-4 border-t border-border/50">
             <Button
               onClick={() => {
                 navigate("/pricing");
                 setIsOpen(false);
               }}
-              className="w-full justify-start gap-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0"
+              className="w-full justify-start gap-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-0 rounded-xl py-3"
             >
               <Crown className="h-5 w-5 flex-shrink-0" />
-              <div className="flex items-center justify-between w-full">
-                <span className="text-sm font-medium">Upgrade to Pro</span>
-                <Badge variant="secondary" className="bg-white text-orange-600 text-xs">
+              <div className="flex items-center justify-between w-full min-w-0">
+                <span className="text-sm font-medium truncate">Upgrade to Pro</span>
+                <Badge variant="secondary" className="bg-white text-orange-600 text-xs flex-shrink-0">
                   PRO
                 </Badge>
               </div>

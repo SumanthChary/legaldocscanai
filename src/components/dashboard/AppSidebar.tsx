@@ -154,7 +154,7 @@ export function AppSidebar() {
   const getNavClassName = (tab: string) => {
     const active = isActive(tab);
     return `
-      flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer
+      flex items-center ${collapsed ? "justify-center px-2" : "gap-3 px-3"} py-2.5 rounded-lg transition-all duration-200 cursor-pointer w-full
       ${active 
         ? "bg-primary text-primary-foreground shadow-sm" 
         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -164,28 +164,28 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`transition-all duration-300 border-r ${collapsed ? "w-16" : "w-64"} hidden md:flex flex-shrink-0`}
+      className={`transition-all duration-300 border-r ${collapsed ? "w-14" : "w-72"} hidden lg:flex flex-shrink-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}
       collapsible="icon"
     >
       {/* Logo Section */}
-      <SidebarHeader className="border-b px-4 py-3">
-        <div className="flex items-center gap-2">
-          <div className="relative">
+      <SidebarHeader className="border-b px-3 py-4">
+        <div className={`flex items-center ${collapsed ? "justify-center" : "gap-3"}`}>
+          <div className="relative flex-shrink-0">
             <img 
               alt="LegalDeep AI" 
-              className="h-8 w-8 object-contain rounded-lg" 
+              className={`object-contain rounded-lg transition-all duration-200 ${collapsed ? "h-6 w-6" : "h-8 w-8"}`}
               src="/lovable-uploads/dd1d70eb-890d-405e-af4a-dab180dc4bf5.png" 
             />
           </div>
           {!collapsed && (
-            <span className="text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            <span className="text-lg font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent truncate">
               LegalDeep AI
             </span>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="flex flex-col gap-4 p-4">
+      <SidebarContent className={`flex flex-col gap-4 ${collapsed ? "p-2" : "p-4"} overflow-y-auto`}>
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className={collapsed ? "sr-only" : ""}>
@@ -196,18 +196,19 @@ export function AppSidebar() {
               {mainNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <div 
+                     <div 
                       onClick={() => handleTabChange(item.tab)} 
                       className={getNavClassName(item.tab)}
+                      title={collapsed ? item.title : undefined}
                     >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      <item.icon className={`flex-shrink-0 ${collapsed ? "h-5 w-5" : "h-4 w-4"}`} />
                       {!collapsed && (
-                        <div className="flex items-center justify-between w-full">
-                          <span className="text-sm font-medium">{item.title}</span>
+                        <div className="flex items-center justify-between w-full min-w-0">
+                          <span className="text-sm font-medium truncate">{item.title}</span>
                           {item.badge && (
                             <Badge 
                               variant={item.badge === "NEW" ? "default" : "secondary"} 
-                              className="text-xs px-1.5 py-0.5"
+                              className="text-xs px-1.5 py-0.5 flex-shrink-0"
                             >
                               {item.badge}
                             </Badge>
@@ -232,18 +233,19 @@ export function AppSidebar() {
               {enterpriseItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <div 
+                     <div 
                       onClick={() => handleTabChange(item.tab)} 
                       className={getNavClassName(item.tab)}
+                      title={collapsed ? item.title : undefined}
                     >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      <item.icon className={`flex-shrink-0 ${collapsed ? "h-5 w-5" : "h-4 w-4"}`} />
                       {!collapsed && (
-                        <div className="flex items-center justify-between w-full">
-                          <span className="text-sm font-medium">{item.title}</span>
+                        <div className="flex items-center justify-between w-full min-w-0">
+                          <span className="text-sm font-medium truncate">{item.title}</span>
                           {item.badge && (
                             <Badge 
                               variant="outline" 
-                              className="text-xs px-1.5 py-0.5 text-muted-foreground"
+                              className="text-xs px-1.5 py-0.5 text-muted-foreground flex-shrink-0"
                             >
                               {item.badge}
                             </Badge>
@@ -268,13 +270,14 @@ export function AppSidebar() {
               {accountItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <div 
+                     <div 
                       onClick={() => navigate(item.url)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer text-muted-foreground hover:bg-muted hover:text-foreground"
+                      className={`flex items-center ${collapsed ? "justify-center px-2" : "gap-3 px-3"} py-2.5 rounded-lg transition-all duration-200 cursor-pointer text-muted-foreground hover:bg-muted hover:text-foreground w-full`}
+                      title={collapsed ? item.title : undefined}
                     >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      <item.icon className={`flex-shrink-0 ${collapsed ? "h-5 w-5" : "h-4 w-4"}`} />
                       {!collapsed && (
-                        <span className="text-sm font-medium">{item.title}</span>
+                        <span className="text-sm font-medium truncate">{item.title}</span>
                       )}
                     </div>
                   </SidebarMenuButton>
@@ -291,19 +294,19 @@ export function AppSidebar() {
               {upgradeItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Button
+                     <Button
                       onClick={() => navigate(item.url)}
                       className={`
-                        w-full justify-start gap-3 bg-gradient-to-r from-amber-500 to-orange-500 
-                        hover:from-amber-600 hover:to-orange-600 text-white border-0
-                        ${collapsed ? "px-2" : "px-3"}
+                        w-full ${collapsed ? "justify-center px-2" : "justify-start gap-3 px-3"} bg-gradient-to-r from-amber-500 to-orange-500 
+                        hover:from-amber-600 hover:to-orange-600 text-white border-0 py-2.5
                       `}
+                      title={collapsed ? item.title : undefined}
                     >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      <item.icon className={`flex-shrink-0 ${collapsed ? "h-5 w-5" : "h-4 w-4"}`} />
                       {!collapsed && (
-                        <div className="flex items-center justify-between w-full">
-                          <span className="text-sm font-medium">{item.title}</span>
-                          <Badge variant="secondary" className="bg-white text-orange-600 text-xs">
+                        <div className="flex items-center justify-between w-full min-w-0">
+                          <span className="text-sm font-medium truncate">{item.title}</span>
+                          <Badge variant="secondary" className="bg-white text-orange-600 text-xs flex-shrink-0">
                             {item.badge}
                           </Badge>
                         </div>
