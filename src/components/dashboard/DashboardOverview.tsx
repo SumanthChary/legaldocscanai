@@ -103,22 +103,22 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
         }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickStatsCards.map((stat, index) => (
-            <Card key={stat.title} className="p-3 sm:p-4 md:p-6 hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/80 backdrop-blur">
+            <Card key={stat.title} className="p-6 hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/80 backdrop-blur">
               <div className="flex items-center justify-between">
-                <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{stat.title}</p>
-                  <p className="text-lg sm:text-xl md:text-2xl font-bold text-foreground">{stat.value}</p>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
+                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
                   <div className="flex items-center gap-1">
-                    <TrendingUp className={`h-3 w-3 flex-shrink-0 ${stat.trendUp ? 'text-green-600' : 'text-red-600'}`} />
-                    <span className={`text-xs font-medium truncate ${stat.trendUp ? 'text-green-600' : 'text-red-600'}`}>
+                    <TrendingUp className={`h-3 w-3 ${stat.trendUp ? 'text-green-600' : 'text-red-600'}`} />
+                    <span className={`text-xs font-medium ${stat.trendUp ? 'text-green-600' : 'text-red-600'}`}>
                       {stat.trend}
                     </span>
                   </div>
                 </div>
-                <div className={`p-2 sm:p-3 rounded-xl flex-shrink-0 ${stat.bgColor}`}>
-                  <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 ${stat.color}`} />
+                <div className={`p-3 rounded-xl ${stat.bgColor}`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
                 </div>
               </div>
             </Card>
@@ -145,8 +145,8 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
         }}
         transition={{ duration: 0.6, delay: 0.4 }}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="lg:col-span-1 xl:col-span-2">
             <RecentActivity isLoading={statsLoading} />
           </div>
           <div className="lg:col-span-1">
@@ -163,7 +163,7 @@ const DashboardOverview = ({ session, onTabChange }: DashboardOverviewProps) => 
         }}
         transition={{ duration: 0.6, delay: 0.5 }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           <WeeklyTrendChart />
           <RiskDistributionChart />
           <PerformanceChart />

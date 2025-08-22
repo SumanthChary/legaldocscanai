@@ -69,7 +69,7 @@ export const AnalyticsCards = ({ stats, isLoading = false }: AnalyticsCardsProps
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       {cards.map((card, index) => (
         <InView 
           key={index} 
@@ -79,15 +79,15 @@ export const AnalyticsCards = ({ stats, isLoading = false }: AnalyticsCardsProps
           }}
           transition={{ duration: 0.3, delay: index * 0.1 }}
         >
-          <Card className="p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <card.icon className={`h-6 w-6 sm:h-8 sm:w-8 ${card.color} flex-shrink-0`} />
-              <span className="text-lg sm:text-2xl font-bold">{card.value}</span>
+          <Card className="p-4 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <card.icon className={`h-8 w-8 ${card.color}`} />
+              <span className="text-2xl font-bold">{card.value}</span>
             </div>
-            <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-2 truncate">{card.title}</h3>
+            <h3 className="text-sm font-medium text-gray-600 mb-2">{card.title}</h3>
             <div className="flex items-center text-xs">
-              <TrendingUp className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 ${card.trendColor} flex-shrink-0`} />
-              <span className={`${card.trendColor} truncate`}>{card.trend}</span>
+              <TrendingUp className={`h-4 w-4 mr-1 ${card.trendColor}`} />
+              <span className={card.trendColor}>{card.trend}</span>
             </div>
           </Card>
         </InView>
