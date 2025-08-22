@@ -37,14 +37,17 @@ export const WelcomeHeader = ({ session }: WelcomeHeaderProps) => {
       
       <div className="relative bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-200/50 shadow-lg">
         <div className="flex items-center gap-2 sm:gap-3 mb-2">
-          <div className="p-1.5 sm:p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
+          <div className="p-1.5 sm:p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex-shrink-0">
             <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-aeonik bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            Welcome back, {userName}
-          </h1>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold font-aeonik bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent break-words">
+              Welcome back,{" "}
+              <span className="break-all">{userName}</span>
+            </h1>
+          </div>
         </div>
-        <p className="text-xs sm:text-sm md:text-base text-gray-600 font-aeonik ml-8 sm:ml-11">
+        <p className="text-xs sm:text-sm md:text-base text-gray-600 font-aeonik ml-8 sm:ml-11 break-words">
           Here's what's happening with your documents today.
         </p>
       </div>
