@@ -1,10 +1,11 @@
 
 import { useState } from "react";
-import { FileText, AlertTriangle, RefreshCw, ChevronDown } from "lucide-react";
+import { FileText, AlertTriangle, RefreshCw, ChevronDown, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { InView } from "@/components/ui/in-view";
 import { StatusBadge } from "./StatusBadge";
+import { useNavigate } from "react-router-dom";
 
 interface DocumentCardProps {
   doc: any;
@@ -14,6 +15,7 @@ interface DocumentCardProps {
 
 export const DocumentCard = ({ doc, expandedDocs, toggleSummary }: DocumentCardProps) => {
   const isExpanded = expandedDocs.includes(doc.id);
+  const navigate = useNavigate();
 
   return (
     <InView>
@@ -40,24 +42,35 @@ export const DocumentCard = ({ doc, expandedDocs, toggleSummary }: DocumentCardP
 
           {doc.analysis_status === 'completed' && doc.summary && (
             <div className="space-y-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full text-left flex justify-between items-center p-2 hover:bg-gray-50"
-                onClick={() => toggleSummary(doc.id)}
-              >
-                <span className="text-sm font-medium">
-                  {isExpanded ? "Hide AI Summary" : "Show AI Summary"}
-                </span>
-                <ChevronDown 
-                  className={`h-4 w-4 transition-transform ${
-                    isExpanded ? "rotate-180" : ""
-                  }`}
-                />
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1 text-left flex justify-between items-center p-2 hover:bg-gray-50"
+                  onClick={() => toggleSummary(doc.id)}
+                >
+                  <span className="text-sm font-medium">
+                    {isExpanded ? "Hide Preview" : "Show Preview"}
+                  </span>
+                  <ChevronDown 
+                    className={`h-4 w-4 transition-transform ${
+                      isExpanded ? "rotate-180" : ""
+                    }`}
+                  />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-1 px-3 border-primary text-primary hover:bg-primary hover:text-white"
+                  onClick={() => navigate(`/document-summary/${doc.id}`)}
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  <span className="text-xs font-medium">Full Analysis</span>
+                </Button>
+              </div>
               {isExpanded && (
-                <div className="text-sm text-gray-600 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  {doc.summary}
+                <div className="text-sm text-gray-600 p-3 bg-gray-50 rounded-lg border border-gray-100 max-h-32 overflow-y-auto">
+                  {doc.summary.length > 200 ? `${doc.summary.substring(0, 200)}...` : doc.summary}
                 </div>
               )}
             </div>

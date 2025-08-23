@@ -92,6 +92,12 @@ function formatSummary(text: string): string {
     .replace(/^\s*---\s*$/gm, '')
     .replace(/^#+\s*/gm, '')
     .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
+    // Remove duplicate phrases and repeated words
+    .replace(/(\b\w+\b)(\s+\1\b)+/gi, '$1')
+    // Remove repeated titles/headers
+    .replace(/(^.+$)\n+\1$/gm, '$1')
+    // Clean up repeated line patterns
+    .replace(/(.+)\n\1+/g, '$1')
     .trim();
 
   const hasStructure = /^\d+\.\s|\n\s*[-•*]\s|\n\s*\d+\.\s/m.test(cleaned);
