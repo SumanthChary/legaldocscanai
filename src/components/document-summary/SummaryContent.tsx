@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, FileText, RefreshCw, Download, Copy } from "lucide-react";
+import { AlertTriangle, FileText, RefreshCw, Download, Copy, BarChart3 } from "lucide-react";
 import { SummaryDisplay } from "./components/SummaryDisplay";
+import { DocumentMetricsCharts } from "./components/DocumentMetricsCharts";
+import { useDocumentMetrics } from "./hooks/useDocumentMetrics";
 import { toast } from "@/hooks/use-toast";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { useFeedbackTrigger } from "@/hooks/useFeedbackTrigger";
+import { useState } from "react";
 
 interface SummaryContentProps {
   analysisStatus?: string;
@@ -17,6 +20,10 @@ interface SummaryContentProps {
 export const SummaryContent = ({ analysisStatus, summary, originalName, analysisId, refreshAnalysis, refreshing }: SummaryContentProps) => {
   const isCompleted = analysisStatus === 'completed';
   const { showFeedback, closeFeedback } = useFeedbackTrigger(analysisId || '', isCompleted);
+  const [showMetrics, setShowMetrics] = useState(false);
+  
+  // Generate document metrics when summary is available
+  const metrics = useDocumentMetrics(summary || '', originalName || '');
 
   if (analysisStatus !== 'completed') {
     return null;
@@ -112,6 +119,15 @@ export const SummaryContent = ({ analysisStatus, summary, originalName, analysis
                 <Download className="h-4 w-4 mr-2" />
                 Download
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowMetrics(!showMetrics)}
+                className={`border-gray-900 font-editorial-new ${showMetrics ? 'bg-gray-100' : ''}`}
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Analytics
+              </Button>
             </div>
           </div>
         </div>
@@ -139,6 +155,16 @@ export const SummaryContent = ({ analysisStatus, summary, originalName, analysis
           />
         </div>
       </div>
+
+      {/* Document Analytics Section */}
+      {showMetrics && (
+        <div className="bg-white border border-gray-900 rounded-lg p-6">
+          <DocumentMetricsCharts 
+            metrics={metrics}
+            fileName={originalName || 'document'}
+          />
+        </div>
+      )}
 
       <FeedbackModal
         open={showFeedback}
