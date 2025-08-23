@@ -245,21 +245,34 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
 
                 {doc.analysis_status === 'completed' && doc.summary && (
                   <div className="space-y-3">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full text-left flex justify-between items-center p-3 hover:bg-gray-50 border border-gray-200 rounded-lg"
-                      onClick={() => toggleSummary(doc.id)}
-                    >
-                      <span className="text-sm font-medium text-gray-700">
-                        {expandedDocs.includes(doc.id) ? "Hide AI Summary" : "Show AI Summary"}
-                      </span>
-                      <ChevronDown 
-                        className={`h-4 w-4 transition-transform ${
-                          expandedDocs.includes(doc.id) ? "rotate-180" : ""
-                        }`}
-                      />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex-1 text-left flex justify-between items-center p-3 hover:bg-gray-50 border border-gray-200 rounded-lg"
+                        onClick={() => toggleSummary(doc.id)}
+                      >
+                        <span className="text-sm font-medium text-gray-700">
+                          {expandedDocs.includes(doc.id) ? "Hide Preview" : "Show Preview"}
+                        </span>
+                        <ChevronDown 
+                          className={`h-4 w-4 transition-transform ${
+                            expandedDocs.includes(doc.id) ? "rotate-180" : ""
+                          }`}
+                        />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1 px-3 border-primary text-primary hover:bg-primary hover:text-white"
+                        onClick={() => window.open(`/document-summary/${doc.id}`, '_blank')}
+                      >
+                        <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span className="text-xs font-medium">Full Analysis</span>
+                      </Button>
+                    </div>
                     {expandedDocs.includes(doc.id) && (
                       <div className="text-sm text-gray-700 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200 leading-relaxed">
                         <div className="whitespace-pre-wrap">{doc.summary}</div>
