@@ -2,11 +2,12 @@
 import { cn } from "@/lib/utils"
 import { TestimonialCard, TestimonialAuthor } from "@/components/ui/testimonial-card"
 import { InView } from "@/components/ui/in-view"
+import { testimonials } from "@/data/testimonials"
 
 interface TestimonialsSectionProps {
-  title: string
-  description: string
-  testimonials: Array<{
+  title?: string
+  description?: string
+  testimonials?: Array<{
     author: TestimonialAuthor
     text: string
     href?: string
@@ -15,11 +16,12 @@ interface TestimonialsSectionProps {
 }
 
 export function TestimonialsSection({ 
-  title,
-  description,
-  testimonials,
+  title = "What Our Beta Users Say",
+  description = "Honest feedback from legal professionals testing our platform",
+  testimonials: customTestimonials,
   className 
 }: TestimonialsSectionProps) {
+  const testimonialsToShow = customTestimonials || testimonials;
   return (
     <section className={cn(
       "bg-background text-foreground",
@@ -45,10 +47,10 @@ export function TestimonialsSection({
         </InView>
 
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
-          <div className="group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)] flex-row [--duration:40s]">
+            <div className="group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)] flex-row [--duration:40s]">
             <div className="flex shrink-0 justify-around [gap:var(--gap)] animate-marquee flex-row group-hover:[animation-play-state:paused]">
               {[...Array(4)].map((_, setIndex) => (
-                testimonials.map((testimonial, i) => (
+                testimonialsToShow.map((testimonial, i) => (
                   <TestimonialCard 
                     key={`${setIndex}-${i}`}
                     {...testimonial}

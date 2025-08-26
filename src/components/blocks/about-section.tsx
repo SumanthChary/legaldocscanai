@@ -16,8 +16,8 @@ export const AboutSection = () => {
     },
     {
       icon: Award,
-      title: "Industry Recognition",
-      description: "Trusted by leading law firms and legal departments worldwide"
+      title: "Beta Development",
+      description: "Actively developing with feedback from early adopter legal professionals"
     },
     {
       icon: Zap,
@@ -42,10 +42,10 @@ export const AboutSection = () => {
               About LegalDeep AI
             </h2>
             <p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 leading-relaxed">
-              LegalDeep AI was founded with a vision to revolutionize legal document analysis through artificial intelligence. Our team of legal professionals and AI experts work together to create innovative solutions that make legal work more efficient and accurate.
+              LegalDeep AI is currently in beta development, founded by Sumanth Chary to help legal professionals analyze documents more efficiently. We're actively working with early adopters to refine our platform.
             </p>
             <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-12">
-              We understand the challenges legal professionals face when dealing with vast amounts of documentation. That's why we've developed a platform that combines cutting-edge AI technology with user-friendly interfaces to streamline your workflow and enhance productivity.
+              <strong>BETA STATUS:</strong> We're continuously improving based on user feedback. Our platform has processed 56+ documents for 9 legal professionals during our testing phase, helping us understand real workflow needs.
             </p>
           </div>
         </InView>
@@ -82,7 +82,7 @@ export const AboutSection = () => {
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
               <p className="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">
-                To democratize access to advanced legal analysis tools and empower legal professionals with AI-driven insights that save time, reduce costs, and improve accuracy in legal document processing.
+                To build a reliable AI tool for legal document analysis through transparent beta development, user feedback, and continuous improvement. Currently serving solo practitioners and small firms with honest, growing capabilities.
               </p>
             </div>
           </div>

@@ -6,33 +6,33 @@ export const TrustSection = () => {
   const trustItems = [
     {
       icon: Shield,
-      title: "SOC 2 Compliant",
-      description: "Certified for security, availability, and confidentiality"
+      title: "BETA - Secure by Design",
+      description: "Enterprise-grade security measures protecting your legal documents"
     },
     {
       icon: Award,
-      title: "ISO 27001 Certified",
-      description: "International standard for information security management"
+      title: "Continuously Improving",
+      description: "Built with feedback from legal professionals in our pilot program"
     },
     {
       icon: Users,
-      title: "10,000+ Users",
-      description: "Trusted by legal professionals worldwide"
+      title: "Growing Community",
+      description: "9 legal professionals actively using our beta platform"
     },
     {
       icon: Globe,
-      title: "99.9% Uptime",
-      description: "Reliable service with enterprise-grade infrastructure"
+      title: "56+ Documents Processed",
+      description: "Real analyses completed during our beta testing phase"
     }
   ];
 
   const certifications = [
-    "GDPR Compliant",
-    "HIPAA Ready",
-    "SOC 2 Type II",
-    "ISO 27001",
-    "PCI DSS",
-    "CCPA Compliant"
+    "BETA Testing Phase",
+    "Secure Data Handling",
+    "Privacy-First Design",
+    "Legal Document Focus",
+    "User Feedback Driven",
+    "Continuous Security Updates"
   ];
 
   return (
@@ -47,11 +47,11 @@ export const TrustSection = () => {
         >
           <div className="text-center mb-16">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-6">
-              Trusted by Legal Professionals
+              Beta Platform - Building Trust Through Transparency
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              LegalDeep AI meets the highest standards of security, compliance, and reliability. 
-              Your sensitive legal data is protected with enterprise-grade security measures.
+              LegalDeep AI is currently in beta, actively improving based on feedback from legal professionals. 
+              We prioritize security and accuracy while continuously developing our platform.
             </p>
           </div>
         </InView>
@@ -86,10 +86,10 @@ export const TrustSection = () => {
         >
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Security & Compliance</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Beta Development Focus</h3>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                We maintain the highest standards of data protection and regulatory compliance 
-                to ensure your legal documents are always secure.
+                Our beta platform focuses on security, user feedback, and continuous improvement 
+                to build a reliable tool for legal professionals.
               </p>
             </div>
             
