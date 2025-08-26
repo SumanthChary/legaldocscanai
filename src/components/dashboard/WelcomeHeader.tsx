@@ -55,7 +55,7 @@ export const WelcomeHeader = ({ session }: WelcomeHeaderProps) => {
     }
   };
 
-  const userName = userProfile?.username || session?.user?.email?.split('@')[0] || 'User';
+  const userName = "&lt;username&gt;";
 
   return (
     <div className="relative">
