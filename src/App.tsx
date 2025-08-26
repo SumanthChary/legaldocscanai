@@ -26,6 +26,7 @@ import { EnhancedDashboard } from "@/components/dashboard/EnhancedDashboard";
 import ESignatures from "./pages/ESignatures";
 import Support from "./pages/Support";
 import WhopCallback from "./pages/WhopCallback";
+import AcceptInvitation from "./pages/AcceptInvitation";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,6 +77,7 @@ function App() {
               <Route path="/esignatures" element={<ESignatures />} />
               <Route path="/support" element={<Support />} />
               <Route path="/whop/callback" element={<WhopCallback />} />
+              <Route path="/accept-invitation" element={<AcceptInvitation />} />
             </Routes>
             <ChatWidget />
           </BrowserRouter>

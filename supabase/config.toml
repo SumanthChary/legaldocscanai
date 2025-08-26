@@ -34,6 +34,10 @@ port = 54327
 vector_port = 54328
 backend = "postgres"
 
+[functions."send-team-invitation"]
+verify_jwt = false
+system_import = true
+
 [functions."analyze-document"]
 verify_jwt = true
 system_import = true

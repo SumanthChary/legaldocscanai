@@ -646,6 +646,18 @@ export type Database = {
           username: string
         }[]
       }
+      get_user_organization_id: {
+        Args: { p_user_id: string }
+        Returns: string
+      }
+      is_organization_admin: {
+        Args: { p_org_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      is_organization_member: {
+        Args: { p_org_id: string; p_user_id: string }
+        Returns: boolean
+      }
       log_user_action: {
         Args: {
           p_action: string

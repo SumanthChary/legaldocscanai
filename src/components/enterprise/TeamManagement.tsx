@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -115,11 +115,17 @@ export const TeamManagement = () => {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('organization_id')
+        .select('organization_id, username')
         .eq('id', user.id)
         .single();
 
       if (!profile?.organization_id) return;
+
+      const { data: org } = await supabase
+        .from('organizations')
+        .select('name')
+        .eq('id', profile.organization_id)
+        .single();
 
       const token = Math.random().toString(36).substring(2, 15);
       const expiresAt = new Date();
@@ -137,6 +143,21 @@ export const TeamManagement = () => {
         });
 
       if (error) throw error;
+
+      // Send invitation email
+      try {
+        await supabase.functions.invoke('send-team-invitation', {
+          body: {
+            email: inviteEmail,
+            role: inviteRole,
+            organizationName: org?.name || 'Your Organization',
+            inviterName: profile.username || 'Team Admin',
+            token,
+          },
+        });
+      } catch (emailError) {
+        console.warn('Email invitation failed, but database record created:', emailError);
+      }
 
       // Log the action
       await supabase.rpc('log_user_action', {
