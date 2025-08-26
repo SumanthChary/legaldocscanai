@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { FileText, AlertTriangle, ChevronDown, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { InView } from "@/components/ui/in-view";
@@ -54,23 +54,40 @@ export const DocumentGallery = ({ userId }: DocumentGalleryProps) => {
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('username, email, document_limit, document_count, organization_id')
         .eq('id', userId)
         .single();
 
       if (error) {
-        console.error("Fetch profile error:", error);
-        toast({
-          title: "Error fetching profile",
-          description: error.message,
-          variant: "destructive",
-        });
+        console.warn("DocumentGallery profile fetch warning:", error.message);
+        // Set fallback data
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setUserProfile({
+            username: user.email?.split('@')[0] || 'User',
+            email: user.email || '',
+            document_limit: 3,
+            document_count: 0,
+            organization_id: null
+          });
+        }
         return;
       }
 
       setUserProfile(profile);
     } catch (err) {
-      console.error("Failed to fetch profile:", err);
+      console.warn("DocumentGallery profile fetch failed:", err);
+      // Set fallback data
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserProfile({
+          username: user.email?.split('@')[0] || 'User',
+          email: user.email || '',
+          document_limit: 3,
+          document_count: 0,
+          organization_id: null
+        });
+      }
     }
   };
 

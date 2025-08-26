@@ -17,18 +17,45 @@ export const WelcomeHeader = ({ session }: WelcomeHeaderProps) => {
   }, [session?.user?.id]);
 
   const fetchUserProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    
-    if (!error && data) {
-      setUserProfile(data);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username, email, organization_id')
+        .eq('id', userId)
+        .single();
+      
+      if (error) {
+        console.warn('WelcomeHeader profile fetch warning:', error.message);
+        // Set fallback data
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setUserProfile({
+            username: user.email?.split('@')[0] || 'User',
+            email: user.email || '',
+            organization_id: null
+          });
+        }
+        return;
+      }
+      
+      if (data) {
+        setUserProfile(data);
+      }
+    } catch (err) {
+      console.warn('WelcomeHeader profile fetch error:', err);
+      // Set fallback data
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserProfile({
+          username: user.email?.split('@')[0] || 'User',
+          email: user.email || '',
+          organization_id: null
+        });
+      }
     }
   };
 
-  const userName = userProfile?.username || userProfile?.full_name || session?.user?.email?.split('@')[0] || 'User';
+  const userName = userProfile?.username || session?.user?.email?.split('@')[0] || 'User';
 
   return (
     <div className="relative">
@@ -51,6 +78,11 @@ export const WelcomeHeader = ({ session }: WelcomeHeaderProps) => {
         </div>
         <p className="text-xs sm:text-sm md:text-base text-gray-600 font-aeonik ml-8 sm:ml-11 break-words">
           Here's what's happening with your documents today.
+          {userProfile?.organization_id && (
+            <span className="block mt-1 text-xs text-primary font-medium">
+              Organization Member
+            </span>
+          )}
         </p>
       </div>
     </div>
