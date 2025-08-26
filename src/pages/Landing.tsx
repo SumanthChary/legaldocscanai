@@ -21,10 +21,10 @@ const Landing = () => {
     setIsWhopUser(WhopService.isWhopUser());
   }, []);
   const benefits = [
-    "Try our beta platform for free",
-    "Help shape legal AI development", 
-    "Early access to new features",
-    "Direct feedback to development team"
+    "Reduce review time by 90%",
+    "Improve analysis accuracy", 
+    "Ensure compliance across jurisdictions",
+    "Streamline team collaboration"
   ];
 
   const faqs = [
