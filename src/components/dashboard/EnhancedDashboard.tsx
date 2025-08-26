@@ -12,6 +12,9 @@ const UploadSection = lazy(() => import("./UploadSection").then(m => ({ default:
 const EnhancedInsightsSection = lazy(() => import("./EnhancedInsightsSection").then(m => ({ default: m.EnhancedInsightsSection })));
 const ChatPage = lazy(() => import("@/pages/ChatPage"));
 const ESignatures = lazy(() => import("@/pages/ESignatures"));
+const TeamManagement = lazy(() => import("../enterprise/TeamManagement").then(m => ({ default: m.TeamManagement })));
+const OrganizationSettings = lazy(() => import("../enterprise/OrganizationSettings").then(m => ({ default: m.OrganizationSettings })));
+const SecurityManagement = lazy(() => import("../enterprise/SecurityManagement").then(m => ({ default: m.SecurityManagement })));
 
 export const EnhancedDashboard = () => {
   const navigate = useNavigate();
@@ -92,30 +95,21 @@ export const EnhancedDashboard = () => {
         );
       case "team":
         return (
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Team Management</h2>
-              <p className="text-muted-foreground">Team management features coming soon...</p>
-            </div>
-          </div>
+          <Suspense fallback={<DashboardSkeleton />}>
+            <TeamManagement />
+          </Suspense>
         );
       case "organization":
         return (
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Organization</h2>
-              <p className="text-muted-foreground">Organization management coming soon...</p>
-            </div>
-          </div>
+          <Suspense fallback={<DashboardSkeleton />}>
+            <OrganizationSettings />
+          </Suspense>
         );
       case "security":
         return (
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Security</h2>
-              <p className="text-muted-foreground">Security settings coming soon...</p>
-            </div>
-          </div>
+          <Suspense fallback={<DashboardSkeleton />}>
+            <SecurityManagement />
+          </Suspense>
         );
       case "api":
         return (

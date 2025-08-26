@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          organization_id: string | null
+          resource_id: string | null
+          resource_type: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          organization_id?: string | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          organization_id?: string | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       code_redemptions: {
         Row: {
           code_id: string
@@ -53,6 +92,7 @@ export type Database = {
           document_path: string
           id: string
           is_deleted: boolean | null
+          organization_id: string | null
           original_name: string
           summary: string | null
           updated_at: string
@@ -64,6 +104,7 @@ export type Database = {
           document_path: string
           id?: string
           is_deleted?: boolean | null
+          organization_id?: string | null
           original_name: string
           summary?: string | null
           updated_at?: string
@@ -75,10 +116,50 @@ export type Database = {
           document_path?: string
           id?: string
           is_deleted?: boolean | null
+          organization_id?: string | null
           original_name?: string
           summary?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          max_members: number | null
+          name: string
+          owner_id: string
+          settings: Json | null
+          subscription_tier: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          max_members?: number | null
+          name: string
+          owner_id: string
+          settings?: Json | null
+          subscription_tier?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          max_members?: number | null
+          name?: string
+          owner_id?: string
+          settings?: Json | null
+          subscription_tier?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -90,6 +171,11 @@ export type Database = {
           document_limit: number | null
           email: string
           id: string
+          last_login: string | null
+          login_history: Json | null
+          organization_id: string | null
+          role: string | null
+          security_settings: Json | null
           source: string | null
           updated_at: string
           username: string
@@ -104,6 +190,11 @@ export type Database = {
           document_limit?: number | null
           email: string
           id: string
+          last_login?: string | null
+          login_history?: Json | null
+          organization_id?: string | null
+          role?: string | null
+          security_settings?: Json | null
           source?: string | null
           updated_at?: string
           username: string
@@ -118,6 +209,11 @@ export type Database = {
           document_limit?: number | null
           email?: string
           id?: string
+          last_login?: string | null
+          login_history?: Json | null
+          organization_id?: string | null
+          role?: string | null
+          security_settings?: Json | null
           source?: string | null
           updated_at?: string
           username?: string
@@ -343,6 +439,78 @@ export type Database = {
         }
         Relationships: []
       }
+      team_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          organization_id: string
+          role: string
+          status: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          invited_by: string
+          organization_id: string
+          role?: string
+          status?: string
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          organization_id?: string
+          role?: string
+          status?: string
+          token?: string
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          id: string
+          invited_by: string | null
+          joined_at: string
+          organization_id: string
+          permissions: Json | null
+          role: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          organization_id: string
+          permissions?: Json | null
+          role?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          organization_id?: string
+          permissions?: Json | null
+          role?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_feedback: {
         Row: {
           analysis_id: string | null
@@ -464,6 +632,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_organization_with_owner: {
+        Args: { org_description?: string; org_name: string }
+        Returns: string
+      }
       force_update_analysis: {
         Args: { analysis_id: string; new_status: string; new_summary: string }
         Returns: undefined
@@ -473,6 +645,15 @@ export type Database = {
         Returns: {
           username: string
         }[]
+      }
+      log_user_action: {
+        Args: {
+          p_action: string
+          p_details?: Json
+          p_resource_id?: string
+          p_resource_type?: string
+        }
+        Returns: undefined
       }
       sync_whop_subscription: {
         Args: {
