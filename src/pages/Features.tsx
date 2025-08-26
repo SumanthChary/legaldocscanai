@@ -95,7 +95,7 @@ const Features = () => {
       icon: FileText,
       title: "Enhanced Document Processing",
       description: "Advanced analysis capabilities for legal documents",
-      status: "beta" as const,
+      status: "pro" as const,
       infoList: [
         "Improved document scanning",
         "Enhanced clause detection",

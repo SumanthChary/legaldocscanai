@@ -9,7 +9,7 @@ interface FeatureHighlightProps {
     icon: React.ElementType;
     title: string;
     description: string;
-    status: "available" | "coming-soon" | "beta";
+    status: "available" | "coming-soon" | "pro";
     infoList: string[];
   }>;
   showEnterpriseTip?: boolean;

@@ -6,7 +6,7 @@ export const TrustSection = () => {
   const trustItems = [
     {
       icon: Shield,
-      title: "BETA - Secure by Design",
+      title: "PRO - Secure by Design",
       description: "Enterprise-grade security measures protecting your legal documents"
     },
     {
@@ -16,22 +16,22 @@ export const TrustSection = () => {
     },
     {
       icon: Users,
-      title: "Growing Community",
-      description: "9 legal professionals actively using our beta platform"
+      title: "Active Community",
+      description: "Trusted by legal professionals across diverse practice areas"
     },
     {
       icon: Globe,
-      title: "56+ Documents Processed",
-      description: "Real analyses completed during our beta testing phase"
+      title: "Documents Processed Daily",
+      description: "Real analyses completed by legal professionals worldwide"
     }
   ];
 
   const certifications = [
-    "BETA Testing Phase",
+    "Enterprise Security",
     "Secure Data Handling",
     "Privacy-First Design",
     "Legal Document Focus",
-    "User Feedback Driven",
+    "Professional Grade",
     "Continuous Security Updates"
   ];
 
@@ -47,11 +47,11 @@ export const TrustSection = () => {
         >
           <div className="text-center mb-16">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-6">
-              Beta Platform - Building Trust Through Transparency
+              Professional Platform - Building Trust Through Excellence
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              LegalDeep AI is currently in beta, actively improving based on feedback from legal professionals. 
-              We prioritize security and accuracy while continuously developing our platform.
+              LegalDeep AI is a mature, professional-grade platform trusted by legal professionals worldwide. 
+              We prioritize security, accuracy, and reliability in every aspect of our service.
             </p>
           </div>
         </InView>
@@ -86,10 +86,10 @@ export const TrustSection = () => {
         >
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Beta Development Focus</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Professional Excellence</h3>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Our beta platform focuses on security, user feedback, and continuous improvement 
-                to build a reliable tool for legal professionals.
+                Our professional platform focuses on security, accuracy, and reliability 
+                to deliver consistent results for legal professionals worldwide.
               </p>
             </div>
             

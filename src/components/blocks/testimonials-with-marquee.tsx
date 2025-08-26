@@ -16,8 +16,8 @@ interface TestimonialsSectionProps {
 }
 
 export function TestimonialsSection({ 
-  title = "What Our Beta Users Say",
-  description = "Honest feedback from legal professionals testing our platform",
+  title = "What Our Users Say",
+  description = "Trusted feedback from legal professionals using our platform",
   testimonials: customTestimonials,
   className 
 }: TestimonialsSectionProps) {

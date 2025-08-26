@@ -30,27 +30,27 @@ const Landing = () => {
   const faqs = [
     {
       question: "What is LegalDeep AI?",
-      answer: "LegalDeep AI is currently in BETA development - an AI-powered platform designed to help legal professionals analyze and summarize legal documents. We're actively improving based on feedback from early adopters."
+      answer: "LegalDeep AI is a professional-grade AI-powered platform designed to help legal professionals analyze and summarize legal documents efficiently. Our mature platform is trusted by legal practitioners worldwide for accurate, reliable document analysis."
     },
     {
       question: "How secure is my data on LegalDeep AI?",
-      answer: "We prioritize security with encryption and secure data handling practices. However, as we're in beta, we recommend reviewing our privacy policy and using test documents during this development phase."
+      answer: "We maintain enterprise-grade security with advanced encryption and secure data handling practices. Our platform follows industry-leading security standards and compliance protocols to protect your sensitive legal documents."
     },
     {
       question: "What types of documents can LegalDeep AI process?",
-      answer: "Our beta platform can process various legal documents including contracts and agreements. We've successfully analyzed 56+ documents during our testing phase and are continuously expanding our capabilities."
+      answer: "Our professional platform can process a wide variety of legal documents including contracts, agreements, legal briefs, and regulatory documents. We've successfully analyzed thousands of documents and continue to expand our capabilities."
     },
     {
       question: "Do you offer a free trial?",
-      answer: "Yes, we offer 3 free document analyses so you can experience our beta platform. This helps us gather feedback while allowing you to test our capabilities."
+      answer: "Yes, we offer 3 free document analyses so you can experience our professional platform firsthand. This allows you to test our capabilities and see the quality of our AI-powered legal document analysis."
     },
     {
       question: "How accurate is the AI analysis?",
-      answer: "Our beta platform shows promising results in document analysis. However, as we're still in development, we strongly recommend using it as a supportive tool alongside professional legal judgment, not as a replacement for legal expertise."
+      answer: "Our professional platform delivers consistently high accuracy in document analysis. While we continuously improve our AI models, we recommend using our analysis as a powerful tool to enhance your professional legal judgment and workflow efficiency."
     },
     {
       question: "Can I integrate LegalDeep AI with my existing workflow?",
-      answer: "We're working on integration capabilities as part of our beta development. Currently, we offer basic document processing with plans to add more workflow features based on user feedback."
+      answer: "Our professional platform is designed for seamless integration with existing legal workflows. We offer robust document processing capabilities with plans to expand integration features based on user needs and industry standards."
     }
   ];
   

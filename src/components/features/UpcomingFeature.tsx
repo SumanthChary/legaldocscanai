@@ -6,7 +6,7 @@ interface UpcomingFeatureProps {
   icon: React.ElementType;
   title: string;
   description: string;
-  status: "available" | "coming-soon" | "beta";
+  status: "available" | "coming-soon" | "pro";
   infoList: string[];
   isPreview?: boolean;
 }
@@ -22,13 +22,13 @@ export const UpcomingFeature = ({
   const statusColors = {
     "available": "bg-green-100 text-green-700",
     "coming-soon": "bg-amber-100 text-amber-700",
-    "beta": "bg-blue-100 text-blue-700"
+    "pro": "bg-blue-100 text-blue-700"
   };
   
   const statusLabels = {
     "available": "Available Now",
     "coming-soon": "Coming Soon",
-    "beta": "Beta Access"
+    "pro": "Professional Access"
   };
 
   return (
@@ -47,7 +47,7 @@ export const UpcomingFeature = ({
 
       {isPreview ? (
         <p className="text-sm text-muted-foreground mt-4">
-          More details available for beta program participants.
+          More details available for professional users.
         </p>
       ) : (
         <>

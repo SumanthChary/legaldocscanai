@@ -56,7 +56,7 @@ export const WaitlistForm = () => {
                 <h3 style="color: #1f2937; margin-top: 0;">What happens next?</h3>
                 <ul style="color: #374151; padding-left: 20px;">
                   <li>You'll be among the first to know about new features</li>
-                  <li>Get exclusive early access to beta features</li>
+                  <li>Get exclusive early access to new features</li>
                   <li>Receive special launch offers and discounts</li>
                   <li>Participate in shaping our product roadmap</li>
                 </ul>

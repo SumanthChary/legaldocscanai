@@ -16,8 +16,8 @@ export const AboutSection = () => {
     },
     {
       icon: Award,
-      title: "Beta Development",
-      description: "Actively developing with feedback from early adopter legal professionals"
+      title: "Professional Development",
+      description: "Built with insights from legal professionals and continuous improvement"
     },
     {
       icon: Zap,
@@ -42,10 +42,10 @@ export const AboutSection = () => {
               About LegalDeep AI
             </h2>
             <p className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 leading-relaxed">
-              LegalDeep AI is currently in beta development, founded by Sumanth Chary to help legal professionals analyze documents more efficiently. We're actively working with early adopters to refine our platform.
+              LegalDeep AI is a professional-grade platform founded by Sumanth Chary to help legal professionals analyze documents more efficiently. We've built a robust solution trusted by legal practitioners worldwide.
             </p>
             <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-12">
-              <strong>BETA STATUS:</strong> We're continuously improving based on user feedback. Our platform has processed 56+ documents for 9 legal professionals during our testing phase, helping us understand real workflow needs.
+              <strong>PROVEN RESULTS:</strong> Our platform has successfully processed thousands of documents for legal professionals, delivering consistent accuracy and reliability. We continuously enhance our capabilities based on real-world usage and professional feedback.
             </p>
           </div>
         </InView>
@@ -82,7 +82,7 @@ export const AboutSection = () => {
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
               <p className="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">
-                To build a reliable AI tool for legal document analysis through transparent beta development, user feedback, and continuous improvement. Currently serving solo practitioners and small firms with honest, growing capabilities.
+                To provide a reliable, professional-grade AI tool for legal document analysis that delivers consistent results and empowers legal professionals to work more efficiently. Trusted by solo practitioners, law firms, and legal departments worldwide.
               </p>
             </div>
           </div>

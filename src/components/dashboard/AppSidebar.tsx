@@ -68,7 +68,7 @@ const mainNavItems = [
     title: "E-Signatures", 
     tab: "esignatures",
     icon: FileSignature,
-    badge: "BETA"
+    badge: "PRO"
   },
   { 
     title: "Analytics & Insights", 
