@@ -24,6 +24,7 @@ export const getPricingPlans = (isAnnual: boolean) => [
     description: "Ideal for solo practitioners",
     features: [
       "25 document analyses per month",
+      "Document scanning with camera", 
       "Advanced clause highlights & risk detection",
       "Jurisdiction-specific legal insights",
       "Priority email support (24-hour response)",
@@ -42,6 +43,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
     description: "Built for growing law firms",
     features: [
       "500 document analyses per month",
+      "Full API access for integrations",
+      "Document scanning with camera",
       "Advanced risk scoring and insights",
       "Multi-jurisdiction compliance checks",
       "Priority support with dedicated success manager",

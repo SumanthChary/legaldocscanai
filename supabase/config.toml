@@ -42,6 +42,10 @@ system_import = true
 verify_jwt = true
 system_import = true
 
+[functions."api-analyze-document"]
+verify_jwt = false
+system_import = true
+
 [functions."send-email"]
 verify_jwt = false
 system_import = true

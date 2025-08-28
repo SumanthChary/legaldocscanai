@@ -1,6 +1,8 @@
 
+import React, { useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Upload, FileText } from "lucide-react";
+import { ScanButton } from './ScanButton';
 
 type FileUploadAreaProps = {
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -8,6 +10,8 @@ type FileUploadAreaProps = {
   handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   fileInputRef: React.RefObject<HTMLInputElement>;
   allowedFileTypes: string[];
+  onFilesAccepted?: (files: File[]) => void;
+  disabled?: boolean;
 };
 
 export const FileUploadArea = ({
@@ -16,7 +20,14 @@ export const FileUploadArea = ({
   handleDragOver,
   fileInputRef,
   allowedFileTypes,
+  onFilesAccepted,
+  disabled = false,
 }: FileUploadAreaProps) => {
+  const handleScanFile = useCallback((file: File) => {
+    if (onFilesAccepted) {
+      onFilesAccepted([file]);
+    }
+  }, [onFilesAccepted]);
   return (
     <div className="flex flex-col items-center">
       <Upload className="h-12 w-12 text-gray-400 mb-2" />
@@ -26,13 +37,19 @@ export const FileUploadArea = ({
       </p>
       <p className="text-sm text-gray-500 mb-4">or click below to browse</p>
       
-      <label 
-        htmlFor="file-upload" 
-        className="flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2 rounded-md cursor-pointer transition-colors"
-      >
-        <FileText className="h-4 w-4" />
-        <span>Choose file</span>
-      </label>
+      <div className="flex flex-col gap-3 w-full max-w-xs">
+        <label 
+          htmlFor="file-upload" 
+          className="flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2 rounded-md cursor-pointer transition-colors justify-center"
+        >
+          <FileText className="h-4 w-4" />
+          <span>Choose file</span>
+        </label>
+        
+        {onFilesAccepted && (
+          <ScanButton onScan={handleScanFile} disabled={disabled} />
+        )}
+      </div>
       <Input
         id="file-upload"
         ref={fileInputRef}
