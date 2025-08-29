@@ -2,7 +2,6 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Camera, X, Check, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import jscanify from 'jscanify';
 
 interface DocumentScannerProps {
   onScan: (file: File) => void;
@@ -53,59 +52,47 @@ export const DocumentScanner = ({ onScan, onClose }: DocumentScannerProps) => {
 
   const captureAndProcess = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current) return;
-    
+
     setProcessing(true);
     try {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
+      const context = canvas.getContext('2d');
       
-      if (!ctx) return;
+      if (!context) return;
 
-      // Set canvas dimensions to video dimensions
+      // Set canvas size to match video
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       
-      // Draw video frame to canvas
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      // Draw current video frame to canvas
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      // Convert to image data for jscanify processing
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      // Apply basic image enhancements for document scanning
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
       
-      // Process with jscanify for document detection and correction
-      const scanner = new jscanify();
-      const corners = scanner.findPaperContour(imageData);
-      
-      if (corners) {
-        // Apply perspective correction
-        const correctedImage = scanner.extractPaper(imageData, corners, canvas.width, canvas.height);
-        
-        // Convert back to canvas and get data URL
-        ctx.putImageData(correctedImage, 0, 0);
-        const dataURL = canvas.toDataURL('image/jpeg', 0.9);
-        setScannedImage(dataURL);
-        stopCamera();
-        
-        toast({
-          title: "Document Scanned",
-          description: "Document processed and ready for analysis",
-        });
-      } else {
-        // If no document detected, use original capture
-        const dataURL = canvas.toDataURL('image/jpeg', 0.9);
-        setScannedImage(dataURL);
-        stopCamera();
-        
-        toast({
-          title: "Image Captured",
-          description: "Image captured. Make sure document is clearly visible.",
-        });
+      // Simple contrast and brightness adjustment for better document visibility
+      for (let i = 0; i < data.length; i += 4) {
+        // Increase contrast and brightness
+        data[i] = Math.min(255, Math.max(0, (data[i] - 128) * 1.2 + 128 + 10));     // Red
+        data[i + 1] = Math.min(255, Math.max(0, (data[i + 1] - 128) * 1.2 + 128 + 10)); // Green
+        data[i + 2] = Math.min(255, Math.max(0, (data[i + 2] - 128) * 1.2 + 128 + 10)); // Blue
       }
+      
+      context.putImageData(imageData, 0, 0);
+      setScannedImage(canvas.toDataURL('image/jpeg', 0.8));
+      stopCamera();
+      
+      toast({
+        title: "Document Captured",
+        description: "Image captured successfully!",
+      });
     } catch (error) {
       console.error('Error processing image:', error);
       toast({
-        title: "Processing Error",
-        description: "Error processing image. Try again.",
+        title: "Capture Error",
+        description: "Error capturing image. Try again.",
         variant: "destructive",
       });
     } finally {
@@ -226,7 +213,7 @@ export const DocumentScanner = ({ onScan, onClose }: DocumentScannerProps) => {
                   <Camera className="h-6 w-6 md:h-8 md:w-8" />
                 </Button>
                 <p className="text-white/90 text-xs md:text-sm bg-black/50 px-3 py-1 rounded-full">
-                  Tap to capture
+                  {processing ? 'Processing...' : 'Tap to capture'}
                 </p>
               </div>
             </>
