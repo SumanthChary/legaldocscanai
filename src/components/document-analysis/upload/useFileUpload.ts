@@ -114,6 +114,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
   
   return {
     file,
+    setFile,
     isUploading,
     uploadProgress,
     uploadError,

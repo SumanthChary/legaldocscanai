@@ -15,6 +15,7 @@ type UploadSectionProps = {
 export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
   const {
     file,
+    setFile,
     isUploading,
     uploadProgress,
     uploadError,
@@ -47,6 +48,12 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
             handleDragOver={handleDragOver}
             fileInputRef={fileInputRef}
             allowedFileTypes={ALLOWED_FILE_TYPES}
+            onFilesAccepted={(files) => {
+              if (files[0]) {
+                setFile(files[0]);
+              }
+            }}
+            disabled={isUploading}
           />
         )}
       </div>

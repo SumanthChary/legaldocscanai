@@ -206,9 +206,9 @@ export const DocumentScanner = ({ onScan, onClose }: DocumentScannerProps) => {
               />
               
               {/* Document overlay guide */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="border-2 border-primary border-dashed rounded-lg w-80 h-60 flex items-center justify-center">
-                  <span className="text-primary-foreground bg-primary/80 px-3 py-1 rounded text-sm">
+              <div className="absolute inset-0 flex items-center justify-center p-4">
+                <div className="border-2 border-primary border-dashed rounded-lg w-full max-w-sm aspect-[4/3] flex items-center justify-center">
+                  <span className="text-primary-foreground bg-primary/90 px-3 py-2 rounded text-sm font-medium text-center">
                     Position document within frame
                   </span>
                 </div>
@@ -216,15 +216,18 @@ export const DocumentScanner = ({ onScan, onClose }: DocumentScannerProps) => {
               
               <canvas ref={canvasRef} className="hidden" />
               
-              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-3">
                 <Button
                   onClick={captureAndProcess}
                   disabled={processing}
                   size="lg"
-                  className="rounded-full w-16 h-16"
+                  className="rounded-full w-16 h-16 md:w-20 md:h-20 shadow-lg"
                 >
-                  <Camera className="h-6 w-6" />
+                  <Camera className="h-6 w-6 md:h-8 md:w-8" />
                 </Button>
+                <p className="text-white/90 text-xs md:text-sm bg-black/50 px-3 py-1 rounded-full">
+                  Tap to capture
+                </p>
               </div>
             </>
           ) : (
@@ -237,8 +240,8 @@ export const DocumentScanner = ({ onScan, onClose }: DocumentScannerProps) => {
           )}
         </div>
         
-        <div className="p-4 border-t">
-          <p className="text-sm text-muted-foreground text-center">
+        <div className="p-4 border-t bg-background/95 backdrop-blur">
+          <p className="text-sm text-muted-foreground text-center max-w-sm mx-auto">
             Position your document within the frame and tap the camera button to scan
           </p>
         </div>
