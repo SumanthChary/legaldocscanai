@@ -3,8 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Upload, FileText, CheckCircle2, AlertCircle, X, Sparkles } from "lucide-react";
+import { Upload, FileText, CheckCircle2, AlertCircle, X, Sparkles, Scan } from "lucide-react";
 import { useFileUpload } from "@/components/document-analysis/upload/useFileUpload";
+import { ScanButton } from "@/components/document-analysis/upload/ScanButton";
 
 type UploadSectionProps = {
   onSuccess?: () => void;
@@ -13,6 +14,7 @@ type UploadSectionProps = {
 export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
   const {
     file,
+    setFile,
     isUploading,
     uploadProgress,
     uploadError,
@@ -87,14 +89,21 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
                 </p>
               </div>
               
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                size="lg"
-                className="gap-2 px-8"
-              >
-                <FileText className="h-5 w-5" />
-                Choose Files
-              </Button>
+              <div className="flex flex-col gap-3">
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  size="lg"
+                  className="gap-2 px-8"
+                >
+                  <FileText className="h-5 w-5" />
+                  Choose Files
+                </Button>
+                
+                <ScanButton 
+                  onScan={(scannedFile) => setFile(scannedFile)} 
+                  disabled={isUploading}
+                />
+              </div>
               
               <input
                 ref={fileInputRef}
