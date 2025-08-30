@@ -15,6 +15,7 @@ const ESignatures = lazy(() => import("@/pages/ESignatures"));
 const TeamManagement = lazy(() => import("../enterprise/TeamManagement").then(m => ({ default: m.TeamManagement })));
 const OrganizationSettings = lazy(() => import("../enterprise/OrganizationSettings").then(m => ({ default: m.OrganizationSettings })));
 const SecurityManagement = lazy(() => import("../enterprise/SecurityManagement").then(m => ({ default: m.SecurityManagement })));
+const ApiDashboard = lazy(() => import("@/pages/ApiDashboard"));
 
 export const EnhancedDashboard = () => {
   const navigate = useNavigate();
@@ -113,12 +114,9 @@ export const EnhancedDashboard = () => {
         );
       case "api":
         return (
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">API Access</h2>
-              <p className="text-muted-foreground">API access management coming soon...</p>
-            </div>
-          </div>
+          <Suspense fallback={<DashboardSkeleton />}>
+            <ApiDashboard />
+          </Suspense>
         );
       default:
         return (

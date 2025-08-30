@@ -104,25 +104,25 @@ const enterpriseItems = [
     title: "Team Management", 
     tab: "team",
     icon: Users,
-    badge: "SOON"
+    badge: null
   },
   { 
     title: "Organization", 
     tab: "organization",
     icon: Building,
-    badge: "SOON"
+    badge: null
   },
   { 
     title: "Security", 
     tab: "security",
     icon: Shield,
-    badge: "SOON"
+    badge: null
   },
   { 
     title: "API Access", 
     tab: "api",
     icon: Key,
-    badge: "SOON"
+    badge: "FREE"
   },
 ];
 

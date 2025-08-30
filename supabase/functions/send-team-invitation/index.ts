@@ -30,10 +30,14 @@ serve(async (req) => {
 
     const { email, role, organizationName, inviterName, token }: InvitationRequest = await req.json();
 
-    const acceptUrl = `${Deno.env.get('SUPABASE_URL')?.replace('.supabase.co', '')}.lovable.app/accept-invitation?token=${token}`;
+    // Use the proper domain for invitation links
+    const baseUrl = Deno.env.get('INVITATION_BASE_URL') || 'https://nhmhqhhxlcmhufxxifbn.lovable.app';
+    const acceptUrl = `${baseUrl}/accept-invitation?token=${token}`;
+    
+    console.log('Sending invitation email to:', email, 'with URL:', acceptUrl);
 
     const { error } = await resend.emails.send({
-      from: 'Team Invitations <no-reply@yourdomain.com>',
+      from: 'Team Invitations <onboarding@resend.dev>',
       to: [email],
       subject: `You're invited to join ${organizationName}`,
       html: `
