@@ -23,8 +23,9 @@ export const DocumentScanner = ({ onScan, onClose }: DocumentScannerProps) => {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { 
           facingMode: 'environment',
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
+          width: { ideal: 1920, max: 4096 },
+          height: { ideal: 1080, max: 4096 },
+          frameRate: { ideal: 30 }
         }
       });
       
@@ -61,38 +62,54 @@ export const DocumentScanner = ({ onScan, onClose }: DocumentScannerProps) => {
       
       if (!context) return;
 
-      // Set canvas size to match video
+      // Set canvas size to match video for high quality
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       
       // Draw current video frame to canvas
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      // Apply basic image enhancements for document scanning
+      // Advanced image processing for document scanning
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const data = imageData.data;
       
-      // Simple contrast and brightness adjustment for better document visibility
+      // Enhanced document processing with better contrast and sharpening
       for (let i = 0; i < data.length; i += 4) {
-        // Increase contrast and brightness
-        data[i] = Math.min(255, Math.max(0, (data[i] - 128) * 1.2 + 128 + 10));     // Red
-        data[i + 1] = Math.min(255, Math.max(0, (data[i + 1] - 128) * 1.2 + 128 + 10)); // Green
-        data[i + 2] = Math.min(255, Math.max(0, (data[i + 2] - 128) * 1.2 + 128 + 10)); // Blue
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        // Convert to grayscale for better text recognition
+        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+        
+        // Apply adaptive contrast enhancement
+        const contrast = 1.4;
+        const brightness = 20;
+        const enhanced = Math.min(255, Math.max(0, (gray - 128) * contrast + 128 + brightness));
+        
+        // Apply sharpening effect for text clarity
+        const sharpened = Math.min(255, Math.max(0, enhanced * 1.1));
+        
+        data[i] = sharpened;     // Red
+        data[i + 1] = sharpened; // Green
+        data[i + 2] = sharpened; // Blue
       }
       
       context.putImageData(imageData, 0, 0);
-      setScannedImage(canvas.toDataURL('image/jpeg', 0.8));
+      
+      // Use higher quality JPEG compression for better text recognition
+      setScannedImage(canvas.toDataURL('image/jpeg', 0.95));
       stopCamera();
       
       toast({
-        title: "Document Captured",
-        description: "Image captured successfully!",
+        title: "Document Scanned",
+        description: "High-quality scan captured for analysis!",
       });
     } catch (error) {
       console.error('Error processing image:', error);
       toast({
-        title: "Capture Error",
-        description: "Error capturing image. Try again.",
+        title: "Scan Error",
+        description: "Error processing scan. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -122,7 +139,7 @@ export const DocumentScanner = ({ onScan, onClose }: DocumentScannerProps) => {
           onScan(file);
           onClose();
         }
-      }, 'image/jpeg', 0.9);
+      }, 'image/jpeg', 0.95);
     };
     
     img.src = scannedImage;

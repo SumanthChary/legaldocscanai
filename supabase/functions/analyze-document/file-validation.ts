@@ -2,8 +2,19 @@
 import { corsHeaders } from "./cors.ts";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-const ALLOWED_FILE_TYPES = ['application/pdf', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-const ALLOWED_EXTENSIONS = ['pdf', 'txt', 'doc', 'docx'];
+const ALLOWED_FILE_TYPES = [
+  'application/pdf', 
+  'text/plain', 
+  'application/msword', 
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/jpeg',
+  'image/jpg', 
+  'image/png',
+  'image/gif',
+  'image/bmp',
+  'image/webp'
+];
+const ALLOWED_EXTENSIONS = ['pdf', 'txt', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
 
 export function validateFileUpload(file: File | null) {
   if (!file) {
@@ -39,7 +50,7 @@ export function validateFileUpload(file: File | null) {
     return {
       success: false,
       response: new Response(
-        JSON.stringify({ error: `Unsupported file type. Please upload PDF, DOC, DOCX, or TXT files. Got type: ${file.type}, extension: ${extension}` }),
+        JSON.stringify({ error: `Unsupported file type. Please upload PDF, DOC, DOCX, TXT, or image files (JPG, PNG, GIF, BMP, WebP). Got type: ${file.type}, extension: ${extension}` }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     };
