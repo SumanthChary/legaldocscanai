@@ -26,6 +26,13 @@ export const PricingButton = ({ plan, className }: PricingButtonProps) => {
     setLoading(true);
     
     try {
+      // Handle Enterprise plan - redirect to contact page
+      if (plan.name === "Enterprise") {
+        navigate("/support");
+        setLoading(false);
+        return;
+      }
+      
       // Check if the user is authenticated
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
@@ -138,7 +145,7 @@ export const PricingButton = ({ plan, className }: PricingButtonProps) => {
           Loading...
         </div>
       ) : (
-        isFree ? "Start Free Trial" : "Get Started"
+        plan.name === "Enterprise" ? "Contact Sales" : (isFree ? "Start Free Trial" : "Get Started")
       )}
     </Button>
   );
