@@ -57,9 +57,14 @@ export const ApiKeyManager = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // Mock empty array for now until types are updated
-      // TODO: Implement real API key fetching after types update
-      setApiKeys([]);
+      const { data, error } = await supabase
+        .from('api_keys')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setApiKeys(data || []);
     } catch (error) {
       console.error('Error fetching API keys:', error);
       toast({
@@ -97,9 +102,15 @@ export const ApiKeyManager = () => {
 
       const apiKey = generateApiKey();
 
-      // Mock success for now until types are updated
-      // TODO: Implement real API key creation after types update
-      const error = null;
+      const { error } = await supabase
+        .from('api_keys')
+        .insert({
+          user_id: session.user.id,
+          name: newKeyName.trim(),
+          key: apiKey,
+          is_active: true,
+          usage_count: 0
+        });
 
       if (error) throw error;
 
@@ -126,9 +137,12 @@ export const ApiKeyManager = () => {
 
   const deleteApiKey = async (keyId: string) => {
     try {
-      // Mock success for now until types are updated
-      // TODO: Implement real API key deletion after types update
-      const error = null;
+      const { error } = await supabase
+        .from('api_keys')
+        .delete()
+        .eq('id', keyId);
+
+      if (error) throw error;
 
       setApiKeys(prev => prev.filter(key => key.id !== keyId));
       toast({

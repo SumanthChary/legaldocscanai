@@ -83,10 +83,19 @@ export const HowItWorksSection = () => {
                 </div>
               </InView>
               
-              {/* Arrow between steps - only show on desktop and not after last step */}
+              {/* Arrow between steps - visible and prominent */}
               {index < steps.length - 1 && (
-                <div className="hidden lg:flex absolute top-10 -right-6 text-gray-400 z-10">
-                  <ArrowRight className="w-5 h-5" />
+                <div className="hidden lg:flex absolute top-12 -right-8 z-10">
+                  <div className="bg-gradient-to-r from-blue-400 to-purple-500 rounded-full p-2 shadow-md">
+                    <ArrowRight className="w-6 h-6 text-white animate-pulse" />
+                  </div>
+                </div>
+              )}
+              
+              {/* Mobile step connector */}
+              {index < steps.length - 1 && (
+                <div className="lg:hidden flex justify-center mt-8 mb-4">
+                  <div className="w-px h-12 bg-gradient-to-b from-blue-400 to-purple-500"></div>
                 </div>
               )}
             </div>
