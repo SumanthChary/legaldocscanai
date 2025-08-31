@@ -766,6 +766,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      upsert_team_invitation: {
+        Args: {
+          p_email: string
+          p_expires_at: string
+          p_invited_by: string
+          p_organization_id: string
+          p_role: string
+          p_token: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       subscription_tier:

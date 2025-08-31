@@ -131,16 +131,15 @@ export const TeamManagement = () => {
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 7); // 7 days from now
 
-      const { error } = await supabase
-        .from('team_invitations')
-        .insert({
-          organization_id: profile.organization_id,
-          email: inviteEmail,
-          role: inviteRole,
-          invited_by: user.id,
-          token,
-          expires_at: expiresAt.toISOString(),
-        });
+      // Use the upsert function to handle duplicate invitations gracefully
+      const { data: invitationId, error } = await supabase.rpc('upsert_team_invitation', {
+        p_organization_id: profile.organization_id,
+        p_email: inviteEmail,
+        p_role: inviteRole,
+        p_invited_by: user.id,
+        p_token: token,
+        p_expires_at: expiresAt.toISOString(),
+      });
 
       if (error) throw error;
 
@@ -167,7 +166,7 @@ export const TeamManagement = () => {
 
       toast({
         title: "Invitation sent",
-        description: `Invitation sent to ${inviteEmail}`,
+        description: `Invitation sent to ${inviteEmail}. If they already had a pending invitation, it has been updated.`,
       });
 
       setInviteEmail("");
@@ -435,7 +434,20 @@ export const TeamManagement = () => {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => {
+                        setInviteEmail(invitation.email);
+                        setInviteRole(invitation.role);
+                        setShowInviteDialog(true);
+                      }}
+                      className="text-xs"
+                    >
+                      Resend
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => cancelInvitation(invitation.id)}
+                      className="text-xs"
                     >
                       Cancel
                     </Button>
