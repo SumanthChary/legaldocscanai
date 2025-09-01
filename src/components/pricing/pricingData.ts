@@ -12,7 +12,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Risk identification highlights",
       "Email support within 48 hours",
       "Standard processing (2-5 minutes)",
-      "PDF and Word document support"
+      "PDF and Word document support",
+      "High Level Security & Safety"
     ],
     highlight: false
   },
@@ -31,7 +32,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Fast processing (under 2 minutes)",
       "Document comparison tools",
       "Analytics dashboard",
-      "Export to PDF, Word, and PowerPoint"
+      "Export to PDF, Word, and PowerPoint",
+      "High Level Security & Safety"
     ],
     highlight: false
   },
@@ -52,7 +54,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Advanced analytics and reporting",
       "Custom contract templates and clauses",
       "Bulk document processing",
-      "Priority feature requests"
+      "Priority feature requests",
+      "High Level Security & Safety"
     ],
     highlight: true,
     popular: true
@@ -73,7 +76,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Comprehensive analytics and business intelligence",
       "Training and onboarding for your entire team",
       "SLA guarantees and uptime commitments",
-      "Custom contract review workflows"
+      "Custom contract review workflows",
+      "High Level Security & Safety"
     ],
     highlight: false
   }

@@ -25,7 +25,8 @@ export const PricingSection = () => {
         "Standard processing (24-48 hours)",
         "Email support",
         "Basic risk detection",
-        "PDF export of summaries"
+        "PDF export of summaries",
+        "High Level Security & Safety"
       ],
       highlight: false,
       badge: "Free"
@@ -44,7 +45,8 @@ export const PricingSection = () => {
         "Custom document templates",
         "Chat support",
         "Document version comparison",
-        "API access"
+        "API access",
+        "High Level Security & Safety"
       ],
       highlight: false,
       popular: false,
@@ -66,7 +68,8 @@ export const PricingSection = () => {
         "Advanced analytics dashboard",
         "Bulk document processing",
         "Custom integrations",
-        "Dedicated account manager"
+        "Dedicated account manager",
+        "High Level Security & Safety"
       ],
       highlight: true,
       popular: true,
