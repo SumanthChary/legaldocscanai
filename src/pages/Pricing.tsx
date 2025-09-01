@@ -80,10 +80,8 @@ const Pricing = () => {
                 <p className="text-gray-600 text-sm mb-4">
                   Not satisfied? Get a full refund within 30 days, no questions asked.
                 </p>
-                <div className="flex justify-center items-center space-x-4 text-xs text-gray-500">
-                  <span>✓ SOC 2 Compliant</span>
-                  <span>✓ GDPR Ready</span>
-                  <span>✓ Bank-Level Security</span>
+                <div className="text-center text-sm text-gray-600 font-medium">
+                  Review 1000+ Documents in few minutes
                 </div>
               </div>
               

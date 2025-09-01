@@ -26,8 +26,6 @@ export const PricingSection = () => {
         "Email support",
         "Basic risk detection",
         "PDF export of summaries",
-        "Team Collaboration and Organization Settings",
-        "Security Settings",
         "High Level Security & Safety"
       ],
       highlight: false,
@@ -109,8 +107,11 @@ export const PricingSection = () => {
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-3 md:mb-4 lg:mb-6">
               Choose Your Legal AI Plan
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-3xl mx-auto mb-4 md:mb-6">
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-3xl mx-auto mb-2">
               From solo practitioners to enterprise firms - unlock the power of AI-driven legal document analysis. Start free, scale as you grow.
+            </p>
+            <p className="text-sm md:text-base text-primary font-medium mb-4 md:mb-6">
+              Review 1000+ Documents in few minutes
             </p>
             <Button 
               onClick={() => setIsRedeemModalOpen(true)}

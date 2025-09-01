@@ -13,8 +13,6 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Email support within 48 hours",
       "Standard processing (2-5 minutes)",
       "PDF and Word document support",
-      "Team Collaboration and Organization Settings",
-      "Security Settings",
       "High Level Security & Safety"
     ],
     highlight: false
@@ -78,7 +76,7 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Advanced batch processing",
       "Dedicated account manager and 24/7 phone support",
       "On-premises or private cloud deployment",
-      "Advanced security and compliance (SOC 2, HIPAA)",
+      "Advanced security and compliance (HIPAA)",
       "Comprehensive analytics and business intelligence",
       "Training and onboarding for your entire team",
       "SLA guarantees and uptime commitments",
