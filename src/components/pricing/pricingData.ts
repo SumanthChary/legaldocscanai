@@ -13,13 +13,15 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Email support within 48 hours",
       "Standard processing (2-5 minutes)",
       "PDF and Word document support",
+      "Team Collaboration and Organization Settings",
+      "Security Settings",
       "High Level Security & Safety"
     ],
     highlight: false
   },
   {
     name: "Starter",
-    price: "20",
+    price: "49",
     originalPrice: "",
     period: "/month",
     description: "Ideal for solo practitioners",
@@ -33,18 +35,20 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Document comparison tools",
       "Analytics dashboard",
       "Export to PDF, Word, and PowerPoint",
+      "Team Collaboration and Organization Settings",
+      "Security Settings",
       "High Level Security & Safety"
     ],
     highlight: false
   },
   {
     name: "Pro Plan",
-    price: "99",
+    price: "149",
     originalPrice: "",
     period: "/month",
     description: "Built for growing law firms",
     features: [
-      "500 document analyses per month",
+      "150 document analyses per month",
       "Full API access for integrations",
       "Document scanning with camera",
       "Advanced risk scoring and insights",
@@ -55,6 +59,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Custom contract templates and clauses",
       "Bulk document processing",
       "Priority feature requests",
+      "Team Collaboration and Organization Settings",
+      "Security Settings",
       "High Level Security & Safety"
     ],
     highlight: true,
@@ -77,6 +83,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Training and onboarding for your entire team",
       "SLA guarantees and uptime commitments",
       "Custom contract review workflows",
+      "Team Collaboration and Organization Settings",
+      "Security Settings",
       "High Level Security & Safety"
     ],
     highlight: false

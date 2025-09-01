@@ -26,6 +26,8 @@ export const PricingSection = () => {
         "Email support",
         "Basic risk detection",
         "PDF export of summaries",
+        "Team Collaboration and Organization Settings",
+        "Security Settings",
         "High Level Security & Safety"
       ],
       highlight: false,
@@ -33,7 +35,7 @@ export const PricingSection = () => {
     },
     {
       name: "Starter",
-      price: "20",
+      price: "49",
       period: "/month",
       originalPrice: "",
       description: "For solo practitioners and small firms",
@@ -46,6 +48,8 @@ export const PricingSection = () => {
         "Chat support",
         "Document version comparison",
         "API access",
+        "Team Collaboration and Organization Settings",
+        "Security Settings",
         "High Level Security & Safety"
       ],
       highlight: false,
@@ -54,12 +58,12 @@ export const PricingSection = () => {
     },
     {
       name: "Pro Plan",
-      price: "99",
+      price: "149",
       period: "/month",
       originalPrice: "",
       description: "For growing law firms and professionals",
       features: [
-        "500 document analyses/month",
+        "150 document analyses/month",
         "Advanced AI with legal precedents",
         "Instant processing (real-time)",
         "Custom AI model training",
@@ -69,6 +73,8 @@ export const PricingSection = () => {
         "Bulk document processing",
         "Custom integrations",
         "Dedicated account manager",
+        "Team Collaboration and Organization Settings",
+        "Security Settings",
         "High Level Security & Safety"
       ],
       highlight: true,
