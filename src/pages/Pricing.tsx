@@ -54,7 +54,7 @@ const Pricing = () => {
                 </div>
                 
                 <div className="flex flex-col items-center p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-                  <div className="text-3xl font-bold text-purple-600 mb-2">24/7</div>
+                  <div className="text-3xl font-bold text-purple-600 mb-2">Review 1000+ Documents in few minutes!</div>
                   <div className="text-sm text-gray-600">Expert Support</div>
                   <div className="text-xs text-gray-500 mt-1">Always here to help</div>
                 </div>
