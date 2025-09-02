@@ -46,7 +46,7 @@ export const getPricingPlans = (isAnnual: boolean) => [
     period: "/month",
     description: "Built for growing law firms",
     features: [
-      "150 document analyses per month",
+      "200 document analyses per month",
       "Full API access for integrations",
       "Document scanning with camera",
       "Advanced risk scoring and insights",
