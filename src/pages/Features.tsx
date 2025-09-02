@@ -11,9 +11,7 @@ import {
   Component,
   Database,
   Languages,
-  Clock,
   Link,
-  Users2,
   Sparkles,
   Eye
 } from "lucide-react";
@@ -134,20 +132,6 @@ const Features = () => {
       icon: Languages,
       title: "Advanced Processing",
       description: "Enhanced capabilities for document analysis",
-      status: "coming-soon" as const,
-      infoList: []
-    },
-    {
-      icon: Clock,
-      title: "Analytics Dashboard",
-      description: "Comprehensive insights and reporting tools",
-      status: "coming-soon" as const,
-      infoList: []
-    },
-    {
-      icon: Users2,
-      title: "Team Collaboration",
-      description: "Enhanced workflow tools for teams",
       status: "coming-soon" as const,
       infoList: []
     }

@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, UserPlus, Mail, Trash2, Shield, User, Crown } from "lucide-react";
+import { Users, UserPlus, Mail, Trash2, Shield, User, Crown, MessageSquare } from "lucide-react";
+import TeamChat from "@/components/chat/TeamChat";
 
 interface TeamMember {
   id: string;
@@ -294,170 +296,247 @@ export const TeamManagement = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Team Management</h2>
-          <p className="text-muted-foreground">Manage your team members and invitations</p>
+          <p className="text-muted-foreground">Manage your team members, invitations, and communicate</p>
         </div>
-        <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <UserPlus className="h-4 w-4" />
-              Invite Member
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Invite Team Member</DialogTitle>
-              <DialogDescription>
-                Send an invitation to add a new team member to your organization.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Email Address</label>
-                <Input
-                  placeholder="Enter email address"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Role</label>
-                <Select value={inviteRole} onValueChange={setInviteRole}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="member">Member</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
-                Cancel
-              </Button>
-              <Button onClick={inviteTeamMember} disabled={!inviteEmail}>
-                Send Invitation
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
 
-      {/* Team Members */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Team Members ({teamMembers.length})
-          </CardTitle>
-          <CardDescription>
-            Current team members in your organization
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {teamMembers.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                    {member.profiles.username?.[0]?.toUpperCase() || member.profiles.email[0].toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-medium">{member.profiles.username || member.profiles.email}</p>
-                    <p className="text-sm text-muted-foreground">{member.profiles.email}</p>
-                    <p className="text-xs text-muted-foreground">
-                      Joined {new Date(member.joined_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={getRoleBadgeVariant(member.role)} className="gap-1">
-                    {getRoleIcon(member.role)}
-                    {member.role}
-                  </Badge>
-                  {member.role !== 'owner' && (
-                    <div className="flex gap-1">
-                      <Select 
-                        value={member.role} 
-                        onValueChange={(value) => updateMemberRole(member.id, value)}
-                      >
-                        <SelectTrigger className="w-24 h-8 text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="member">Member</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeMember(member.id)}
-                        className="h-8 px-2"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Pending Invitations */}
-      {invitations.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5" />
-              Pending Invitations ({invitations.length})
-            </CardTitle>
-            <CardDescription>
-              Invitations that haven't been accepted yet
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {invitations.map((invitation) => (
-                <div key={invitation.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{invitation.email}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Invited as {invitation.role} • Expires {new Date(invitation.expires_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">Pending</Badge>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setInviteEmail(invitation.email);
-                        setInviteRole(invitation.role);
-                        setShowInviteDialog(true);
-                      }}
-                      className="text-xs"
-                    >
-                      Resend
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => cancelInvitation(invitation.id)}
-                      className="text-xs"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              ))}
+      <Tabs defaultValue="members" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="members">Team Members</TabsTrigger>
+          <TabsTrigger value="chat">Team Chat</TabsTrigger>
+          <TabsTrigger value="invitations">Invitations</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="members" className="mt-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-semibold">Team Members</h3>
+              <p className="text-sm text-muted-foreground">Manage roles and permissions</p>
             </div>
-          </CardContent>
-        </Card>
-      )}
+            <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+              <DialogTrigger asChild>
+                <Button className="gap-2">
+                  <UserPlus className="h-4 w-4" />
+                  Invite Member
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Invite Team Member</DialogTitle>
+                  <DialogDescription>
+                    Send an invitation to add a new team member to your organization.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">Email Address</label>
+                    <Input
+                      placeholder="Enter email address"
+                      value={inviteEmail}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Role</label>
+                    <Select value={inviteRole} onValueChange={setInviteRole}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="member">Member</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={inviteTeamMember} disabled={!inviteEmail}>
+                    Send Invitation
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          {/* Team Members */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Team Members ({teamMembers.length})
+              </CardTitle>
+              <CardDescription>
+                Current team members in your organization
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {teamMembers.map((member) => (
+                  <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                        {member.profiles.username?.[0]?.toUpperCase() || member.profiles.email[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-medium">{member.profiles.username || member.profiles.email}</p>
+                        <p className="text-sm text-muted-foreground">{member.profiles.email}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Joined {new Date(member.joined_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={getRoleBadgeVariant(member.role)} className="gap-1">
+                        {getRoleIcon(member.role)}
+                        {member.role}
+                      </Badge>
+                      {member.role !== 'owner' && (
+                        <div className="flex gap-1">
+                          <Select 
+                            value={member.role} 
+                            onValueChange={(value) => updateMemberRole(member.id, value)}
+                          >
+                            <SelectTrigger className="w-24 h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="member">Member</SelectItem>
+                              <SelectItem value="admin">Admin</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeMember(member.id)}
+                            className="h-8 px-2"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="chat" className="mt-6">
+          <TeamChat />
+        </TabsContent>
+
+        <TabsContent value="invitations" className="mt-6">
+          {/* Pending Invitations */}
+          {invitations.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Mail className="h-5 w-5" />
+                  Pending Invitations ({invitations.length})
+                </CardTitle>
+                <CardDescription>
+                  Invitations that haven't been accepted yet
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {invitations.map((invitation) => (
+                    <div key={invitation.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div>
+                        <p className="font-medium">{invitation.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Invited as {invitation.role} • Expires {new Date(invitation.expires_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">Pending</Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setInviteEmail(invitation.email);
+                            setInviteRole(invitation.role);
+                            setShowInviteDialog(true);
+                          }}
+                          className="text-xs"
+                        >
+                          Resend
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => cancelInvitation(invitation.id)}
+                          className="text-xs"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-8">
+                <Mail className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No pending invitations</h3>
+                <p className="text-muted-foreground mb-4">All invitations have been processed or no invitations sent yet.</p>
+                <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+                  <DialogTrigger asChild>
+                    <Button className="gap-2">
+                      <UserPlus className="h-4 w-4" />
+                      Invite First Member
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Invite Team Member</DialogTitle>
+                      <DialogDescription>
+                        Send an invitation to add a new team member to your organization.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-sm font-medium">Email Address</label>
+                        <Input
+                          placeholder="Enter email address"
+                          value={inviteEmail}
+                          onChange={(e) => setInviteEmail(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium">Role</label>
+                        <Select value={inviteRole} onValueChange={setInviteRole}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="member">Member</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={inviteTeamMember} disabled={!inviteEmail}>
+                        Send Invitation
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

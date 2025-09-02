@@ -139,6 +139,79 @@ export type Database = {
         }
         Relationships: []
       }
+      channel_members: {
+        Row: {
+          channel_id: string
+          id: string
+          joined_at: string | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          channel_id: string
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          channel_id?: string
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_members_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      channels: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          description: string | null
+          id: string
+          name: string
+          organization_id: string
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channels_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       code_redemptions: {
         Row: {
           code_id: string
@@ -209,6 +282,102 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      message_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          message_id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message_id: string
+          reaction: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message_id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          analysis_id: string | null
+          channel_id: string
+          content: string | null
+          created_at: string | null
+          edited_at: string | null
+          file_name: string | null
+          file_url: string | null
+          id: string
+          message_type: string | null
+          reply_to_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          analysis_id?: string | null
+          channel_id: string
+          content?: string | null
+          created_at?: string | null
+          edited_at?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          message_type?: string | null
+          reply_to_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          analysis_id?: string | null
+          channel_id?: string
+          content?: string | null
+          created_at?: string | null
+          edited_at?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          message_type?: string | null
+          reply_to_id?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "document_analyses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       organizations: {
         Row: {
@@ -718,6 +887,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_direct_channel: {
+        Args: { other_user_id: string }
+        Returns: string
+      }
       create_organization_with_owner: {
         Args: { org_description?: string; org_name: string }
         Returns: string
