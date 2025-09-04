@@ -40,35 +40,55 @@ export const useTeamChat = () => {
       .eq('id', user.id)
       .single();
 
-    if (!userProfile?.organization_id) return;
-
-    const { data, error } = await supabase
-      .from('channels')
-      .select(`
-        id,
-        name,
-        type,
-        description,
-        organization_id,
-        created_by,
-        created_at,
-        channel_members!inner(user_id)
-      `)
-      .eq('organization_id', userProfile.organization_id)
-      .eq('channel_members.user_id', user.id);
-
-    if (error) {
-      console.error('Error loading channels:', error);
+    if (!userProfile?.organization_id) {
+      console.log('User not part of any organization');
       return;
     }
 
-    const typedChannels = (data || []).map(channel => ({
+    // First get all channels in the user's organization
+    const { data: orgChannels, error: channelsError } = await supabase
+      .from('channels')
+      .select('*')
+      .eq('organization_id', userProfile.organization_id);
+
+    if (channelsError) {
+      console.error('Error loading channels:', channelsError);
+      return;
+    }
+
+    if (!orgChannels || orgChannels.length === 0) {
+      console.log('No channels found in organization');
+      setChannels([]);
+      return;
+    }
+
+    // Get channel memberships for the user
+    const { data: memberships, error: membershipError } = await supabase
+      .from('channel_members')
+      .select('channel_id')
+      .eq('user_id', user.id);
+
+    if (membershipError) {
+      console.error('Error loading channel memberships:', membershipError);
+      return;
+    }
+
+    const memberChannelIds = new Set(memberships?.map(m => m.channel_id) || []);
+
+    // Filter channels to only those the user is a member of
+    const userChannels = orgChannels.filter(channel => 
+      memberChannelIds.has(channel.id)
+    );
+
+    const typedChannels = userChannels.map(channel => ({
       ...channel,
       type: channel.type as 'public' | 'private' | 'direct'
     })) as Channel[];
 
+    console.log('Loaded channels:', typedChannels);
     setChannels(typedChannels);
-    if (typedChannels.length && !selectedChannel) {
+    
+    if (typedChannels.length > 0 && !selectedChannel) {
       setSelectedChannel(typedChannels[0]);
     }
   };

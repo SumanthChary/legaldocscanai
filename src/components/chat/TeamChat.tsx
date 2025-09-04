@@ -39,6 +39,7 @@ const TeamChat: React.FC = () => {
   } = useTeamChat();
 
   useEffect(() => {
+    console.log('Team Chat mounted, loading initial data...');
     loadCurrentUser();
     loadChannels();
     loadTeamMembers();
