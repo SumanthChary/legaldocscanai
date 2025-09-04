@@ -1,9 +1,12 @@
-import { useState, useRef } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useState, useRef, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import { MessageList } from "@/components/chat/MessageList";
 import { ModernChatInput } from "@/components/chat/ModernChatInput";
+import { TeamChat } from "@/components/chat";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 type Message = {
   id: string;
@@ -26,8 +29,25 @@ const ChatPage = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("ai-chat");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        setCurrentUser({ ...user, profile });
+      }
+    };
+    loadUser();
+  }, []);
 
   const handleSend = async () => {
     if (!input.trim() && !file) return;
@@ -128,29 +148,68 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="h-full bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/10">
-      <div className="flex flex-col h-full">
-        <div className="flex-shrink-0 px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 md:pt-6">
-          <div className="max-w-4xl mx-auto">
-            <ChatHeader />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/10">
+      <div className="container mx-auto px-4 py-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <div className="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-bold">💬</span>
+              </div>
+              Chat Dashboard
+            </CardTitle>
+          </CardHeader>
+          <div className="px-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="ai-chat">AI Assistant</TabsTrigger>
+                <TabsTrigger value="team-chat" disabled={!currentUser?.profile?.organization_id}>
+                  Team Chat {!currentUser?.profile?.organization_id && "(Join Organization)"}
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="ai-chat" className="mt-6">
+                <div className="h-[600px] bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/10 rounded-lg border">
+                  <div className="flex flex-col h-full">
+                    <div className="flex-shrink-0 px-6 pt-6">
+                      <ChatHeader />
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col min-h-0 px-6">
+                      <MessageList messages={messages} isLoading={isLoading} />
+                    </div>
+                    
+                    <ModernChatInput 
+                      input={input}
+                      setInput={setInput}
+                      onSend={handleSend}
+                      isLoading={isLoading}
+                      file={file}
+                      onFileChange={handleFileChange}
+                      onFileRemove={removeFile}
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="team-chat" className="mt-6">
+                {currentUser?.profile?.organization_id ? (
+                  <TeamChat />
+                ) : (
+                  <Card>
+                    <div className="p-8 text-center">
+                      <h3 className="text-lg font-semibold mb-2">Join an Organization</h3>
+                      <p className="text-muted-foreground">
+                        Team chat is available when you're part of an organization. 
+                        Create or join an organization to start collaborating with your team.
+                      </p>
+                    </div>
+                  </Card>
+                )}
+              </TabsContent>
+            </Tabs>
           </div>
-        </div>
-        
-        <div className="flex-1 flex flex-col min-h-0 px-3 sm:px-4 md:px-6">
-          <div className="max-w-4xl mx-auto w-full flex flex-col h-full">
-            <MessageList messages={messages} isLoading={isLoading} />
-          </div>
-        </div>
-        
-        <ModernChatInput 
-          input={input}
-          setInput={setInput}
-          onSend={handleSend}
-          isLoading={isLoading}
-          file={file}
-          onFileChange={handleFileChange}
-          onFileRemove={removeFile}
-        />
+        </Card>
       </div>
     </div>
   );
