@@ -7,6 +7,7 @@ import { ModernChatInput } from "@/components/chat/ModernChatInput";
 import { TeamChat } from "@/components/chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type Message = {
   id: string;
@@ -198,11 +199,50 @@ const ChatPage = () => {
                 ) : (
                   <Card>
                     <div className="p-8 text-center">
-                      <h3 className="text-lg font-semibold mb-2">Join an Organization</h3>
-                      <p className="text-muted-foreground">
+                      <h3 className="text-lg font-semibold mb-4">Join an Organization</h3>
+                      <p className="text-muted-foreground mb-6">
                         Team chat is available when you're part of an organization. 
                         Create or join an organization to start collaborating with your team.
                       </p>
+                      <div className="space-y-4">
+                        <Button 
+                          onClick={async () => {
+                            try {
+                              const { data, error } = await supabase.rpc('create_organization_with_owner', {
+                                org_name: `${currentUser?.profile?.username}'s Organization`,
+                                org_description: 'Demo organization for team collaboration'
+                              });
+                              
+                              if (error) throw error;
+                              
+                              // Reload user data to get updated organization_id
+                              const { data: updatedProfile } = await supabase
+                                .from('profiles')
+                                .select('*')
+                                .eq('id', currentUser.id)
+                                .single();
+                              
+                              setCurrentUser({ ...currentUser, profile: updatedProfile });
+                              
+                              toast({
+                                title: "Success",
+                                description: "Organization created successfully!"
+                              });
+                            } catch (error) {
+                              toast({
+                                title: "Error",
+                                description: "Failed to create organization",
+                                variant: "destructive"
+                              });
+                            }
+                          }}
+                        >
+                          Create Demo Organization
+                        </Button>
+                        <p className="text-sm text-muted-foreground">
+                          This will create a demo organization so you can test the team chat features.
+                        </p>
+                      </div>
                     </div>
                   </Card>
                 )}
