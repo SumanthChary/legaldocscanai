@@ -365,6 +365,21 @@ export const useTeamChat = () => {
       }
 
       console.log('Created default channel:', channel);
+
+      // Add creator as channel member
+      const { error: memberError } = await supabase
+        .from('channel_members')
+        .insert({
+          channel_id: channel.id,
+          user_id: user.id,
+          role: 'admin'
+        });
+
+      if (memberError) {
+        console.error('Error adding creator to default channel:', memberError);
+      } else {
+        console.log('Added creator to default channel');
+      }
     } catch (error) {
       console.error('Error in createDefaultChannel:', error);
     }
