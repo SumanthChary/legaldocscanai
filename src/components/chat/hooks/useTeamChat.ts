@@ -57,9 +57,10 @@ export const useTeamChat = () => {
     }
 
     if (!orgChannels || orgChannels.length === 0) {
-      console.log('No channels found in organization');
-      setChannels([]);
-      return;
+      console.log('No channels found in organization, creating default general channel');
+      await createDefaultChannel(userProfile.organization_id);
+      // Reload channels after creating default
+      return loadChannels();
     }
 
     // Get channel memberships for the user
@@ -338,6 +339,34 @@ export const useTeamChat = () => {
         description: "Failed to create direct message",
         variant: "destructive"
       });
+    }
+  };
+
+  const createDefaultChannel = async (organizationId: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: channel, error } = await supabase
+        .from('channels')
+        .insert({
+          name: 'General',
+          description: 'General team discussion',
+          type: 'public',
+          organization_id: organizationId,
+          created_by: user.id
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating default channel:', error);
+        return;
+      }
+
+      console.log('Created default channel:', channel);
+    } catch (error) {
+      console.error('Error in createDefaultChannel:', error);
     }
   };
 

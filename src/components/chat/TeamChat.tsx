@@ -40,6 +40,7 @@ const TeamChat: React.FC = () => {
 
   useEffect(() => {
     console.log('Team Chat mounted, loading initial data...');
+    console.log('Current user:', currentUser);
     loadCurrentUser();
     loadChannels();
     loadTeamMembers();
@@ -58,6 +59,7 @@ const TeamChat: React.FC = () => {
   }, [messages]);
 
   if (!currentUser?.profile?.organization_id) {
+    console.log('User not in organization:', currentUser);
     return (
       <Card className="p-6">
         <div className="text-center">
@@ -66,6 +68,9 @@ const TeamChat: React.FC = () => {
       </Card>
     );
   }
+
+  console.log('Rendering team chat with channels:', channels);
+  console.log('Selected channel:', selectedChannel);
 
   return (
     <div className="flex h-[600px] bg-background border rounded-lg">
