@@ -300,7 +300,7 @@ export const TeamManagement = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="members" className="w-full">
+      <Tabs defaultValue="chat" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="members">Team Members</TabsTrigger>
           <TabsTrigger value="chat">Team Chat</TabsTrigger>
