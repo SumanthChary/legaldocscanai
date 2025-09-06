@@ -10,6 +10,7 @@ import { HowItWorksSection } from "@/components/blocks/how-it-works-section";
 import { AboutAuthorSection } from "@/components/blocks/about-author-section";
 import { FeaturedSection } from "@/components/blocks/featured-section";
 import { PowerfulFeaturesSection } from "@/components/blocks/powerful-features-section";
+import { CompetitiveAdvantageSection } from "@/components/blocks/competitive-advantage-section";
 import { WhopService } from "@/integrations/whop";
 import { WhopWelcomeUpsell } from "@/components/whop";
 import { useEffect, useState } from "react";
@@ -69,6 +70,7 @@ const Landing = () => {
         <FeaturedSection />
         <HowItWorksSection />
         <PowerfulFeaturesSection />
+        <CompetitiveAdvantageSection />
         <TrustSection />
         {/* Show special Whop upsell for Whop users */}
         {isWhopUser && <WhopWelcomeUpsell />}
