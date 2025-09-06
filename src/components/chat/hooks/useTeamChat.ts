@@ -56,6 +56,8 @@ export const useTeamChat = () => {
       return;
     }
 
+    console.log('Found channels in organization:', orgChannels);
+
     if (!orgChannels || orgChannels.length === 0) {
       console.log('No channels found in organization, creating default general channel');
       await createDefaultChannel(userProfile.organization_id);
@@ -74,7 +76,30 @@ export const useTeamChat = () => {
       return;
     }
 
+    console.log('User memberships:', memberships);
     const memberChannelIds = new Set(memberships?.map(m => m.channel_id) || []);
+    console.log('Member channel IDs:', memberChannelIds);
+
+    // If user has no memberships, add them to existing public channels
+    if (memberships?.length === 0) {
+      console.log('User has no channel memberships, adding to public channels');
+      const publicChannels = orgChannels.filter(c => c.type === 'public');
+      
+      for (const channel of publicChannels) {
+        const { error: addMemberError } = await supabase
+          .from('channel_members')
+          .insert({
+            channel_id: channel.id,
+            user_id: user.id,
+            role: channel.created_by === user.id ? 'admin' : 'member'
+          });
+        
+        if (!addMemberError) {
+          memberChannelIds.add(channel.id);
+          console.log(`Added user to channel: ${channel.name}`);
+        }
+      }
+    }
 
     // Filter channels to only those the user is a member of
     const userChannels = orgChannels.filter(channel => 
