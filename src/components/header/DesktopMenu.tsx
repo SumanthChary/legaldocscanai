@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Book, MessageCircle } from "lucide-react";
+import { Book } from "lucide-react";
 import { UserProfile } from "./UserProfile";
 
 type DesktopMenuProps = {
@@ -45,14 +45,6 @@ export const DesktopMenu = ({ session, profile, handleSignOut }: DesktopMenuProp
             className="text-gray-600 hover:text-primary hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
           >
             Dashboard
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/chat")}
-            className="text-gray-600 hover:text-primary hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200 flex items-center gap-2"
-          >
-            <MessageCircle className="h-4 w-4" />
-            Chat
           </Button>
           <UserProfile profile={profile} handleSignOut={handleSignOut} />
         </>
