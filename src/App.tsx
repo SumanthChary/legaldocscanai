@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,25 +8,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 
-// Import pages directly instead of lazy loading
-import Landing from "./pages/Landing";
-import Index from "./pages/Index";
-import Pricing from "./pages/Pricing";
-import Features from "./pages/Features";
+// Import mobile-first pages
+import MobileHome from "./pages/MobileHome";
+import MobileScan from "./pages/MobileScan";
+import MobileHistory from "./pages/MobileHistory";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
-import Payment from "./pages/Payment";
-import DocumentAnalysis from "./pages/DocumentAnalysis";
 import DocumentSummary from "./pages/DocumentSummary";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import Documentation from "./pages/Documentation";
-import ChatPage from "./pages/ChatPage";
-import { EnhancedDashboard } from "@/components/dashboard/EnhancedDashboard";
-import ESignatures from "./pages/ESignatures";
-import Support from "./pages/Support";
-import WhopCallback from "./pages/WhopCallback";
-import AcceptInvitation from "./pages/AcceptInvitation";
+import DocumentAnalysis from "./pages/DocumentAnalysis";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,6 +37,21 @@ const paypalOptions = {
 };
 
 function App() {
+  useEffect(() => {
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('SW registered: ', registration);
+          })
+          .catch((registrationError) => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  }, []);
+
   return (
     <PayPalScriptProvider 
       options={paypalOptions}
@@ -59,27 +63,15 @@ function App() {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/index" element={<Index />} />
+              <Route path="/" element={<MobileHome />} />
+              <Route path="/scan" element={<MobileScan />} />
+              <Route path="/history" element={<MobileHistory />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/features" element={<Features />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/document-analysis" element={<DocumentAnalysis />} />
               <Route path="/document-summary/:id" element={<DocumentSummary />} />
               <Route path="/document/:id/summary" element={<DocumentSummary />} />
-              <Route path="/payment" element={<Payment />} />
-              <Route path="/documentation" element={<Documentation />} />
-              <Route path="/dashboard" element={<EnhancedDashboard />} />
-              <Route path="/chat" element={<ChatPage />} />
-              <Route path="/esignatures" element={<ESignatures />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="/whop/callback" element={<WhopCallback />} />
-              <Route path="/accept-invitation" element={<AcceptInvitation />} />
+              <Route path="/settings" element={<Profile />} />
             </Routes>
-            <ChatWidget />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
