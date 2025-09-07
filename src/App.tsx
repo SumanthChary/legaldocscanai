@@ -14,7 +14,9 @@ import MobileScan from "./pages/MobileScan";
 import MobileHistory from "./pages/MobileHistory";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import MobileProfile from "./pages/MobileProfile";
 import DocumentSummary from "./pages/DocumentSummary";
+import MobileDocumentSummary from "./pages/MobileDocumentSummary";
 import DocumentAnalysis from "./pages/DocumentAnalysis";
 
 const queryClient = new QueryClient({
@@ -67,10 +69,10 @@ function App() {
               <Route path="/scan" element={<MobileScan />} />
               <Route path="/history" element={<MobileHistory />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/document-summary/:id" element={<DocumentSummary />} />
-              <Route path="/document/:id/summary" element={<DocumentSummary />} />
-              <Route path="/settings" element={<Profile />} />
+              <Route path="/profile" element={<MobileProfile />} />
+              <Route path="/document-summary/:id" element={<MobileDocumentSummary />} />
+              <Route path="/document/:id/summary" element={<MobileDocumentSummary />} />
+              <Route path="/settings" element={<MobileProfile />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
