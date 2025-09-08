@@ -4,7 +4,7 @@ import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Camera, Upload, FileText, CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
+import { Camera, Upload, FileText, CheckCircle2, AlertCircle, Scan, Shield, ArrowLeft } from "lucide-react";
 import { useFileUpload } from "@/components/document-analysis/upload/useFileUpload";
 import { useNavigate } from "react-router-dom";
 
@@ -38,49 +38,68 @@ export default function MobileScan() {
 
   return (
     <MobileLayout>
-      <MobileHeader title="Scan Document" showBack />
+      <MobileHeader title="Document Upload" showBack />
       
-      <div className="px-4 py-6 space-y-6">
+      <div className="px-4 py-4 space-y-6">
         {!file && !scanMode && (
           <>
-            <div className="text-center space-y-2">
-              <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <Sparkles className="w-10 h-10 text-primary" />
+            {/* Header Section */}
+            <div className="text-center space-y-4">
+              <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/20 rounded-2xl flex items-center justify-center mx-auto">
+                <Shield className="w-10 h-10 text-primary" />
               </div>
-              <h2 className="text-xl font-bold">Choose Scan Method</h2>
-              <p className="text-muted-foreground">
-                How would you like to add your document?
-              </p>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground mb-2">Upload Document</h1>
+                <p className="text-muted-foreground text-sm max-w-sm mx-auto">
+                  Choose how you'd like to add your legal document for professional analysis
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <Button
+            {/* Upload Options */}
+            <div className="space-y-3">
+              <Card 
+                className="p-6 border-0 bg-gradient-to-br from-primary/5 to-primary/10 cursor-pointer transition-all duration-200 hover:shadow-md mobile-tap"
                 onClick={() => handleScanMode("camera")}
-                className="w-full h-14 text-lg gap-3"
-                size="lg"
               >
-                <Camera className="w-6 h-6" />
-                Take Photo
-              </Button>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
+                    <Camera className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground mb-1">Camera Capture</h3>
+                    <p className="text-sm text-muted-foreground">Take a photo of your document</p>
+                  </div>
+                </div>
+              </Card>
               
-              <Button
+              <Card 
+                className="p-6 border-0 bg-gradient-to-br from-muted/30 to-muted/10 cursor-pointer transition-all duration-200 hover:shadow-md mobile-tap"
                 onClick={() => handleScanMode("upload")}
-                variant="outline"
-                className="w-full h-14 text-lg gap-3"
-                size="lg"
               >
-                <Upload className="w-6 h-6" />
-                Upload File
-              </Button>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-muted/50 rounded-xl flex items-center justify-center">
+                    <Upload className="w-6 h-6 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground mb-1">File Upload</h3>
+                    <p className="text-sm text-muted-foreground">Choose from your device storage</p>
+                  </div>
+                </div>
+              </Card>
             </div>
 
-            <Card className="p-4 bg-muted/50">
-              <h4 className="font-medium mb-2">Supported Formats</h4>
-              <div className="flex flex-wrap gap-2">
+            {/* Supported Formats */}
+            <Card className="p-4 border-0 bg-gradient-to-br from-background to-muted/20">
+              <h4 className="font-medium text-foreground mb-3">Supported Formats</h4>
+              <div className="grid grid-cols-2 gap-2">
                 {ALLOWED_FILE_TYPES.slice(0, 4).map((type) => (
-                  <span key={type} className="text-xs bg-background px-2 py-1 rounded">
-                    {type.replace('.', '').toUpperCase()}
-                  </span>
+                  <div key={type} className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                    <span className="text-muted-foreground">
+                      {type.replace('.', '').toUpperCase()}
+                    </span>
+                  </div>
                 ))}
               </div>
             </Card>
@@ -89,69 +108,91 @@ export default function MobileScan() {
 
         {file && (
           <div className="space-y-6">
-            <Card className="p-6">
+            {/* File Preview */}
+            <Card className="p-6 border-0 bg-gradient-to-br from-emerald-50/50 to-emerald-100/30">
               <div className="text-center space-y-4">
-                <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle2 className="w-8 h-8 text-green-600" />
+                <div className="mx-auto w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8 text-emerald-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">{file.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
+                  <h3 className="font-semibold text-lg text-foreground mb-1">{file.name}</h3>
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                    <div className="w-1 h-1 bg-muted-foreground rounded-full" />
+                    <span>{file.type.split('/')[1].toUpperCase()}</span>
+                  </div>
                 </div>
                 <Button
                   variant="outline"
                   onClick={clearFile}
-                  className="w-full"
+                  className="w-full border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                  size="sm"
                 >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
                   Choose Different File
                 </Button>
               </div>
             </Card>
 
+            {/* Analysis Button */}
             {!isUploading && (
-              <Button
-                onClick={handleUpload}
-                className="w-full h-14 text-lg gap-3"
-                size="lg"
-              >
-                <Sparkles className="w-6 h-6" />
-                Analyze Document
-              </Button>
+              <div className="space-y-3">
+                <Button
+                  onClick={handleUpload}
+                  className="w-full h-14 text-lg gap-3 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
+                  size="lg"
+                >
+                  <Scan className="w-5 h-5" />
+                  Start Analysis
+                </Button>
+                <p className="text-center text-xs text-muted-foreground">
+                  Your document will be processed securely and privately
+                </p>
+              </div>
             )}
           </div>
         )}
 
         {uploadError && (
-          <Card className="p-4 border-destructive/50 bg-destructive/5">
-            <div className="flex items-center gap-2 text-destructive">
-              <AlertCircle className="w-5 h-5" />
-              <span className="font-medium">Upload Error</span>
+          <Card className="p-4 border-0 bg-gradient-to-br from-red-50/50 to-red-100/30">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-medium text-red-900 mb-1">Upload Failed</h4>
+                <p className="text-sm text-red-700">{uploadError}</p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">{uploadError}</p>
           </Card>
         )}
 
         {isUploading && (
-          <Card className="p-6">
-            <div className="space-y-4">
+          <Card className="p-6 border-0 bg-gradient-to-br from-primary/5 to-primary/10">
+            <div className="space-y-6">
               <div className="text-center">
-                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 animate-pulse">
-                  <FileText className="w-8 h-8 text-primary" />
+                <div className="mx-auto w-20 h-20 bg-primary/20 rounded-2xl flex items-center justify-center mb-4">
+                  <div className="animate-spin">
+                    <Scan className="w-8 h-8 text-primary" />
+                  </div>
                 </div>
-                <h3 className="font-semibold">Analyzing Document</h3>
+                <h3 className="font-semibold text-lg text-foreground mb-1">Processing Document</h3>
                 <p className="text-sm text-muted-foreground">
-                  AI is processing your document...
+                  Your document is being analyzed with advanced technology...
                 </p>
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span>Progress</span>
-                  <span>{uploadProgress}%</span>
+                  <span className="text-muted-foreground">Analysis Progress</span>
+                  <span className="font-medium text-primary">{uploadProgress}%</span>
                 </div>
-                <Progress value={uploadProgress} className="h-2" />
+                <Progress value={uploadProgress} className="h-3" />
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground">
+                    This usually takes 30-60 seconds
+                  </p>
+                </div>
               </div>
             </div>
           </Card>
