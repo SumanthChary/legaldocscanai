@@ -8,15 +8,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 
+// Auth
+import { AuthProvider } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+
 // Import mobile-first pages
 import MobileHome from "./pages/MobileHome";
 import MobileScan from "./pages/MobileScan";
 import MobileHistory from "./pages/MobileHistory";
+import MobileAuth from "./pages/MobileAuth";
+import MobileProfile from "./pages/MobileProfile";
+import MobileDocumentSummary from "./pages/MobileDocumentSummary";
+
+// Desktop fallbacks
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
-import MobileProfile from "./pages/MobileProfile";
 import DocumentSummary from "./pages/DocumentSummary";
-import MobileDocumentSummary from "./pages/MobileDocumentSummary";
 import DocumentAnalysis from "./pages/DocumentAnalysis";
 
 const queryClient = new QueryClient({
@@ -60,22 +67,55 @@ function App() {
       deferLoading={false}
     >
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<MobileHome />} />
-              <Route path="/scan" element={<MobileScan />} />
-              <Route path="/history" element={<MobileHistory />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/profile" element={<MobileProfile />} />
-              <Route path="/document-summary/:id" element={<MobileDocumentSummary />} />
-              <Route path="/document/:id/summary" element={<MobileDocumentSummary />} />
-              <Route path="/settings" element={<MobileProfile />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Public auth route */}
+                <Route path="/auth" element={<MobileAuth />} />
+                
+                {/* Protected Mobile-first routes */}
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <MobileHome />
+                  </ProtectedRoute>
+                } />
+                <Route path="/scan" element={
+                  <ProtectedRoute>
+                    <MobileScan />
+                  </ProtectedRoute>
+                } />
+                <Route path="/history" element={
+                  <ProtectedRoute>
+                    <MobileHistory />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <MobileProfile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/document-summary/:id" element={
+                  <ProtectedRoute>
+                    <MobileDocumentSummary />
+                  </ProtectedRoute>
+                } />
+                <Route path="/document/:id/summary" element={
+                  <ProtectedRoute>
+                    <MobileDocumentSummary />
+                  </ProtectedRoute>
+                } />
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <MobileProfile />
+                  </ProtectedRoute>
+                } />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </PayPalScriptProvider>
   );

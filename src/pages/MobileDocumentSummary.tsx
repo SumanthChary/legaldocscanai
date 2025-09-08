@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useAuth } from "@/hooks/useAuth";
 import { useDocumentAnalysis } from "@/hooks/document-summary/useDocumentAnalysis";
 import { SummaryContent } from "@/components/document-summary/SummaryContent";
 import { 
@@ -21,6 +22,7 @@ import {
 export default function MobileDocumentSummary() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { analysis, loading, refreshing, fetchAnalysis } = useDocumentAnalysis(id!);
 
   if (loading) {
@@ -71,7 +73,8 @@ export default function MobileDocumentSummary() {
   }
 
   const getStatusIcon = () => {
-    switch (analysis.status) {
+    const status = analysis.status || analysis.analysis_status;
+    switch (status) {
       case 'completed':
         return <CheckCircle2 className="w-5 h-5 text-green-500" />;
       case 'processing':
@@ -84,7 +87,8 @@ export default function MobileDocumentSummary() {
   };
 
   const getStatusColor = () => {
-    switch (analysis.status) {
+    const status = analysis.status || analysis.analysis_status;
+    switch (status) {
       case 'completed': return 'bg-green-100 text-green-800';
       case 'processing': return 'bg-blue-100 text-blue-800';
       case 'failed': return 'bg-red-100 text-red-800';
@@ -110,7 +114,7 @@ export default function MobileDocumentSummary() {
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-semibold text-lg truncate">{analysis.file_name}</h2>
+                  <h2 className="font-semibold text-lg truncate">{analysis.file_name || analysis.original_name}</h2>
                   <p className="text-sm text-muted-foreground">
                     {formatDate(analysis.created_at)}
                   </p>
@@ -123,7 +127,7 @@ export default function MobileDocumentSummary() {
               <div className="flex items-center gap-2 mt-3">
                 {getStatusIcon()}
                 <Badge variant="secondary" className={getStatusColor()}>
-                  {analysis.status}
+                  {analysis.status || analysis.analysis_status}
                 </Badge>
               </div>
             </div>
@@ -131,7 +135,7 @@ export default function MobileDocumentSummary() {
         </Card>
 
         {/* Processing Status */}
-        {analysis.status === 'processing' && (
+        {(analysis.status === 'processing' || analysis.analysis_status === 'processing') && (
           <Card className="p-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -147,7 +151,7 @@ export default function MobileDocumentSummary() {
         )}
 
         {/* Quick Actions */}
-        {analysis.status === 'completed' && (
+        {(analysis.status === 'completed' || analysis.analysis_status === 'completed') && (
           <div className="grid grid-cols-2 gap-3">
             <Button variant="outline" className="gap-2">
               <Share className="w-4 h-4" />
@@ -163,9 +167,9 @@ export default function MobileDocumentSummary() {
         {/* Summary Content */}
         <div className="space-y-4">
           <SummaryContent
-            analysisStatus={analysis.status}
+            analysisStatus={analysis.status || analysis.analysis_status}
             summary={analysis.summary}
-            originalName={analysis.file_name}
+            originalName={analysis.file_name || analysis.original_name}
             analysisId={analysis.id}
             refreshAnalysis={fetchAnalysis}
             refreshing={refreshing}
@@ -173,7 +177,7 @@ export default function MobileDocumentSummary() {
         </div>
 
         {/* Error State */}
-        {analysis.status === 'failed' && (
+        {(analysis.status === 'failed' || analysis.analysis_status === 'failed') && (
           <Card className="p-4 border-destructive/20 bg-destructive/5">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-destructive mt-0.5" />

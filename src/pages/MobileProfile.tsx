@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { 
   User, 
   Mail, 
@@ -22,45 +23,48 @@ import {
   Trash2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import type { Tables } from "@/integrations/supabase/types";
 
 export default function MobileProfile() {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [profile, setProfile] = useState({
+  const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
+  const [formData, setFormData] = useState({
     username: "",
     email: "",
     avatar_url: ""
   });
 
   useEffect(() => {
-    getProfile();
-  }, []);
+    if (user) {
+      getProfile();
+    }
+  }, [user]);
 
   const getProfile = async () => {
+    if (!user) return;
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        setProfile(prev => ({
-          ...prev,
-          email: user.email || ""
-        }));
+      setFormData(prev => ({
+        ...prev,
+        email: user.email || ""
+      }));
 
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
 
-        if (data) {
-          setProfile(prev => ({
-            ...prev,
-            username: data.username || "",
-            avatar_url: data.avatar_url || ""
-          }));
-        }
+      if (data) {
+        setProfile(data);
+        setFormData({
+          username: data.username || "",
+          email: data.email || user.email || "",
+          avatar_url: data.avatar_url || ""
+        });
       }
     } catch (error: any) {
       console.error("Error loading profile:", error);
@@ -70,42 +74,41 @@ export default function MobileProfile() {
   };
 
   const updateProfile = async () => {
+    if (!user) return;
+    
     try {
       setSaving(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return;
 
       const { error } = await supabase
         .from("profiles")
         .upsert({
           id: user.id,
-          username: profile.username,
-          avatar_url: profile.avatar_url,
-          email: profile.email,
+          username: formData.username,
+          avatar_url: formData.avatar_url,
+          email: formData.email,
           updated_at: new Date().toISOString()
         });
 
       if (error) throw error;
 
-      toast({
-        title: "Profile updated",
-        description: "Your profile has been successfully updated."
-      });
+      toast.success("Profile updated successfully");
+      await getProfile();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
     } finally {
       setSaving(false);
     }
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
+    try {
+      await signOut();
+      navigate("/auth");
+    } catch (error: any) {
+      console.error("Error signing out:", error);
+      toast.error("Failed to sign out");
+    }
   };
 
   if (loading) {
@@ -139,9 +142,9 @@ export default function MobileProfile() {
           <div className="flex items-center gap-4">
             <div className="relative">
               <Avatar className="w-20 h-20">
-                <AvatarImage src={profile.avatar_url} />
+                <AvatarImage src={formData.avatar_url} />
                 <AvatarFallback className="text-lg">
-                  {(profile.username || profile.email)
+                  {(formData.username || formData.email)
                     ?.charAt(0)
                     ?.toUpperCase()}
                 </AvatarFallback>
@@ -156,9 +159,9 @@ export default function MobileProfile() {
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-bold">
-                {profile.username || "User"}
+                {formData.username || "User"}
               </h2>
-              <p className="text-muted-foreground">{profile.email}</p>
+              <p className="text-muted-foreground">{formData.email}</p>
               <Badge variant="secondary" className="mt-2">
                 <Crown className="w-3 h-3 mr-1" />
                 Free Plan
@@ -197,8 +200,8 @@ export default function MobileProfile() {
               <Label htmlFor="username">Username</Label>
               <Input
                 id="username"
-                value={profile.username}
-                onChange={(e) => setProfile(prev => ({ ...prev, username: e.target.value }))}
+                value={formData.username}
+                onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
                 placeholder="Choose a username"
               />
             </div>
@@ -207,7 +210,7 @@ export default function MobileProfile() {
               <Input
                 id="email"
                 type="email"
-                value={profile.email}
+                value={formData.email}
                 disabled
                 className="bg-muted"
               />

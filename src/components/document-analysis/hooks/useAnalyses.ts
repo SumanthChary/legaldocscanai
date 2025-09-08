@@ -1,35 +1,32 @@
 
 import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export const useAnalyses = () => {
   const [analyses, setAnalyses] = useState<any[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { toast } = useToast();
+  const { user } = useAuth();
 
   const fetchAnalyses = async () => {
+    if (!user) {
+      setAnalyses([]);
+      return;
+    }
+
     try {
       setIsRefreshing(true);
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        return;
-      }
 
       const { data, error } = await supabase
         .from('document_analyses')
         .select('*')
-        .eq('user_id', session.user.id)
+        .eq('user_id', user.id)
         .or('is_deleted.is.null,is_deleted.eq.false')
         .order('created_at', { ascending: false });
 
       if (error) {
-        toast({
-          title: "Error fetching analyses",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error("Error fetching analyses: " + error.message);
         console.error("Error fetching analyses:", error);
       } else {
         setAnalyses(data || []);
@@ -42,6 +39,8 @@ export const useAnalyses = () => {
   };
 
   const subscribeToAnalyses = () => {
+    if (!user) return null;
+    
     const channel = supabase
       .channel('document_analyses_changes')
       .on(
@@ -49,7 +48,8 @@ export const useAnalyses = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'document_analyses'
+          table: 'document_analyses',
+          filter: `user_id=eq.${user.id}`
         },
         (payload) => {
           console.log("Received real-time update:", payload);
@@ -64,13 +64,17 @@ export const useAnalyses = () => {
   };
 
   useEffect(() => {
-    fetchAnalyses();
-    const channel = subscribeToAnalyses();
+    if (user) {
+      fetchAnalyses();
+      const channel = subscribeToAnalyses();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+      return () => {
+        if (channel) {
+          supabase.removeChannel(channel);
+        }
+      };
+    }
+  }, [user]);
 
   const handleDocumentDeleted = (deletedId: string) => {
     setAnalyses(current => current.filter(analysis => analysis.id !== deletedId));
