@@ -60,123 +60,121 @@ export default function MobileHome() {
     <MobileLayout>
       <MobileHeader title="LegalDoc Scanner" showAppName={false} />
       
-      <div className="px-4 py-4 space-y-6">
+      <div className="px-4 py-6 space-y-8 pb-24">
         {/* Welcome Section */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-foreground mb-2 leading-tight">
                 {user?.user_metadata?.full_name || user?.user_metadata?.name 
                   ? `Hello, ${(user.user_metadata.full_name || user.user_metadata.name).split(' ')[0]}` 
                   : user?.email 
                   ? `Hello, ${user.email.split('@')[0]}` 
-                  : 'Welcome'}
+                  : 'Hello'}
               </h1>
-              <p className="text-muted-foreground text-sm">
-                Advanced legal document analysis and insights
+              <p className="text-muted-foreground leading-relaxed">
+                Ready to analyze your legal documents?
               </p>
             </div>
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
+            <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/30 rounded-2xl flex items-center justify-center">
+              <Shield className="w-7 h-7 text-primary" />
             </div>
           </div>
         </div>
 
-        {/* Quick Action Card */}
-        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-primary via-primary to-primary/90 p-6">
+        {/* Quick Action Card - Cal AI Inspired */}
+        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-primary/95 to-primary p-8 shadow-xl shadow-primary/25">
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                <Scan className="w-6 h-6 text-white" />
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                  <Scan className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-xl mb-1">Document Scanner</h3>
+                  <p className="text-white/80 text-sm">
+                    Professional legal document analysis
+                  </p>
+                </div>
               </div>
-              <Button 
-                onClick={() => navigate("/scan")}
-                size="sm"
-                variant="secondary"
-                className="bg-white/20 border-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
-              >
-                <ArrowRight className="w-4 h-4" />
-              </Button>
             </div>
-            <h3 className="text-white font-semibold text-lg mb-1">Document Scanner</h3>
-            <p className="text-white/80 text-sm mb-4">
-              Upload and scan documents with advanced recognition
-            </p>
             <Button 
               onClick={() => navigate("/scan")}
-              className="w-full bg-white/20 border-white/20 text-white hover:bg-white/30 backdrop-blur-sm h-11"
+              className="w-full bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm h-14 text-base font-semibold rounded-2xl transition-all duration-200"
               variant="outline"
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-5 h-5 mr-3" />
               New Scan
             </Button>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-8 translate-x-8" />
+          <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full translate-y-4 -translate-x-4" />
         </Card>
 
-        {/* Analytics Overview */}
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Overview</h2>
-          <div className="grid grid-cols-3 gap-3">
+        {/* Stats Overview - Cal AI Style */}
+        <div className="space-y-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate("/history")}
+              className="text-primary hover:text-primary/80 font-medium"
+            >
+              View All →
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4">
             {stats.map((stat, index) => (
-              <Card key={index} className={`relative overflow-hidden border-0 bg-gradient-to-br ${stat.gradient} p-4`}>
-                <div className="text-center space-y-2">
-                  <div className={`w-8 h-8 mx-auto rounded-lg bg-white/50 flex items-center justify-center backdrop-blur-sm`}>
-                    <stat.icon className={`w-4 h-4 ${stat.iconColor}`} />
+              <Card key={index} className="relative overflow-hidden border-0 bg-white/60 backdrop-blur-sm p-5 hover:shadow-lg transition-all duration-200">
+                <div className="text-center space-y-3">
+                  <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                    <stat.icon className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-foreground">{stat.value}</div>
-                    <div className="text-xs text-muted-foreground">{stat.label}</div>
-                    <div className="text-xs font-medium text-emerald-600 mt-1">{stat.trend}</div>
+                    <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
+                    <div className="text-xs text-muted-foreground font-medium">{stat.label}</div>
                   </div>
                 </div>
+                <div className="absolute top-0 right-0 w-8 h-8 bg-primary/5 rounded-full -translate-y-2 translate-x-2" />
               </Card>
             ))}
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-foreground">Recent Activity</h2>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate("/history")}
-              className="text-primary hover:text-primary/80"
-            >
-              View All
-            </Button>
-          </div>
+        {/* Recent Documents */}
+        <div className="space-y-5">
+          <h2 className="text-xl font-bold text-foreground">Recent Documents</h2>
           
-          <div className="space-y-2">
+          <div className="space-y-3">
             {isRefreshing ? (
               [1, 2, 3].map((i) => (
-                <Card key={i} className="p-4 animate-pulse mobile-skeleton">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-muted rounded-lg"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-muted rounded w-3/4"></div>
-                      <div className="h-3 bg-muted rounded w-1/2"></div>
+                <Card key={i} className="p-5 animate-pulse border-0 bg-white/60 backdrop-blur-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-muted rounded-2xl"></div>
+                    <div className="flex-1 space-y-3">
+                      <div className="h-4 bg-muted rounded-lg w-3/4"></div>
+                      <div className="h-3 bg-muted rounded-lg w-1/2"></div>
                     </div>
                   </div>
                 </Card>
               ))
             ) : analyses.length === 0 ? (
-              <Card className="p-8 text-center border-0 bg-gradient-to-br from-muted/30 to-muted/10">
-                <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-8 h-8 text-muted-foreground" />
+              <Card className="p-10 text-center border-0 bg-gradient-to-br from-muted/20 to-muted/5 backdrop-blur-sm">
+                <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                  <FileText className="w-10 h-10 text-primary" />
                 </div>
-                <h4 className="font-semibold mb-2 text-foreground">No documents yet</h4>
-                <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-                  Upload your first document to get started with professional scanning
+                <h4 className="font-bold text-lg mb-3 text-foreground">Start Your First Analysis</h4>
+                <p className="text-muted-foreground mb-8 max-w-sm mx-auto leading-relaxed">
+                  Upload a legal document to experience our advanced analysis capabilities
                 </p>
                 <Button 
                   onClick={() => navigate("/scan")} 
-                  className="px-6"
+                  className="px-8 h-12 rounded-2xl font-semibold"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Document
+                  <Plus className="w-5 h-5 mr-3" />
+                  Upload Document
                 </Button>
               </Card>
             ) : (
@@ -197,28 +195,31 @@ export default function MobileHome() {
                 return (
                   <Card 
                     key={analysis.id} 
-                    className="p-4 border-0 bg-gradient-to-r from-background to-muted/20 mobile-tap cursor-pointer transition-all duration-200 hover:shadow-md"
+                    className="p-5 border-0 bg-white/60 backdrop-blur-sm cursor-pointer transition-all duration-200 hover:shadow-lg hover:bg-white/80 active:scale-[0.98]"
                     onClick={() => navigate(`/document-summary/${analysis.id}`)}
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-5 h-5 text-primary" />
+                      <div className="w-14 h-14 bg-gradient-to-br from-primary/15 to-primary/25 rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-6 h-6 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-sm truncate text-foreground mb-1">
+                        <div className="font-semibold truncate text-foreground mb-2">
                           {analysis.file_name}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-xs text-muted-foreground">
+                        <div className="flex items-center gap-3">
+                          <div className="text-sm text-muted-foreground">
                             {formatDate(analysis.created_at)}
                           </div>
-                          <div className={`w-2 h-2 rounded-full ${
+                          <div className={`w-2.5 h-2.5 rounded-full ${
                             analysis.status === 'completed' ? 'bg-emerald-500' : 
                             analysis.status === 'processing' ? 'bg-amber-500' : 'bg-red-500'
                           }`} />
+                          <div className="text-sm font-medium text-muted-foreground capitalize">
+                            {analysis.status}
+                          </div>
                         </div>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                      <ArrowRight className="w-5 h-5 text-muted-foreground/50 flex-shrink-0" />
                     </div>
                   </Card>
                 );

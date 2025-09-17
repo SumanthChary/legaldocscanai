@@ -42,34 +42,34 @@ export default function MobileScan() {
     <MobileLayout>
       <MobileHeader title="Document Upload" showBack />
       
-      <div className="px-4 py-4 space-y-6 pb-24 overflow-y-auto scrollbar-thin max-h-[calc(100vh-160px)]">
+      <div className="px-4 py-6 space-y-8 pb-28 overflow-y-auto h-[calc(100vh-120px)]">
         {!file && !scanMode && (
           <>
             {/* Header Section */}
-            <div className="text-center space-y-4">
-              <div className="w-24 h-24 bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl flex items-center justify-center mx-auto">
-                <Shield className="w-12 h-12 text-primary" />
+            <div className="text-center space-y-6">
+              <div className="w-28 h-28 bg-gradient-to-br from-primary/20 to-primary/30 rounded-[2rem] flex items-center justify-center mx-auto">
+                <Shield className="w-14 h-14 text-primary" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground mb-2">Upload Document</h1>
-                <p className="text-muted-foreground text-sm max-w-sm mx-auto leading-relaxed">
-                  Choose how you'd like to add your legal document for AI-powered analysis
+              <div className="space-y-3">
+                <h1 className="text-3xl font-bold text-foreground leading-tight">Upload Document</h1>
+                <p className="text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                  Choose your preferred method to add legal documents for professional analysis
                 </p>
               </div>
             </div>
 
             {/* Upload Options Tabs */}
-            <Tabs defaultValue="device" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-3 bg-muted/30 h-12">
-                <TabsTrigger value="camera" className="h-10 rounded-lg">
+            <Tabs defaultValue="device" className="space-y-6">
+              <TabsList className="grid w-full grid-cols-3 bg-white/60 backdrop-blur-sm h-14 p-1 rounded-2xl">
+                <TabsTrigger value="camera" className="h-12 rounded-xl text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-sm">
                   <Camera className="w-4 h-4 mr-2" />
                   Camera
                 </TabsTrigger>
-                <TabsTrigger value="device" className="h-10 rounded-lg">
+                <TabsTrigger value="device" className="h-12 rounded-xl text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-sm">
                   <Upload className="w-4 h-4 mr-2" />
                   Device
                 </TabsTrigger>
-                <TabsTrigger value="drive" className="h-10 rounded-lg">
+                <TabsTrigger value="drive" className="h-12 rounded-xl text-sm font-semibold data-[state=active]:bg-white data-[state=active]:shadow-sm">
                   <FolderOpen className="w-4 h-4 mr-2" />
                   Drive
                 </TabsTrigger>
@@ -77,20 +77,20 @@ export default function MobileScan() {
 
               <TabsContent value="camera" className="space-y-4">
                 <Card 
-                  className="p-8 border-0 bg-gradient-to-br from-primary/5 to-primary/10 cursor-pointer transition-all duration-200 hover:shadow-lg mobile-tap"
+                  className="p-10 border-0 bg-gradient-to-br from-primary/8 to-primary/15 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] rounded-3xl"
                   onClick={() => handleScanMode("camera")}
                 >
-                  <div className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto">
-                      <Camera className="w-8 h-8 text-primary" />
+                  <div className="text-center space-y-6">
+                    <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/30 rounded-3xl flex items-center justify-center mx-auto">
+                      <Camera className="w-10 h-10 text-primary" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-lg text-foreground mb-2">Camera Capture</h3>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Take a high-quality photo of your document using your device camera
+                    <div className="space-y-4">
+                      <h3 className="font-bold text-xl text-foreground">Camera Capture</h3>
+                      <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                        Capture documents instantly with your device camera for immediate processing
                       </p>
-                      <Button className="w-full h-12 text-base">
-                        <Camera className="w-5 h-5 mr-2" />
+                      <Button className="w-full h-14 text-base font-semibold rounded-2xl">
+                        <Camera className="w-5 h-5 mr-3" />
                         Open Camera
                       </Button>
                     </div>
@@ -100,20 +100,20 @@ export default function MobileScan() {
 
               <TabsContent value="device" className="space-y-4">
                 <Card 
-                  className="p-8 border-0 bg-gradient-to-br from-emerald-50/50 to-emerald-100/30 cursor-pointer transition-all duration-200 hover:shadow-lg mobile-tap"
+                  className="p-10 border-0 bg-gradient-to-br from-emerald-500/8 to-emerald-600/15 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] rounded-3xl"
                   onClick={() => handleScanMode("upload")}
                 >
-                  <div className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto">
-                      <Upload className="w-8 h-8 text-emerald-600" />
+                  <div className="text-center space-y-6">
+                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-500/20 to-emerald-600/30 rounded-3xl flex items-center justify-center mx-auto">
+                      <Upload className="w-10 h-10 text-emerald-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-lg text-foreground mb-2">Device Upload</h3>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Select files from your device storage or recent downloads
+                    <div className="space-y-4">
+                      <h3 className="font-bold text-xl text-foreground">Device Upload</h3>
+                      <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                        Browse and select documents from your device storage or downloads
                       </p>
-                      <Button className="w-full h-12 text-base bg-emerald-600 hover:bg-emerald-700">
-                        <Upload className="w-5 h-5 mr-2" />
+                      <Button className="w-full h-14 text-base font-semibold bg-emerald-600 hover:bg-emerald-700 rounded-2xl">
+                        <Upload className="w-5 h-5 mr-3" />
                         Browse Files
                       </Button>
                     </div>
@@ -127,13 +127,13 @@ export default function MobileScan() {
             </Tabs>
 
             {/* Supported Formats */}
-            <Card className="p-4 border-0 bg-gradient-to-br from-background to-muted/20">
-              <h4 className="font-medium text-foreground mb-3">Supported Formats</h4>
-              <div className="grid grid-cols-2 gap-2">
+            <Card className="p-6 border-0 bg-white/40 backdrop-blur-sm rounded-2xl">
+              <h4 className="font-bold text-foreground mb-4">Supported Formats</h4>
+              <div className="grid grid-cols-2 gap-3">
                 {ALLOWED_FILE_TYPES.slice(0, 4).map((type) => (
-                  <div key={type} className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full" />
-                    <span className="text-muted-foreground">
+                  <div key={type} className="flex items-center gap-3">
+                    <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-sm" />
+                    <span className="text-muted-foreground font-medium">
                       {type.replace('.', '').toUpperCase()}
                     </span>
                   </div>
