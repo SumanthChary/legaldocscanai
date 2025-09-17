@@ -15,7 +15,7 @@ export default function MobileHistory() {
   const { analyses, isRefreshing } = useAnalyses();
 
   const filteredAnalyses = analyses.filter(analysis =>
-    analysis.file_name.toLowerCase().includes(searchQuery.toLowerCase())
+    analysis.file_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const getStatusColor = (status: string) => {
@@ -107,7 +107,7 @@ export default function MobileHistory() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium truncate">{analysis.file_name}</h3>
+                        <h3 className="font-medium truncate">{analysis.file_name || 'Untitled Document'}</h3>
                         <div className="flex items-center gap-2 mt-1">
                           <Calendar className="w-3 h-3 text-muted-foreground" />
                           <span className="text-xs text-muted-foreground">
