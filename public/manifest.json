@@ -1,7 +1,7 @@
 {
-  "name": "LegalDeep Scanner",
-  "short_name": "LegalDeep",
-  "description": "AI-powered legal document scanner and analyzer",
+  "name": "DocScan Pro",
+  "short_name": "DocScan",
+  "description": "Professional mobile document scanner and analyzer",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

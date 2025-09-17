@@ -58,7 +58,7 @@ export default function MobileHome() {
 
   return (
     <MobileLayout>
-      <MobileHeader title="LegalDeep" />
+      <MobileHeader title="DocScan Pro" />
       
       <div className="px-4 py-4 space-y-6">
         {/* Welcome Section */}
@@ -69,7 +69,7 @@ export default function MobileHome() {
                 {user?.email ? `Hello, ${user.email.split('@')[0]}` : 'Welcome'}
               </h1>
               <p className="text-muted-foreground text-sm">
-                Professional document analysis at your fingertips
+                Professional document scanning at your fingertips
               </p>
             </div>
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center">
@@ -94,9 +94,9 @@ export default function MobileHome() {
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
-            <h3 className="text-white font-semibold text-lg mb-1">Document Analysis</h3>
+            <h3 className="text-white font-semibold text-lg mb-1">Document Scanner</h3>
             <p className="text-white/80 text-sm mb-4">
-              Upload and analyze legal documents instantly
+              Upload and scan documents with advanced recognition
             </p>
             <Button 
               onClick={() => navigate("/scan")}
@@ -104,7 +104,7 @@ export default function MobileHome() {
               variant="outline"
             >
               <Plus className="w-4 h-4 mr-2" />
-              New Analysis
+              New Scan
             </Button>
           </div>
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
@@ -165,7 +165,7 @@ export default function MobileHome() {
                 </div>
                 <h4 className="font-semibold mb-2 text-foreground">No documents yet</h4>
                 <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-                  Upload your first legal document to get started with professional analysis
+                  Upload your first document to get started with professional scanning
                 </p>
                 <Button 
                   onClick={() => navigate("/scan")} 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'legaldeep-v1';
+const CACHE_NAME = 'docscan-pro-v1';
 const STATIC_CACHE = [
   '/',
   '/static/js/bundle.js',
