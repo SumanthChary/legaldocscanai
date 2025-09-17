@@ -4,8 +4,10 @@ import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Camera, Upload, FileText, CheckCircle2, AlertCircle, Scan, Shield, ArrowLeft } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Camera, Upload, FileText, CheckCircle2, AlertCircle, Scan, Shield, ArrowLeft, FolderOpen } from "lucide-react";
 import { useFileUpload } from "@/components/document-analysis/upload/useFileUpload";
+import { GoogleDriveUpload } from "@/components/mobile/GoogleDriveUpload";
 import { useNavigate } from "react-router-dom";
 
 export default function MobileScan() {
@@ -40,54 +42,89 @@ export default function MobileScan() {
     <MobileLayout>
       <MobileHeader title="Document Upload" showBack />
       
-      <div className="px-4 py-4 space-y-6">
+      <div className="px-4 py-4 space-y-6 pb-24 overflow-y-auto scrollbar-thin max-h-[calc(100vh-160px)]">
         {!file && !scanMode && (
           <>
             {/* Header Section */}
             <div className="text-center space-y-4">
-              <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/20 rounded-2xl flex items-center justify-center mx-auto">
-                <Shield className="w-10 h-10 text-primary" />
+              <div className="w-24 h-24 bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl flex items-center justify-center mx-auto">
+                <Shield className="w-12 h-12 text-primary" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground mb-2">Upload Document</h1>
-                <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-                  Choose how you'd like to add your legal document for professional analysis
+                <p className="text-muted-foreground text-sm max-w-sm mx-auto leading-relaxed">
+                  Choose how you'd like to add your legal document for AI-powered analysis
                 </p>
               </div>
             </div>
 
-            {/* Upload Options */}
-            <div className="space-y-3">
-              <Card 
-                className="p-6 border-0 bg-gradient-to-br from-primary/5 to-primary/10 cursor-pointer transition-all duration-200 hover:shadow-md mobile-tap"
-                onClick={() => handleScanMode("camera")}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
-                    <Camera className="w-6 h-6 text-primary" />
+            {/* Upload Options Tabs */}
+            <Tabs defaultValue="device" className="space-y-4">
+              <TabsList className="grid w-full grid-cols-3 bg-muted/30 h-12">
+                <TabsTrigger value="camera" className="h-10 rounded-lg">
+                  <Camera className="w-4 h-4 mr-2" />
+                  Camera
+                </TabsTrigger>
+                <TabsTrigger value="device" className="h-10 rounded-lg">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Device
+                </TabsTrigger>
+                <TabsTrigger value="drive" className="h-10 rounded-lg">
+                  <FolderOpen className="w-4 h-4 mr-2" />
+                  Drive
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="camera" className="space-y-4">
+                <Card 
+                  className="p-8 border-0 bg-gradient-to-br from-primary/5 to-primary/10 cursor-pointer transition-all duration-200 hover:shadow-lg mobile-tap"
+                  onClick={() => handleScanMode("camera")}
+                >
+                  <div className="text-center space-y-4">
+                    <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto">
+                      <Camera className="w-8 h-8 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg text-foreground mb-2">Camera Capture</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Take a high-quality photo of your document using your device camera
+                      </p>
+                      <Button className="w-full h-12 text-base">
+                        <Camera className="w-5 h-5 mr-2" />
+                        Open Camera
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">Camera Capture</h3>
-                    <p className="text-sm text-muted-foreground">Take a photo of your document</p>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="device" className="space-y-4">
+                <Card 
+                  className="p-8 border-0 bg-gradient-to-br from-emerald-50/50 to-emerald-100/30 cursor-pointer transition-all duration-200 hover:shadow-lg mobile-tap"
+                  onClick={() => handleScanMode("upload")}
+                >
+                  <div className="text-center space-y-4">
+                    <div className="w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto">
+                      <Upload className="w-8 h-8 text-emerald-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg text-foreground mb-2">Device Upload</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Select files from your device storage or recent downloads
+                      </p>
+                      <Button className="w-full h-12 text-base bg-emerald-600 hover:bg-emerald-700">
+                        <Upload className="w-5 h-5 mr-2" />
+                        Browse Files
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </Card>
-              
-              <Card 
-                className="p-6 border-0 bg-gradient-to-br from-muted/30 to-muted/10 cursor-pointer transition-all duration-200 hover:shadow-md mobile-tap"
-                onClick={() => handleScanMode("upload")}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-muted/50 rounded-xl flex items-center justify-center">
-                    <Upload className="w-6 h-6 text-muted-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">File Upload</h3>
-                    <p className="text-sm text-muted-foreground">Choose from your device storage</p>
-                  </div>
-                </div>
-              </Card>
-            </div>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="drive" className="space-y-4">
+                <GoogleDriveUpload onFileSelect={setFile} />
+              </TabsContent>
+            </Tabs>
 
             {/* Supported Formats */}
             <Card className="p-4 border-0 bg-gradient-to-br from-background to-muted/20">

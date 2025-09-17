@@ -1,4 +1,4 @@
-import { Home, Scan, History, User, Settings } from "lucide-react";
+import { Home, Scan, History, MessageCircle, Settings } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +10,7 @@ export const MobileNavigation = () => {
       { icon: Home, label: "Home", path: "/" },
       { icon: History, label: "History", path: "/history" },
       { icon: Scan, label: "Scan", path: "/scan", isMain: true },
-      { icon: User, label: "Profile", path: "/profile" },
+      { icon: MessageCircle, label: "Law AI", path: "/chat" },
       { icon: Settings, label: "Settings", path: "/settings" },
     ];
 
@@ -22,16 +22,16 @@ export const MobileNavigation = () => {
             key={path}
             onClick={() => navigate(path)}
             className={cn(
-              "flex flex-col items-center justify-center p-2 rounded-2xl transition-all duration-300 min-w-[60px] mobile-tap",
+              "flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 min-w-[64px] mobile-tap",
               location.pathname === path
-                ? "text-primary bg-primary/10 scale-105"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-              isMain && "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground hover:from-primary/90 hover:to-primary/70 scale-110 -mt-3 shadow-lg shadow-primary/20"
+                ? "text-primary bg-primary/10 scale-105 shadow-sm"
+                : "text-muted-foreground hover:text-primary hover:bg-primary/5",
+              isMain && "bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground hover:from-primary/95 hover:to-primary/85 scale-110 -mt-4 shadow-xl shadow-primary/25"
             )}
           >
-            <Icon size={isMain ? 26 : 22} className={isMain ? "drop-shadow-sm" : ""} />
+            <Icon size={isMain ? 28 : 20} className={isMain ? "drop-shadow-sm" : ""} />
             <span className={cn(
-              "text-xs mt-1 font-medium",
+              "text-[11px] mt-1.5 font-medium leading-tight",
               isMain && "text-primary-foreground font-semibold drop-shadow-sm"
             )}>
               {label}

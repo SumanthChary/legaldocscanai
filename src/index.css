@@ -241,6 +241,15 @@
     opacity: 0.9;
   }
   
+  /* Remove black hover colors */
+  .hover\:bg-muted\/50:hover {
+    background-color: hsl(var(--primary) / 0.05) !important;
+  }
+  
+  button:hover {
+    color: hsl(var(--primary)) !important;
+  }
+  
   /* Enhanced mobile navigation */
   .mobile-nav-item {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

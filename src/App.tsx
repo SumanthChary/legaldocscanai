@@ -17,7 +17,8 @@ import MobileHome from "./pages/MobileHome";
 import MobileScan from "./pages/MobileScan";
 import MobileHistory from "./pages/MobileHistory";
 import MobileAuth from "./pages/MobileAuth";
-import MobileProfile from "./pages/MobileProfile";
+import MobileChat from "./pages/MobileChat";
+import MobileSettings from "./pages/MobileSettings";
 import MobileDocumentSummary from "./pages/MobileDocumentSummary";
 
 // Desktop fallbacks
@@ -92,11 +93,6 @@ function App() {
                     <MobileHistory />
                   </ProtectedRoute>
                 } />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <MobileProfile />
-                  </ProtectedRoute>
-                } />
                 <Route path="/document-summary/:id" element={
                   <ProtectedRoute>
                     <MobileDocumentSummary />
@@ -107,9 +103,14 @@ function App() {
                     <MobileDocumentSummary />
                   </ProtectedRoute>
                 } />
+                <Route path="/chat" element={
+                  <ProtectedRoute>
+                    <MobileChat />
+                  </ProtectedRoute>
+                } />
                 <Route path="/settings" element={
                   <ProtectedRoute>
-                    <MobileProfile />
+                    <MobileSettings />
                   </ProtectedRoute>
                 } />
               </Routes>

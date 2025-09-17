@@ -58,7 +58,7 @@ export default function MobileHome() {
 
   return (
     <MobileLayout>
-      <MobileHeader title="DocScan Pro" />
+      <MobileHeader title="LegalDoc Scanner" showAppName={false} />
       
       <div className="px-4 py-4 space-y-6">
         {/* Welcome Section */}
@@ -66,10 +66,14 @@ export default function MobileHome() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-foreground">
-                {user?.email ? `Hello, ${user.email.split('@')[0]}` : 'Welcome'}
+                {user?.user_metadata?.full_name || user?.user_metadata?.name 
+                  ? `Hello, ${(user.user_metadata.full_name || user.user_metadata.name).split(' ')[0]}` 
+                  : user?.email 
+                  ? `Hello, ${user.email.split('@')[0]}` 
+                  : 'Welcome'}
               </h1>
               <p className="text-muted-foreground text-sm">
-                Professional document scanning at your fingertips
+                Advanced legal document analysis and insights
               </p>
             </div>
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center">
