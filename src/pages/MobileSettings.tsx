@@ -23,7 +23,7 @@ import {
   Crown,
   BarChart3,
   Trash2,
-  Moon,
+  
   Globe,
   Lock,
   HelpCircle,
@@ -45,7 +45,7 @@ export default function MobileSettings() {
     avatar_url: ""
   });
   const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  
 
   useEffect(() => {
     if (user) {
@@ -245,21 +245,6 @@ export default function MobileSettings() {
                 />
               </div>
               
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Moon className="w-5 h-5 text-muted-foreground" />
-                  <div>
-                    <div className="font-medium">Dark Mode</div>
-                    <div className="text-sm text-muted-foreground">Switch to dark theme</div>
-                  </div>
-                </div>
-                <Switch 
-                  checked={darkMode} 
-                  onCheckedChange={setDarkMode}
-                />
-              </div>
             </div>
           </Card>
         </div>
@@ -280,7 +265,7 @@ export default function MobileSettings() {
                 <h4 className="font-semibold">Upgrade to Pro</h4>
                 <p className="text-sm text-muted-foreground">Unlock unlimited scans and advanced features</p>
               </div>
-              <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
+              <Button size="sm" className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-sm">
                 Upgrade
               </Button>
             </div>

@@ -33,14 +33,6 @@ export const MobileHeader = ({
               <ArrowLeft size={20} />
             </Button>
           )}
-          {showAppName && showBack && (
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center">
-                <Scan className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="text-sm font-medium text-muted-foreground">LegalDoc Scanner</span>
-            </div>
-          )}
           <h1 className="text-xl font-bold text-foreground">{title}</h1>
         </div>
         

@@ -1,4 +1,4 @@
-import { Home, Scan, History, MessageCircle, Settings } from "lucide-react";
+import { Home, Plus, History, MessageCircle, Settings } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +9,7 @@ export const MobileNavigation = () => {
     const navItems = [
       { icon: Home, label: "Home", path: "/" },
       { icon: History, label: "History", path: "/history" },
-      { icon: Scan, label: "Scan", path: "/scan", isMain: true },
+      { icon: Plus, label: "Scan", path: "/scan", isMain: true },
       { icon: MessageCircle, label: "Law AI", path: "/chat" },
       { icon: Settings, label: "Settings", path: "/settings" },
     ];
@@ -29,9 +29,9 @@ export const MobileNavigation = () => {
               isMain && "bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground hover:from-primary/95 hover:to-primary/85 scale-110 -mt-4 shadow-xl shadow-primary/25"
             )}
           >
-            <Icon size={isMain ? 28 : 20} className={isMain ? "drop-shadow-sm" : ""} />
+            <Icon size={isMain ? 24 : 18} className={isMain ? "drop-shadow-sm" : ""} />
             <span className={cn(
-              "text-[11px] mt-1.5 font-medium leading-tight",
+              "text-[10px] mt-1 font-medium leading-none",
               isMain && "text-primary-foreground font-semibold drop-shadow-sm"
             )}>
               {label}
