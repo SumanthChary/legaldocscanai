@@ -8,30 +8,28 @@ import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { useDocumentAnalysis } from "@/hooks/document-summary/useDocumentAnalysis";
 import { SummaryContent } from "@/components/document-summary/SummaryContent";
-import { 
-  FileText, 
-  Clock, 
-  AlertCircle, 
-  CheckCircle2, 
-  Loader2,
-  Download,
-  Share,
-  MoreVertical
-} from "lucide-react";
-
+import { FileText, Clock, AlertCircle, CheckCircle2, Loader2, Download, Share, MoreVertical } from "lucide-react";
 export default function MobileDocumentSummary() {
-  const { id } = useParams<{ id: string }>();
+  const {
+    id
+  } = useParams<{
+    id: string;
+  }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { analysis, loading, refreshing, fetchAnalysis } = useDocumentAnalysis(id!);
-
+  const {
+    user
+  } = useAuth();
+  const {
+    analysis,
+    loading,
+    refreshing,
+    fetchAnalysis
+  } = useDocumentAnalysis(id!);
   if (loading) {
-    return (
-      <MobileLayout>
+    return <MobileLayout>
         <MobileHeader title="Document Analysis" showBack />
         <div className="px-4 py-6 space-y-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="p-6 animate-pulse mobile-skeleton">
+          {[1, 2, 3].map(i => <Card key={i} className="p-6 animate-pulse mobile-skeleton">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-muted rounded-full"></div>
@@ -45,16 +43,12 @@ export default function MobileDocumentSummary() {
                   <div className="h-3 bg-muted rounded w-2/3"></div>
                 </div>
               </div>
-            </Card>
-          ))}
+            </Card>)}
         </div>
-      </MobileLayout>
-    );
+      </MobileLayout>;
   }
-
   if (!analysis) {
-    return (
-      <MobileLayout>
+    return <MobileLayout>
         <MobileHeader title="Document Not Found" showBack />
         <div className="px-4 py-6">
           <Card className="p-8 text-center">
@@ -68,10 +62,8 @@ export default function MobileDocumentSummary() {
             </Button>
           </Card>
         </div>
-      </MobileLayout>
-    );
+      </MobileLayout>;
   }
-
   const getStatusIcon = () => {
     const status = analysis.status || analysis.analysis_status;
     switch (status) {
@@ -85,23 +77,23 @@ export default function MobileDocumentSummary() {
         return <Clock className="w-5 h-5 text-yellow-500" />;
     }
   };
-
   const getStatusColor = () => {
     const status = analysis.status || analysis.analysis_status;
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'processing': return 'bg-blue-100 text-blue-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      default: return 'bg-yellow-100 text-yellow-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'processing':
+        return 'bg-blue-100 text-blue-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-yellow-100 text-yellow-800';
     }
   };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
   };
-
-  return (
-    <MobileLayout>
+  return <MobileLayout>
       <MobileHeader title="Analysis Results" showBack />
       
       <div className="px-4 py-4 space-y-4">
@@ -119,9 +111,7 @@ export default function MobileDocumentSummary() {
                     {formatDate(analysis.created_at)}
                   </p>
                 </div>
-                <Button variant="ghost" size="sm" className="p-2">
-                  <MoreVertical className="w-4 h-4" />
-                </Button>
+                
               </div>
               
               <div className="flex items-center gap-2 mt-3">
@@ -135,8 +125,7 @@ export default function MobileDocumentSummary() {
         </Card>
 
         {/* Processing Status */}
-        {(analysis.status === 'processing' || analysis.analysis_status === 'processing') && (
-          <Card className="p-4">
+        {(analysis.status === 'processing' || analysis.analysis_status === 'processing') && <Card className="p-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Processing Document</span>
@@ -147,12 +136,10 @@ export default function MobileDocumentSummary() {
                 AI is analyzing your document. This usually takes 30-60 seconds.
               </p>
             </div>
-          </Card>
-        )}
+          </Card>}
 
         {/* Quick Actions */}
-        {(analysis.status === 'completed' || analysis.analysis_status === 'completed') && (
-          <div className="grid grid-cols-2 gap-3">
+        {(analysis.status === 'completed' || analysis.analysis_status === 'completed') && <div className="grid grid-cols-2 gap-3">
             <Button variant="outline" className="gap-2">
               <Share className="w-4 h-4" />
               Share
@@ -161,24 +148,15 @@ export default function MobileDocumentSummary() {
               <Download className="w-4 h-4" />
               Export
             </Button>
-          </div>
-        )}
+          </div>}
 
         {/* Summary Content */}
         <div className="space-y-4">
-          <SummaryContent
-            analysisStatus={analysis.status || analysis.analysis_status}
-            summary={analysis.summary}
-            originalName={analysis.file_name || analysis.original_name}
-            analysisId={analysis.id}
-            refreshAnalysis={fetchAnalysis}
-            refreshing={refreshing}
-          />
+          <SummaryContent analysisStatus={analysis.status || analysis.analysis_status} summary={analysis.summary} originalName={analysis.file_name || analysis.original_name} analysisId={analysis.id} refreshAnalysis={fetchAnalysis} refreshing={refreshing} />
         </div>
 
         {/* Error State */}
-        {(analysis.status === 'failed' || analysis.analysis_status === 'failed') && (
-          <Card className="p-4 border-destructive/20 bg-destructive/5">
+        {(analysis.status === 'failed' || analysis.analysis_status === 'failed') && <Card className="p-4 border-destructive/20 bg-destructive/5">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-destructive mt-0.5" />
               <div className="flex-1">
@@ -186,22 +164,15 @@ export default function MobileDocumentSummary() {
                 <p className="text-sm text-muted-foreground mt-1">
                   There was an error processing your document. Please try uploading it again.
                 </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate("/scan")}
-                  className="mt-3"
-                >
+                <Button variant="outline" size="sm" onClick={() => navigate("/scan")} className="mt-3">
                   Try Again
                 </Button>
               </div>
             </div>
-          </Card>
-        )}
+          </Card>}
 
         {/* Bottom spacing for mobile navigation */}
         <div className="h-20"></div>
       </div>
-    </MobileLayout>
-  );
+    </MobileLayout>;
 }
