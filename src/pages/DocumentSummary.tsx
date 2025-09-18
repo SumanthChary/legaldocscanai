@@ -1,15 +1,10 @@
 
 import { useParams } from "react-router-dom";
 import { PageLayout } from "@/components/layout";
-import { Card } from "@/components/ui/card";
 import { 
-  DocumentHeader, 
-  DocumentInfo, 
-  StatusDisplay, 
   SummaryContent,
   DocumentNotFound,
-  DocumentLoading,
-  SummaryActions
+  DocumentLoading
 } from "@/components/document-summary";
 import { useDocumentAnalysis } from "@/hooks/document-summary/useDocumentAnalysis";
 
