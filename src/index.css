@@ -180,6 +180,27 @@
 }
 
 @layer utilities {
+  /* ===== Scrollbar Hide Utilities ===== */
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar globally for app-like feel */
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+
+  html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
   .scrollbar-hide {
     /* Firefox */
     scrollbar-width: none;

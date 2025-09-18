@@ -3,7 +3,7 @@ import { MobileLayout } from "@/components/mobile/MobileLayout";
 import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Scan, FileText, BarChart3, Clock, TrendingUp, Shield, ArrowRight, Plus } from "lucide-react";
+import { Scan, FileText, BarChart3, Clock, TrendingUp, Shield, ArrowRight, Plus, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 import { supabase } from "@/integrations/supabase/client";
@@ -125,21 +125,42 @@ export default function MobileHome() {
             </Button>
           </div>
           
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
             {stats.map((stat, index) => (
-              <Card key={index} className="relative overflow-hidden border-0 bg-white/60 backdrop-blur-sm p-5 hover:shadow-lg transition-all duration-200">
-                <div className="text-center space-y-3">
-                  <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
-                    <stat.icon className="w-6 h-6 text-primary" />
+              <Card key={index} className="relative overflow-hidden border-0 bg-white/60 backdrop-blur-sm p-3 sm:p-5 hover:shadow-lg transition-all duration-200">
+                <div className="text-center space-y-2 sm:space-y-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-2xl bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                    <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
+                    <div className="text-xl sm:text-2xl font-bold text-foreground mb-1">{stat.value}</div>
                     <div className="text-xs text-muted-foreground font-medium">{stat.label}</div>
                   </div>
                 </div>
-                <div className="absolute top-0 right-0 w-8 h-8 bg-primary/5 rounded-full -translate-y-2 translate-x-2" />
+                <div className="absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8 bg-primary/5 rounded-full -translate-y-2 translate-x-2" />
               </Card>
             ))}
+          </div>
+
+          {/* Share Button */}
+          <div className="flex justify-center pt-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="px-6 h-10 rounded-full border-primary/20 text-primary hover:bg-primary/5 hover:border-primary/30 font-medium"
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({
+                    title: 'LegalDoc Scanner',
+                    text: 'Check out this amazing legal document analysis app!',
+                    url: window.location.origin,
+                  });
+                }
+              }}
+            >
+              <Share2 className="w-4 h-4 mr-2" />
+              Share App
+            </Button>
           </div>
         </div>
 

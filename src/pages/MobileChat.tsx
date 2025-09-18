@@ -61,10 +61,10 @@ export default function MobileChat() {
     <MobileLayout>
       <MobileHeader title="Law AI Assistant" showBack />
       
-      <div className="flex flex-col h-[calc(100vh-180px)]">
+      <div className="flex flex-col h-[calc(100vh-180px)] bg-gradient-to-br from-background via-background/95 to-muted/20">
         {/* Chat Messages */}
-        <ScrollArea className="flex-1 px-4 py-4">
-          <div className="space-y-4">
+        <div className="flex-1 px-4 py-6 overflow-y-auto scrollbar-hide">
+          <div className="space-y-6 max-w-2xl mx-auto">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -73,22 +73,22 @@ export default function MobileChat() {
                 }`}
               >
                 {message.sender === "ai" && (
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <Bot className="w-4 h-4 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary/90 to-primary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <Bot className="w-5 h-5 text-white" />
                   </div>
                 )}
                 
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                  className={`max-w-[75%] rounded-3xl px-5 py-4 shadow-sm ${
                     message.sender === "user"
-                      ? "bg-primary text-primary-foreground ml-auto"
-                      : "bg-muted text-foreground"
+                      ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground ml-auto"
+                      : "bg-white/80 backdrop-blur-sm border border-border/30 text-foreground"
                   }`}
                 >
                   <p className="text-sm leading-relaxed">{message.text}</p>
-                  <p className={`text-xs mt-2 ${
+                  <p className={`text-xs mt-3 ${
                     message.sender === "user" 
-                      ? "text-primary-foreground/70" 
+                      ? "text-primary-foreground/60" 
                       : "text-muted-foreground"
                   }`}>
                     {formatTime(message.timestamp)}
@@ -96,8 +96,8 @@ export default function MobileChat() {
                 </div>
                 
                 {message.sender === "user" && (
-                  <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <User className="w-4 h-4 text-muted-foreground" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-muted to-muted/80 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <User className="w-5 h-5 text-muted-foreground" />
                   </div>
                 )}
               </div>
@@ -105,10 +105,10 @@ export default function MobileChat() {
             
             {isLoading && (
               <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Bot className="w-4 h-4 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-br from-primary/90 to-primary rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <Bot className="w-5 h-5 text-white" />
                 </div>
-                <div className="bg-muted rounded-2xl px-4 py-3">
+                <div className="bg-white/80 backdrop-blur-sm border border-border/30 rounded-3xl px-5 py-4 shadow-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
                     <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></div>
@@ -118,17 +118,17 @@ export default function MobileChat() {
               </div>
             )}
           </div>
-        </ScrollArea>
+        </div>
 
         {/* Input Area */}
-        <div className="border-t border-border/50 p-4 bg-background/95 backdrop-blur-md">
-          <Card className="border-0 bg-muted/30 p-1">
-            <div className="flex items-end gap-2">
+        <div className="border-t border-border/30 p-4 bg-white/80 backdrop-blur-xl">
+          <Card className="border-0 bg-white/60 backdrop-blur-sm p-2 shadow-sm">
+            <div className="flex items-end gap-3">
               <Input
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Ask me about legal documents..."
-                className="border-0 bg-transparent resize-none min-h-[44px] text-sm"
+                className="border-0 bg-transparent resize-none min-h-[44px] text-sm placeholder:text-muted-foreground/60"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -140,40 +140,40 @@ export default function MobileChat() {
                 onClick={handleSendMessage}
                 disabled={!inputText.trim() || isLoading}
                 size="sm"
-                className="h-10 w-10 rounded-xl bg-primary hover:bg-primary/90"
+                className="h-11 w-11 rounded-2xl bg-gradient-to-br from-primary to-primary/90 hover:from-primary/95 hover:to-primary shadow-lg"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-5 h-5" />
               </Button>
             </div>
           </Card>
           
           {/* Quick Actions */}
-          <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 mt-4 overflow-x-auto scrollbar-hide pb-1">
             <Button
               variant="outline"
               size="sm"
-              className="whitespace-nowrap text-xs h-8 rounded-full bg-background/50 border-border/50 hover:bg-primary/10 hover:border-primary/20"
+              className="whitespace-nowrap text-xs h-9 px-4 rounded-full bg-white/60 border-border/30 hover:bg-primary/5 hover:border-primary/20 shadow-sm backdrop-blur-sm"
               onClick={() => setInputText("Explain this contract clause")}
             >
-              <Sparkles className="w-3 h-3 mr-1.5" />
+              <Sparkles className="w-3 h-3 mr-2" />
               Explain Clause
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="whitespace-nowrap text-xs h-8 rounded-full bg-background/50 border-border/50 hover:bg-primary/10 hover:border-primary/20"
+              className="whitespace-nowrap text-xs h-9 px-4 rounded-full bg-white/60 border-border/30 hover:bg-primary/5 hover:border-primary/20 shadow-sm backdrop-blur-sm"
               onClick={() => setInputText("What are the key terms?")}
             >
-              <MessageCircle className="w-3 h-3 mr-1.5" />
+              <MessageCircle className="w-3 h-3 mr-2" />
               Key Terms
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="whitespace-nowrap text-xs h-8 rounded-full bg-background/50 border-border/50 hover:bg-primary/10 hover:border-primary/20"
+              className="whitespace-nowrap text-xs h-9 px-4 rounded-full bg-white/60 border-border/30 hover:bg-primary/5 hover:border-primary/20 shadow-sm backdrop-blur-sm"
               onClick={() => setInputText("Review legal risks")}
             >
-              <Bot className="w-3 h-3 mr-1.5" />
+              <Bot className="w-3 h-3 mr-2" />
               Legal Risks
             </Button>
           </div>
