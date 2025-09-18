@@ -1,4 +1,4 @@
-import { Home, Scan, History, MessageCircle, Settings } from "lucide-react";
+import { Home, Plus, History, MessageCircle, Settings } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +9,7 @@ export const MobileNavigation = () => {
     const navItems = [
       { icon: Home, label: "Home", path: "/" },
       { icon: History, label: "History", path: "/history" },
-      { icon: Scan, label: "Scan", path: "/scan", isMain: true },
+      { icon: Plus, label: "Scan", path: "/scan", isMain: true },
       { icon: MessageCircle, label: "Law AI", path: "/chat" },
       { icon: Settings, label: "Settings", path: "/settings" },
     ];
