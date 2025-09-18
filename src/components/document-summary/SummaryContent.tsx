@@ -89,7 +89,7 @@ export const SummaryContent = ({ analysisStatus, summary, originalName, analysis
                 <FileText className="h-5 w-5 text-blue-600" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-lg font-editorial-new font-medium text-gray-900 truncate">{originalName}</h1>
+                <h1 className="text-base sm:text-lg font-editorial-new font-medium text-gray-900">Summary</h1>
                 <p className="text-xs sm:text-sm text-gray-500 font-editorial-new">Professional Legal Analysis</p>
               </div>
             </div>
