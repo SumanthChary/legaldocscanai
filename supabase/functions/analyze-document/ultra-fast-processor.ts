@@ -4,6 +4,8 @@ import { processWithGroqVision } from "./processors/vision-processor.ts";
 import { processWithGeminiUltraFast } from "./processors/fast-gemini.ts";
 import { processWithGroqUltraFast } from "./processors/fast-groq.ts";
 import { generateEmergencySummary, formatUltraFastResult } from "./utils/emergency-fallback.ts";
+import { getLegalPrompt, getBusinessPrompt, getDetailedPrompt } from "./prompt-templates.ts";
+import { getDocumentContext } from "./gemini-client.ts";
 
 export async function processUltraFast(text: string, fileName: string, fileBuffer?: ArrayBuffer): Promise<string> {
   console.log(`🚀 ULTRA-FAST processing: ${fileName} (${text.length} chars)`);
@@ -17,6 +19,10 @@ export async function processUltraFast(text: string, fileName: string, fileBuffe
     
     console.log(`📄 Processing ${fileExtension} file with ${cleanedText.length} characters`);
     
+    // Get document context for enhanced prompting
+    const documentContext = getDocumentContext(cleanedText, fileName);
+    console.log(`📋 Document type detected: ${documentContext.type}, Approach: ${documentContext.approach}`);
+    
     const isTextFile = ['txt', 'doc', 'docx', 'rtf'].includes(fileExtension);
     const isImageFile = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(fileExtension);
     const isPDF = fileExtension === 'pdf';
@@ -28,15 +34,15 @@ export async function processUltraFast(text: string, fileName: string, fileBuffe
       console.log(`🖼️ Using GroqCloud Vision for ${fileExtension}`);
       result = await processWithGroqVision(cleanedText, fileBuffer!, fileExtension);
     } else {
-      // Try Gemini first for text documents
+      // Try Gemini first for text documents with enhanced prompting
       console.log(`📝 Attempting Gemini processing for: ${fileExtension}`);
       try {
-        result = await processWithGeminiUltraFast(cleanedText, fileName);
+        result = await processWithGeminiUltraFast(cleanedText, fileName, documentContext);
         console.log(`✅ Gemini processing successful`);
       } catch (geminiError) {
         console.log("🔄 Gemini failed, switching to GroqCloud:", geminiError.message);
         try {
-          result = await processWithGroqUltraFast(cleanedText, fileName);
+          result = await processWithGroqUltraFast(cleanedText, fileName, documentContext);
           console.log(`✅ GroqCloud processing successful`);
         } catch (groqError) {
           console.error("💥 Both AI services failed:", groqError.message);

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, FileText, RefreshCw, Download, Copy, BarChart3 } from "lucide-react";
+import { AlertTriangle, FileText, RefreshCw, Download, Copy, BarChart3, MoreVertical, Share } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SummaryDisplay } from "./components/SummaryDisplay";
 import { DocumentMetricsCharts } from "./components/DocumentMetricsCharts";
 import { useDocumentMetrics } from "./hooks/useDocumentMetrics";
@@ -79,66 +80,61 @@ export const SummaryContent = ({ analysisStatus, summary, originalName, analysis
   return (
     <div className="space-y-6">
       {/* Combined Header Section */}
-      <div className="bg-white border border-gray-900 rounded-lg">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
         {/* File Info Header */}
-        <div className="border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <FileText className="h-5 w-5 text-gray-600" />
-              <div>
-                <h1 className="text-lg font-editorial-new font-light text-gray-900">{originalName}</h1>
-                <p className="text-sm text-gray-500 font-editorial-new">AI Legal Analysis</p>
+        <div className="border-b border-gray-100 px-4 sm:px-6 py-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center space-x-3 min-w-0 flex-1">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <FileText className="h-5 w-5 text-blue-600" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-base sm:text-lg font-editorial-new font-medium text-gray-900 truncate">{originalName}</h1>
+                <p className="text-xs sm:text-sm text-gray-500 font-editorial-new">Professional Legal Analysis</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refreshAnalysis}
-                disabled={refreshing}
-                className="border-gray-900 font-editorial-new"
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopy}
-                className="border-gray-900 font-editorial-new"
-              >
-                <Copy className="h-4 w-4 mr-2" />
-                Copy
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownload}
-                className="border-gray-900 font-editorial-new"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowMetrics(!showMetrics)}
-                className={`border-gray-900 font-editorial-new ${showMetrics ? 'bg-gray-100' : ''}`}
-              >
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Analytics
-              </Button>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="border-gray-900 font-editorial-new">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={refreshAnalysis} disabled={refreshing}>
+                  <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                  {refreshing ? 'Refreshing...' : 'Refresh'}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleCopy}>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy Summary
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDownload}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowMetrics(!showMetrics)}>
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  {showMetrics ? 'Hide Analytics' : 'Show Analytics'}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast({ title: "Link copied", description: "Document link copied to clipboard" });
+                }}>
+                  <Share className="h-4 w-4 mr-2" />
+                  Share Document
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
         {/* Emergency Processing Warning */}
         {isEmergencyProcessing && (
-          <div className="border-b border-gray-200 px-6 py-4 bg-yellow-50">
+          <div className="border-b border-gray-100 px-4 sm:px-6 py-4 bg-yellow-50">
             <div className="flex items-start space-x-3">
-              <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
               <div className="text-sm">
-                <p className="font-editorial-new font-light text-yellow-800 mb-1">Emergency Processing Mode</p>
+                <p className="font-editorial-new font-medium text-yellow-800 mb-1">Emergency Processing Mode</p>
                 <p className="text-yellow-700 font-editorial-new">
                   Document processed in emergency mode. For enhanced analysis, try re-uploading.
                 </p>
@@ -148,7 +144,7 @@ export const SummaryContent = ({ analysisStatus, summary, originalName, analysis
         )}
 
         {/* Analysis Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <SummaryDisplay 
             summary={summary}
             isEmergencyProcessing={isEmergencyProcessing}
@@ -158,7 +154,8 @@ export const SummaryContent = ({ analysisStatus, summary, originalName, analysis
 
       {/* Document Analytics Section */}
       {showMetrics && (
-        <div className="bg-white border border-gray-900 rounded-lg p-6">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
+          <h3 className="text-lg font-editorial-new font-medium text-gray-900 mb-4">Document Analytics</h3>
           <DocumentMetricsCharts 
             metrics={metrics}
             fileName={originalName || 'document'}

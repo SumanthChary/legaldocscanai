@@ -1,18 +1,59 @@
 
 import { callGroqCloudAPI } from "../groqcloud-client.ts";
 
-export async function processWithGroqUltraFast(text: string, fileName: string): Promise<string> {
+export async function processWithGroqUltraFast(text: string, fileName: string, documentContext?: any): Promise<string> {
   console.log("⚡ GroqCloud MAXIMUM SPEED processing - API CALL STARTING");
   console.log(`🔑 GroqCloud API Key available: ${!!Deno.env.get('GROQCLOUD_API_KEY')}`);
   
   const maxChunkSize = 5000;
+  
+  // Create enhanced prompt based on document type
+  const getPromptForContext = (isChunk = false, chunkInfo = "") => {
+    if (documentContext?.type === 'legal') {
+      return `PROFESSIONAL LEGAL ANALYSIS${isChunk ? ` ${chunkInfo}` : ''} - Provide comprehensive legal insights for document "${fileName}":
+
+⚖️ ESSENTIAL LEGAL ANALYSIS:
+- Identify document type, parties, and legal framework
+- Extract key clauses, obligations, and rights
+- Highlight critical legal provisions and implications
+- Assess risks, liabilities, and compliance requirements
+- Provide actionable legal recommendations
+- Include clause-by-clause breakdown for important provisions
+
+${isChunk ? 'Focus on this section while being aware it\'s part of a larger legal document.' : 'Provide complete professional legal analysis.'}`;
+    } else if (documentContext?.type === 'business') {
+      return `PROFESSIONAL BUSINESS ANALYSIS${isChunk ? ` ${chunkInfo}` : ''} - Provide comprehensive business insights for document "${fileName}":
+
+📊 ESSENTIAL BUSINESS ANALYSIS:
+- Identify business objectives and strategic elements
+- Extract financial data and operational details
+- Highlight performance metrics and success factors
+- Assess business risks and opportunities
+- Provide actionable business recommendations
+- Include competitive and market analysis
+
+${isChunk ? 'Focus on this section while being aware it\'s part of a larger business document.' : 'Provide complete professional business analysis.'}`;
+    } else {
+      return `PROFESSIONAL DOCUMENT ANALYSIS${isChunk ? ` ${chunkInfo}` : ''} - Provide comprehensive analysis for document "${fileName}":
+
+🎯 ESSENTIAL ANALYSIS:
+- Extract all key information and insights
+- Provide detailed content breakdown
+- Highlight critical points and implications
+- Assess actionable recommendations
+- Include professional-grade analysis that saves time
+- Focus on value-adding insights
+
+${isChunk ? 'Focus on this section while being aware it\'s part of a larger document.' : 'Provide complete comprehensive analysis.'}`;
+    }
+  };
   
   if (text.length <= maxChunkSize) {
     try {
       console.log("🚀 Processing single chunk with GroqCloud...");
       const result = await callGroqCloudAPI(
         text,
-        `CRITICAL: Provide IMMEDIATE comprehensive analysis for document "${fileName}". Include key points, main content, insights, and actionable information:`,
+        getPromptForContext(),
         "llama-3.1-8b-instant"
       );
       console.log(`✅ GROQ API SUCCESS: Generated ${result.length} characters`);
@@ -42,7 +83,7 @@ export async function processWithGroqUltraFast(text: string, fileName: string): 
     try {
       const result = await callGroqCloudAPI(
         chunk,
-        `URGENT: Analyze section ${index + 1}/${chunks.length} of document "${fileName}" IMMEDIATELY. Extract key information:`,
+        getPromptForContext(true, `section ${index + 1}/${chunks.length}`),
         "llama-3.1-8b-instant"
       );
       console.log(`✅ GROQ CHUNK ${index + 1} SUCCESS`);
@@ -67,7 +108,7 @@ export async function processWithGroqUltraFast(text: string, fileName: string): 
     try {
       const finalResult = await callGroqCloudAPI(
         combined,
-        `CRITICAL: Create final comprehensive summary for document "${fileName}" from these sections:`,
+        `CRITICAL: Create final comprehensive ${documentContext?.type || 'document'} summary for "${fileName}" from these sections. Provide professional-grade analysis with detailed insights:`,
         "llama-3.1-8b-instant"
       );
       console.log(`✅ GROQ FINAL SUMMARY SUCCESS: ${finalResult.length} characters`);

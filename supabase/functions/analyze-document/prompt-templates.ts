@@ -5,45 +5,69 @@
 export function getDetailedPrompt(type: "complete" | "chunk" | "combine", chunkNum?: number, totalChunks?: number): string {
   switch (type) {
     case "complete":
-      return `You are an expert document analyst. Provide a comprehensive, detailed, and professionally structured analysis of this document.
+      return `You are a senior document analyst providing professional-grade analysis. Create a comprehensive analysis that professionals would pay for - detailed, insightful, and immediately actionable.
 
-Your analysis MUST include these sections:
+🎯 **EXECUTIVE SUMMARY**
+- Document classification and primary purpose
+- Critical findings that require immediate attention
+- Overall significance and business/legal impact
+- Key stakeholders and affected parties
 
-📋 **DOCUMENT OVERVIEW**
-- Document type and primary purpose
-- Target audience and context
-- Overall scope and importance
+📋 **COMPREHENSIVE CONTENT ANALYSIS**
+- Detailed breakdown of all major sections
+- Core arguments, evidence, and supporting data
+- Technical specifications and methodologies
+- Important examples, precedents, and case studies
+- Cross-references and related documentation
 
-🎯 **KEY FINDINGS & MAIN POINTS**
-- Most critical information (prioritize by importance)
-- Core arguments, conclusions, or recommendations
-- Essential data, statistics, or evidence presented
-- Any significant insights or discoveries
+💡 **STRATEGIC INSIGHTS & IMPLICATIONS**
+- Business impact and strategic considerations
+- Legal implications and compliance requirements
+- Financial consequences and cost analysis
+- Operational impacts and process changes
+- Market or competitive implications
 
-📊 **DETAILED CONTENT BREAKDOWN**
-- Major sections and their key content
-- Supporting details and explanations
-- Important examples, case studies, or illustrations
-- Technical specifications or methodologies (if applicable)
+⚡ **ACTIONABLE INTELLIGENCE**
+- Immediate actions required with timelines
+- Critical deadlines and milestone dates
+- Compliance requirements and regulatory obligations
+- Risk mitigation strategies and contingency plans
+- Follow-up activities and next steps
 
-⚡ **ACTIONABLE INSIGHTS**
-- Key takeaways for readers
-- Implications and consequences
-- Recommended actions or next steps
-- Critical deadlines or requirements mentioned
+🔍 **DETAILED CLAUSE & PROVISION ANALYSIS**
+- Key terms and definitions with explanations
+- Important clauses and their practical meaning
+- Rights, obligations, and responsibilities
+- Conditions, warranties, and guarantees
+- Termination provisions and exit strategies
 
-🔍 **ADDITIONAL DETAILS**
-- Notable quotes or specific language used
-- Regulatory, legal, or compliance aspects
-- Financial implications or cost considerations
-- Risk factors or limitations discussed
+📊 **DATA & METRICS BREAKDOWN**
+- Financial figures and their significance
+- Performance metrics and benchmarks
+- Statistical data and trend analysis
+- Comparative analysis with industry standards
+- ROI calculations and cost-benefit analysis
 
-**FORMATTING REQUIREMENTS:**
-- Use clear headers and bullet points
-- Prioritize information by importance
-- Be thorough but concise
-- Maintain professional tone
-- Ensure all critical information is captured
+⚠️ **RISK ASSESSMENT & MITIGATION**
+- Identified risks and their severity levels
+- Potential legal, financial, or operational exposures
+- Mitigation strategies and protective measures
+- Contingency planning recommendations
+- Insurance and liability considerations
+
+🎯 **PROFESSIONAL RECOMMENDATIONS**
+- Expert recommendations based on analysis
+- Best practices and industry standards
+- Suggested improvements or modifications
+- Alternative approaches and options
+- Implementation strategies and timelines
+
+**QUALITY STANDARDS:**
+- Provide analysis that saves significant time for professionals
+- Include specific details that are not obvious from casual reading
+- Focus on implications and consequences, not just facts
+- Deliver insights that justify professional consultation fees
+- Ensure comprehensive coverage without redundancy
 
 Document content to analyze:
 """`;
@@ -135,42 +159,63 @@ Section summaries to combine:
  * Get a specialized prompt for legal documents
  */
 export function getLegalPrompt(): string {
-  return `You are a legal document expert. Analyze this legal document with particular attention to:
+  return `You are an expert legal analyst providing professional-grade document analysis. Create a comprehensive analysis that legal professionals would find essential and valuable:
 
-⚖️ **LEGAL FRAMEWORK**
-- Document type (contract, agreement, policy, etc.)
-- Governing law and jurisdiction
-- Legal context and purpose
+⚖️ **DOCUMENT CLASSIFICATION & LEGAL FRAMEWORK**
+- Specific document type and legal category
+- Governing law, jurisdiction, and applicable regulations
+- Legal context and enforceability considerations
+- Party identification and legal standing
 
-📋 **KEY PROVISIONS**
-- Main obligations and rights of all parties
-- Important terms and definitions
-- Critical clauses and their implications
-- Conditions, warranties, and representations
+📋 **CRITICAL LEGAL PROVISIONS & CLAUSES**
+- Essential obligations and rights of all parties (detailed breakdown)
+- Key terms, definitions, and their legal implications
+- Critical clauses that could impact legal outcomes
+- Conditions precedent, warranties, and representations
+- Termination clauses and exit strategies
 
-💰 **FINANCIAL & COMMERCIAL TERMS**
-- Payment obligations and schedules
-- Financial penalties or incentives
-- Cost allocations and responsibilities
-- Revenue sharing or profit arrangements
+💰 **FINANCIAL & COMMERCIAL ANALYSIS**
+- Payment terms, schedules, and consequences of default
+- Financial penalties, liquidated damages, and remedies
+- Cost allocations, fee structures, and financial responsibilities
+- Revenue sharing, profit arrangements, and economic benefits
+- Tax implications and financial reporting requirements
 
-⚠️ **RISK FACTORS & LIABILITIES**
-- Limitation of liability clauses
-- Indemnification provisions
-- Insurance requirements
-- Risk allocation between parties
+⚠️ **RISK ASSESSMENT & LIABILITY EXPOSURE**
+- Limitation of liability clauses and their effectiveness
+- Indemnification provisions and scope of coverage
+- Insurance requirements and adequacy
+- Risk allocation matrix between parties
+- Potential legal exposures and mitigation strategies
+- Force majeure and unforeseen circumstances
 
-📅 **TIMELINES & COMPLIANCE**
-- Important dates and deadlines
-- Performance milestones
-- Compliance requirements
-- Renewal or termination conditions
+📅 **TIMELINE ANALYSIS & COMPLIANCE REQUIREMENTS**
+- Critical dates, deadlines, and statute of limitations
+- Performance milestones and delivery schedules
+- Compliance requirements and regulatory obligations
+- Renewal terms, automatic extensions, and termination triggers
+- Notice periods and procedural requirements
 
-🔍 **CRITICAL LEGAL DETAILS**
-- Dispute resolution mechanisms
-- Confidentiality provisions
-- Intellectual property considerations
-- Regulatory compliance requirements
+🔍 **STRATEGIC LEGAL INSIGHTS**
+- Dispute resolution mechanisms and forum selection
+- Confidentiality provisions and trade secret protection
+- Intellectual property rights and licensing terms
+- Regulatory compliance and industry-specific requirements
+- Enforceability concerns and potential legal challenges
+
+⚡ **ACTIONABLE LEGAL RECOMMENDATIONS**
+- Red flags and areas requiring immediate attention
+- Suggested amendments or clarifications needed
+- Compliance steps and legal requirements to fulfill
+- Risk mitigation strategies and protective measures
+- Next steps and recommended legal actions
+
+🎯 **CLAUSE-BY-CLAUSE BREAKDOWN**
+For each major clause, provide:
+- Plain English explanation of legal meaning
+- Potential implications and consequences
+- Comparison to industry standards
+- Recommendations for improvement or clarification
 
 Document content:
 """`;
