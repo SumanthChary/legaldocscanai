@@ -8,11 +8,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Camera, Upload, FileText, CheckCircle2, AlertCircle, Scan, Shield, ArrowLeft, FolderOpen } from "lucide-react";
 import { useFileUpload } from "@/components/document-analysis/upload/useFileUpload";
 import { GoogleDriveUpload } from "@/components/mobile/GoogleDriveUpload";
+import { DocumentScanner } from "@/components/document-analysis/upload/DocumentScanner";
 import { useNavigate } from "react-router-dom";
 
 export default function MobileScan() {
   const navigate = useNavigate();
   const [scanMode, setScanMode] = useState<"camera" | "upload" | null>(null);
+  const [showScanner, setShowScanner] = useState(false);
   
   const {
     file,
@@ -35,7 +37,15 @@ export default function MobileScan() {
     setScanMode(mode);
     if (mode === "upload") {
       fileInputRef.current?.click();
+    } else if (mode === "camera") {
+      setShowScanner(true);
     }
+  };
+
+  const handleScanComplete = (scannedFile: File) => {
+    setFile(scannedFile);
+    setShowScanner(false);
+    setScanMode(null);
   };
 
   return (
@@ -242,6 +252,13 @@ export default function MobileScan() {
           accept={ALLOWED_FILE_TYPES.join(',')}
           className="hidden"
         />
+        
+        {showScanner && (
+          <DocumentScanner
+            onScan={handleScanComplete}
+            onClose={() => setShowScanner(false)}
+          />
+        )}
       </div>
     </MobileLayout>
   );

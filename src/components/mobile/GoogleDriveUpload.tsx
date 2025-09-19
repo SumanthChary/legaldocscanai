@@ -35,25 +35,32 @@ export const GoogleDriveUpload = ({ onFileSelect }: GoogleDriveUploadProps) => {
       const mockFiles: GoogleDriveFile[] = [
         {
           id: "1",
-          name: "Contract_Agreement.pdf",
+          name: "Contract_Agreement_2024.pdf",
           mimeType: "application/pdf",
           size: "2.4 MB",
-          modifiedTime: "2024-01-15T10:30:00Z",
+          modifiedTime: new Date(Date.now() - 86400000).toISOString(), // Yesterday
         },
         {
           id: "2", 
-          name: "Legal_Document.docx",
+          name: "Legal_Document_Draft.docx",
           mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           size: "1.8 MB",
-          modifiedTime: "2024-01-14T15:45:00Z",
+          modifiedTime: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
         },
         {
           id: "3",
-          name: "Terms_of_Service.pdf", 
+          name: "Terms_And_Conditions.pdf", 
           mimeType: "application/pdf",
           size: "956 KB",
-          modifiedTime: "2024-01-13T09:20:00Z",
+          modifiedTime: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
         },
+        {
+          id: "4",
+          name: "Partnership_Agreement.jpg",
+          mimeType: "image/jpeg",
+          size: "3.2 MB",
+          modifiedTime: new Date(Date.now() - 604800000).toISOString(), // 1 week ago
+        }
       ];
       
       setFiles(mockFiles);
@@ -75,9 +82,13 @@ export const GoogleDriveUpload = ({ onFileSelect }: GoogleDriveUploadProps) => {
       
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Create a mock file object
-      const mockFileContent = new Blob(['Mock file content'], { type: driveFile.mimeType });
-      const file = new File([mockFileContent], driveFile.name, { type: driveFile.mimeType });
+      // Create a mock file object with better size simulation
+      const sizeInBytes = parseFloat(driveFile.size) * (driveFile.size.includes('MB') ? 1024 * 1024 : 1024);
+      const mockFileContent = new Uint8Array(Math.min(sizeInBytes, 10000)); // Mock smaller content for testing
+      const file = new File([mockFileContent], driveFile.name, { 
+        type: driveFile.mimeType,
+        lastModified: new Date(driveFile.modifiedTime).getTime()
+      });
       
       onFileSelect(file);
       toast.success(`Downloaded ${driveFile.name} from Google Drive`);
@@ -90,6 +101,13 @@ export const GoogleDriveUpload = ({ onFileSelect }: GoogleDriveUploadProps) => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return 'Today';
+    if (diffDays === 2) return 'Yesterday';
+    if (diffDays <= 7) return `${diffDays - 1} days ago`;
     return date.toLocaleDateString(undefined, { 
       year: 'numeric', 
       month: 'short', 
