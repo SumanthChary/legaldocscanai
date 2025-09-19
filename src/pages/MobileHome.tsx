@@ -7,11 +7,13 @@ import { Scan, FileText, BarChart3, Clock, TrendingUp, Shield, ArrowRight, Plus,
 import { useNavigate } from "react-router-dom";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 import { supabase } from "@/integrations/supabase/client";
+import { DocumentScanner } from "@/components/document-analysis/upload/DocumentScanner";
 
 export default function MobileHome() {
   const navigate = useNavigate();
   const { analyses, isRefreshing } = useAnalyses();
   const [user, setUser] = useState<any>(null);
+  const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
     getUser();
@@ -20,6 +22,12 @@ export default function MobileHome() {
   const getUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setUser(user);
+  };
+
+  const handleScanComplete = (file: File) => {
+    setShowScanner(false);
+    // Navigate to scan page with the scanned file (this would need additional implementation)
+    navigate("/scan");
   };
 
   const completedAnalyses = analyses.filter(a => a.status === 'completed');
@@ -99,7 +107,7 @@ export default function MobileHome() {
               </div>
             </div>
             <Button 
-              onClick={() => navigate("/scan")}
+              onClick={() => setShowScanner(true)}
               className="w-full bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm h-14 text-base font-semibold rounded-2xl transition-all duration-200"
               variant="outline"
             >
@@ -249,6 +257,13 @@ export default function MobileHome() {
           </div>
         </div>
       </div>
+      
+      {showScanner && (
+        <DocumentScanner
+          onScan={handleScanComplete}
+          onClose={() => setShowScanner(false)}
+        />
+      )}
     </MobileLayout>
   );
 }
