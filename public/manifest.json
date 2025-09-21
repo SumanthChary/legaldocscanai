@@ -1,4 +1,5 @@
 {
+  "id": "app.lovable.83f647f3cfa24f8c8777ba526dd5e49f",
   "name": "LegalDoc Scanner",
   "short_name": "LegalDoc",
   "description": "Professional legal document analysis and insights app",
@@ -7,6 +8,8 @@
   "background_color": "#ffffff",
   "theme_color": "#1a1a1a",
   "orientation": "portrait",
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/favicon.ico",
@@ -14,13 +17,44 @@
       "type": "image/x-icon"
     },
     {
-      "src": "/og-image.png",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Document scanning interface"
+    },
+    {
+      "src": "/screenshot-2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Analysis results view"
+    }
+  ],
   "categories": ["productivity", "business", "utilities"],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=app.lovable.83f647f3cfa24f8c8777ba526dd5e49f",
+      "id": "app.lovable.83f647f3cfa24f8c8777ba526dd5e49f"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Scan Document",
@@ -29,10 +63,48 @@
       "url": "/scan",
       "icons": [
         {
-          "src": "/favicon.ico",
-          "sizes": "96x96"
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "View History",
+      "short_name": "History",
+      "description": "View document history",
+      "url": "/history",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
         }
       ]
     }
-  ]
+  ],
+  "share_target": {
+    "action": "/scan",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "document",
+          "accept": ["image/*", "application/pdf"]
+        }
+      ]
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/scan",
+      "accept": {
+        "application/pdf": [".pdf"],
+        "image/jpeg": [".jpg", ".jpeg"],
+        "image/png": [".png"]
+      }
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
 }
