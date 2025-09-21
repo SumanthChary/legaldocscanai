@@ -1,15 +1,16 @@
 {
   "id": "app.lovable.83f647f3cfa24f8c8777ba526dd5e49f",
-  "name": "LegalDoc Scanner",
-  "short_name": "LegalDoc",
-  "description": "Professional legal document analysis and insights app",
+  "name": "Legal Doc Scanner AI",
+  "short_name": "Legal Doc Scanner AI",
+  "description": "Professional legal document analysis and AI-powered insights app for contracts, agreements, and legal documents",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#fefcf8",
   "theme_color": "#1a1a1a",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "lang": "en",
   "dir": "ltr",
+  "scope": "/",
   "icons": [
     {
       "src": "/favicon.ico",
