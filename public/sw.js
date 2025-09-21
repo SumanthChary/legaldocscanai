@@ -1,7 +1,6 @@
-const CACHE_NAME = 'legaldoc-scanner-v1';
+const CACHE_NAME = 'legaldoc-scanner-v2';
 const STATIC_CACHE = [
   '/',
-  '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
   '/favicon.ico'
@@ -67,6 +66,15 @@ self.addEventListener('fetch', (event) => {
           // Fallback to cache if network fails
           return caches.match(request);
         })
+    );
+    return;
+  }
+
+  // Always fetch the latest manifest (avoid SW cache)
+  if (url.pathname === '/manifest.json') {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' })
+        .catch(() => fetch(request))
     );
     return;
   }
