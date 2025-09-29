@@ -48,12 +48,62 @@
       "src": "/screenshot-2.png",
       "sizes": "1280x720",
       "type": "image/png",
+      "form_factor": "wide",
       "label": "AI analysis results screen"
+    },
+    {
+      "src": "/screenshot-narrow-1.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile scanning interface"
+    },
+    {
+      "src": "/screenshot-narrow-2.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile analysis results"
     }
   ],
   "categories": ["business", "productivity", "utilities"],
   "prefer_related_applications": false,
-  "display_override": ["standalone", "window-controls-overlay"],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=app.lovable.83f647f3cfa24f8c8777ba526dd5e49f",
+      "id": "app.lovable.83f647f3cfa24f8c8777ba526dd5e49f"
+    }
+  ],
+  "iarc_rating_id": "e58c174a-81d2-5c3c-32cc-34b8de4a52e9",
+  "scope_extensions": [
+    {"origin": "https://legaldocscanai.lovable.app"}
+  ],
+  "display_override": ["tabbed", "standalone", "window-controls-overlay"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "widgets": [
+    {
+      "name": "quick-scan",
+      "description": "Quick document scan widget",
+      "tag": "quick-scan",
+      "template": "quick-scan-template",
+      "ms_ac_template": "adaptive-card.json",
+      "data": "quick-scan-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "/screenshot-narrow-1.png",
+          "sizes": "720x1280",
+          "label": "Quick scan widget"
+        }
+      ]
+    }
+  ],
+  "note_taking": {
+    "new_note_url": "/scan?action=note"
+  },
   "shortcuts": [
     {
       "name": "Scan Document",

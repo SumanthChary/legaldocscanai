@@ -122,6 +122,27 @@ self.addEventListener('sync', (event) => {
   }
 });
 
+// Periodic background sync for data updates
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'content-sync') {
+    event.waitUntil(updateContentInBackground());
+  }
+});
+
+async function updateContentInBackground() {
+  console.log('[SW] Periodic sync: updating content');
+  try {
+    // Fetch latest document analysis data
+    const response = await fetch('/api/sync-data');
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.put('/api/sync-data', response);
+    }
+  } catch (error) {
+    console.log('[SW] Periodic sync failed:', error);
+  }
+}
+
 // Push notifications
 self.addEventListener('push', (event) => {
   if (event.data) {
