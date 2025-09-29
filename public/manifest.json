@@ -1,7 +1,7 @@
 {
   "id": "app.lovable.83f647f3cfa24f8c8777ba526dd5e49f",
   "name": "Legal Doc Scanner AI",
-  "short_name": "Legal Doc Scanner AI",
+  "short_name": "Legal Doc Scan",
   "description": "Professional legal document analysis and AI-powered insights app for contracts, agreements, and legal documents",
   "start_url": "/",
   "display": "standalone",
