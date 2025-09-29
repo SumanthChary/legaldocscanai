@@ -1,7 +1,7 @@
 {
   "id": "app.lovable.83f647f3cfa24f8c8777ba526dd5e49f",
   "name": "Legal Doc Scanner AI",
-  "short_name": "Legal Doc Scan",
+  "short_name": "LegalScan",
   "description": "Professional legal document analysis and AI-powered insights app for contracts, agreements, and legal documents",
   "start_url": "/",
   "display": "standalone",
@@ -27,7 +27,13 @@
       "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+  "src": "/icon-512.png",
+  "sizes": "512x512", 
+  "type": "image/png",
+  "purpose": "maskable"
     }
   ],
   "screenshots": [
@@ -41,20 +47,8 @@
     {
       "src": "/screenshot-2.png",
       "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Analysis results view"
     }
   ],
-  "categories": ["productivity", "business", "utilities"],
-  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
-  "prefer_related_applications": false,
-  "related_applications": [
-    {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=app.lovable.83f647f3cfa24f8c8777ba526dd5e49f",
-      "id": "app.lovable.83f647f3cfa24f8c8777ba526dd5e49f"
-    }
   ],
   "shortcuts": [
     {
