@@ -12,8 +12,8 @@ const corsHeaders = {
 /**
  * Enhanced GroqCloud API client for genius-level legal AI chat with document knowledge
  */
-async function callGroqCloudAPI(text: string, promptPrefix: string, model = "llama-3.3-70b-versatile"): Promise<string> {
-  console.log(`🤖 Elite Legal AI Chat with GroqCloud: ${model}, text length: ${text.length}`);
+async function callGroqCloudAPI(text: string, promptPrefix: string, model = "llama-3.3-70b-versatile", temperature = 0.3): Promise<string> {
+  console.log(`🤖 Elite Legal AI Chat with GroqCloud: ${model}, text length: ${text.length}, temp: ${temperature}`);
   
   if (!GROQCLOUD_API_KEY) {
     console.error("GROQCLOUD_API_KEY environment variable is not set");
@@ -101,7 +101,7 @@ You are a real professional - brilliant, approachable, and genuinely helpful. Th
             content: `${promptPrefix}\n\nUser Message:\n${text}\n\nRespond naturally and professionally. If it's a greeting or casual message, be personable and warm. If it's a legal question, provide genius-level analysis. Always be conversational and real, not robotic. No hash symbols, no asterisks, no markdown.`
           }
         ],
-        temperature: 0.1,
+        temperature: temperature,
         max_tokens: 8192,
         top_p: 0.9,
         stream: false
@@ -156,14 +156,22 @@ You are a real professional - brilliant, approachable, and genuinely helpful. Th
 
 function isGreeting(text: string): boolean {
   const t = (text || '').trim().toLowerCase();
+  if (!t) return false;
   const simple = ['hi', 'hello', 'hey', 'hola', 'yo', 'sup', 'hiya', 'howdy'];
   if (simple.includes(t)) return true;
-  const patterns = [
-    /^(hi|hello|hey|hiya|howdy|hola)[!.,\s]?$/,
-    /^good (morning|afternoon|evening|night)\b/,
-    /^(yo|sup)\b/,
-  ];
-  return patterns.some((re) => re.test(t));
+  const startsWith = /^(hi|hello|hey|hola|howdy|hiya)\b/i;
+  const timeOfDay = /^good\s+(morning|afternoon|evening|night)\b/i;
+  return startsWith.test(t) || timeOfDay.test(t) || t.length <= 12 && /(hi|hello|hey|hola)/.test(t);
+}
+
+function isSmallTalk(text: string): boolean {
+  const t = (text || '').trim().toLowerCase();
+  if (!t) return false;
+  const legalKeywords = ['contract','agreement','clause','law','legal','case','document','analysis','court','regulation','policy','gdpr','ccpa','privacy','nda','trademark','copyright','patent','ip','lease','merger','acquisition','employment'];
+  const hasLegal = legalKeywords.some(k => t.includes(k));
+  const smallTalkPatterns = /(how are (you|u)|what'?s up|how(’|')?s it going|nice to (meet|see) you|thanks|thank you|cool|great|awesome|ok(ay)?|yo|sup)/i;
+  const wordCount = t.split(/\s+/).filter(Boolean).length;
+  return !hasLegal && (wordCount <= 12 || smallTalkPatterns.test(t));
 }
 
 serve(async (req) => {
@@ -179,10 +187,13 @@ serve(async (req) => {
       throw new Error("Message and userId are required");
     }
 
-    // Greeting mode: friendly, no document context
-    if (isGreeting(message)) {
-      const greetingPrompt = `You are a brilliant senior legal counsel and trusted advisor. For simple greetings or small talk, be warm, personable, and natural. Do not reference documents or legal matters unless asked. Keep it brief, friendly, and professional. No markdown, no hash symbols or asterisks. End by asking how you can help.`;
-      const responseText = await callGroqCloudAPI(message, greetingPrompt, "llama-3.3-70b-versatile");
+    // Greeting or small talk mode: friendly, no document context
+    if (isGreeting(message) || isSmallTalk(message)) {
+      const mode = isGreeting(message) ? 'greeting' : 'smalltalk';
+      const prompt = mode === 'greeting'
+        ? `You are a brilliant senior legal counsel and trusted advisor. For simple greetings, be warm, personable, and natural. Do not reference documents or legal matters unless asked. Keep it brief, friendly, and professional. No markdown, no hash symbols or asterisks. End by asking how you can help.`
+        : `You are a brilliant senior legal counsel. When the user makes casual conversation (no legal keywords), respond like a real professional: friendly, concise, and human. Avoid legal analysis or document references unless the user asks. Invite them to describe their legal question or share a document when appropriate. No markdown, no hash symbols or asterisks.`;
+      const responseText = await callGroqCloudAPI(message, prompt, "llama-3.3-70b-versatile", 0.8);
       const cleanResponse = responseText
         .replace(/#{1,6}\s*/g, '')
         .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
