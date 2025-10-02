@@ -12,8 +12,8 @@ const corsHeaders = {
 /**
  * Enhanced GroqCloud API client for genius-level legal AI chat with document knowledge
  */
-async function callGroqCloudAPI(text: string, promptPrefix: string, model = "llama-3.3-70b-versatile", temperature = 0.3): Promise<string> {
-  console.log(`🤖 Elite Legal AI Chat with GroqCloud: ${model}, text length: ${text.length}, temp: ${temperature}`);
+async function callGroqCloudAPI(text: string, promptPrefix: string, model = "llama-3.3-70b-versatile", temperature = 0.3, topP = 0.9): Promise<string> {
+  console.log(`🤖 Elite Legal AI Chat with GroqCloud: ${model}, text length: ${text.length}, temp: ${temperature}, top_p: ${topP}`);
   
   if (!GROQCLOUD_API_KEY) {
     console.error("GROQCLOUD_API_KEY environment variable is not set");
@@ -103,7 +103,7 @@ You are a real professional - brilliant, approachable, and genuinely helpful. Th
         ],
         temperature: temperature,
         max_tokens: 8192,
-        top_p: 0.9,
+        top_p: topP,
         stream: false
       })
     });
@@ -174,6 +174,16 @@ function isSmallTalk(text: string): boolean {
   return !hasLegal && (wordCount <= 12 || smallTalkPatterns.test(t));
 }
 
+// Ensure greeting/small talk responses never mention documents or legal analysis unless explicitly asked
+function sanitizeFriendlyResponse(text: string): string {
+  if (!text) return '';
+  const banned = /(document|documents|upload|file|pdf|analysis|analyze|clause|contract|agreement|provision|term|exhibit)/i;
+  const sentences = text.split(/(?<=[.!?])\s+|\n+/);
+  const filtered = sentences.filter((s) => !banned.test(s)).join(' ').trim();
+  // Keep short and conversational (about ~80 tokens max)
+  return filtered.split(/\s+/).slice(0, 80).join(' ').trim();
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -191,17 +201,19 @@ serve(async (req) => {
     if (isGreeting(message) || isSmallTalk(message)) {
       const mode = isGreeting(message) ? 'greeting' : 'smalltalk';
       const prompt = mode === 'greeting'
-        ? `You are a brilliant senior legal counsel and trusted advisor. For simple greetings, be warm, personable, and natural. Do not reference documents or legal matters unless asked. Keep it brief, friendly, and professional. No markdown, no hash symbols or asterisks. End by asking how you can help.`
-        : `You are a brilliant senior legal counsel. When the user makes casual conversation (no legal keywords), respond like a real professional: friendly, concise, and human. Avoid legal analysis or document references unless the user asks. Invite them to describe their legal question or share a document when appropriate. No markdown, no hash symbols or asterisks.`;
-      const responseText = await callGroqCloudAPI(message, prompt, "llama-3.3-70b-versatile", 0.8);
-      const cleanResponse = responseText
-        .replace(/#{1,6}\s*/g, '')
-        .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
-        .replace(/\*\s/g, '- ')
-        .replace(/^\s*[\*\+]\s*/gm, '- ')
-        .replace(/(\*\*|__)/g, '')
-        .replace(/`([^`]+)`/g, '$1')
-        .trim();
+        ? `You are a brilliant senior legal counsel and trusted advisor. For simple greetings, be warm, personable, and natural. Never mention documents, uploads, files, or legal analysis unless the user explicitly asks. Vary your phrasing each time, mirror the user's tone, and keep it to 1-2 sentences. No markdown, no hash symbols or asterisks.`
+        : `You are a brilliant senior legal counsel. When the user makes casual conversation (no legal keywords), respond like a real professional: friendly, concise, and human. Do not bring up documents, uploads, files, or legal analysis unless the user explicitly asks. Vary your tone naturally and keep it to 1-2 sentences. No markdown, no hash symbols or asterisks.`;
+      const responseText = await callGroqCloudAPI(message, prompt, "llama-3.3-70b-versatile", 0.95, 0.95);
+      const cleanResponse = sanitizeFriendlyResponse(
+        responseText
+          .replace(/#{1,6}\s*/g, '')
+          .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
+          .replace(/\*\s/g, '- ')
+          .replace(/^\s*[\*\+]\s*/gm, '- ')
+          .replace(/(\*\*|__)/g, '')
+          .replace(/`([^`]+)`/g, '$1')
+          .trim()
+      );
 
       return new Response(JSON.stringify({ response: cleanResponse }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
