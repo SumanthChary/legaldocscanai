@@ -154,6 +154,18 @@ You are a real professional - brilliant, approachable, and genuinely helpful. Th
   }
 }
 
+function isGreeting(text: string): boolean {
+  const t = (text || '').trim().toLowerCase();
+  const simple = ['hi', 'hello', 'hey', 'hola', 'yo', 'sup', 'hiya', 'howdy'];
+  if (simple.includes(t)) return true;
+  const patterns = [
+    /^(hi|hello|hey|hiya|howdy|hola)[!.,\s]?$/,
+    /^good (morning|afternoon|evening|night)\b/,
+    /^(yo|sup)\b/,
+  ];
+  return patterns.some((re) => re.test(t));
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -165,6 +177,25 @@ serve(async (req) => {
 
     if (!message || !userId) {
       throw new Error("Message and userId are required");
+    }
+
+    // Greeting mode: friendly, no document context
+    if (isGreeting(message)) {
+      const greetingPrompt = `You are a brilliant senior legal counsel and trusted advisor. For simple greetings or small talk, be warm, personable, and natural. Do not reference documents or legal matters unless asked. Keep it brief, friendly, and professional. No markdown, no hash symbols or asterisks. End by asking how you can help.`;
+      const responseText = await callGroqCloudAPI(message, greetingPrompt, "llama-3.3-70b-versatile");
+      const cleanResponse = responseText
+        .replace(/#{1,6}\s*/g, '')
+        .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
+        .replace(/\*\s/g, '- ')
+        .replace(/^\s*[\*\+]\s*/gm, '- ')
+        .replace(/(\*\*|__)/g, '')
+        .replace(/`([^`]+)`/g, '$1')
+        .trim();
+
+      return new Response(JSON.stringify({ response: cleanResponse }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      });
     }
 
     // Initialize Supabase client to get user's documents
