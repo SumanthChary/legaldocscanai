@@ -50,6 +50,21 @@ const ChatPage = () => {
     loadUser();
   }, []);
 
+  const startNewChat = () => {
+    setMessages([
+      {
+        id: "welcome",
+        content: "Hello! I'm your AI legal assistant. How can I assist you today?",
+        sender: "ai",
+        timestamp: new Date(),
+      },
+    ]);
+    toast({
+      title: "New chat started",
+      description: "Your previous chat has been saved to history.",
+    });
+  };
+
   const handleSend = async () => {
     if (!input.trim() && !file) return;
 
@@ -113,6 +128,17 @@ const ChatPage = () => {
       
       setMessages((prev) => [...prev, aiResponse]);
 
+      // Save to chat history
+      try {
+        await (supabase as any).from('chat_history').insert({
+          user_id: user.id,
+          message_text: currentInput || `I just uploaded a file: ${file?.name}. Please analyze it and tell me about it.`,
+          response_text: chatResult.response
+        });
+      } catch (historyError) {
+        console.log('Chat history save failed:', historyError);
+      }
+
     } catch (error) {
       console.error("Chat error:", error);
       
@@ -172,8 +198,16 @@ const ChatPage = () => {
               <TabsContent value="ai-chat" className="mt-6">
                 <div className="h-[600px] bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/10 rounded-lg border">
                   <div className="flex flex-col h-full">
-                    <div className="flex-shrink-0 px-6 pt-6">
+                    <div className="flex-shrink-0 px-6 pt-6 flex items-center justify-between">
                       <ChatHeader />
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={startNewChat}
+                        className="ml-4"
+                      >
+                        New Chat
+                      </Button>
                     </div>
                     
                     <div className="flex-1 flex flex-col min-h-0 px-6">

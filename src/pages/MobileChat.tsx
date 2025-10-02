@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, MessageCircle, Bot, User, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: string;
@@ -25,6 +27,7 @@ export default function MobileChat() {
   ]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
@@ -37,20 +40,68 @@ export default function MobileChat() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const currentInput = inputText;
     setInputText("");
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("Please sign in to use the AI chat");
+      }
+
+      const { data: chatResult, error: chatError } = await supabase.functions.invoke('ai-chat', {
+        body: {
+          message: currentInput,
+          userId: user.id
+        }
+      });
+
+      if (chatError) {
+        throw new Error(`Chat failed: ${chatError.message}`);
+      }
+
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: "I understand your question about legal documents. Based on the context you've provided, I can offer the following insights... [This is a demo response. In a real implementation, this would connect to a legal AI service.]",
+        text: chatResult.response,
         sender: "ai",
         timestamp: new Date(),
       };
+      
       setMessages((prev) => [...prev, aiResponse]);
+
+      // Save to chat history
+      try {
+        await (supabase as any).from('chat_history').insert({
+          user_id: user.id,
+          message_text: currentInput,
+          response_text: chatResult.response
+        });
+      } catch (historyError) {
+        console.log('Chat history save failed:', historyError);
+      }
+
+    } catch (error: any) {
+      console.error("Chat error:", error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: `I apologize, but I encountered an error: ${error.message}. Please try again.`,
+        sender: "ai",
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, errorMessage]);
+      
+      toast({
+        variant: "destructive",
+        title: "Chat Error",
+        description: error.message,
+      });
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const formatTime = (date: Date) => {
