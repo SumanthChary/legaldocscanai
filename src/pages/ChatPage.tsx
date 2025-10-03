@@ -8,6 +8,8 @@ import { TeamChat } from "@/components/chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ChatHistorySidebar } from "@/components/chat/ChatHistorySidebar";
+import { PanelLeftClose, PanelLeft } from "lucide-react";
 
 type Message = {
   id: string;
@@ -32,6 +34,7 @@ const ChatPage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("ai-chat");
+  const [showHistory, setShowHistory] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -59,10 +62,26 @@ const ChatPage = () => {
         timestamp: new Date(),
       },
     ]);
+    setFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
     toast({
       title: "New chat started",
       description: "Your previous chat has been saved to history.",
     });
+  };
+
+  const handleLoadChat = (loadedMessages: Message[]) => {
+    setMessages([
+      {
+        id: "welcome",
+        content: "Hello! I'm your AI legal assistant. How can I assist you today?",
+        sender: "ai",
+        timestamp: new Date(),
+      },
+      ...loadedMessages,
+    ]);
   };
 
   const handleSend = async () => {
@@ -196,33 +215,54 @@ const ChatPage = () => {
               </TabsList>
               
               <TabsContent value="ai-chat" className="mt-6">
-                <div className="h-[600px] bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/10 rounded-lg border">
-                  <div className="flex flex-col h-full">
-                    <div className="flex-shrink-0 px-6 pt-6 flex items-center justify-between">
-                      <ChatHeader />
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={startNewChat}
-                        className="ml-4"
-                      >
-                        New Chat
-                      </Button>
-                    </div>
+                <div className="h-[600px] bg-gradient-to-br from-gray-50 via-blue-50/20 to-purple-50/10 rounded-lg border overflow-hidden">
+                  <div className="flex h-full">
+                    {/* Chat History Sidebar */}
+                    {showHistory && (
+                      <div className="w-80 flex-shrink-0">
+                        <ChatHistorySidebar 
+                          onLoadChat={handleLoadChat}
+                          currentUserId={currentUser?.id}
+                        />
+                      </div>
+                    )}
                     
-                    <div className="flex-1 flex flex-col min-h-0 px-6">
-                      <MessageList messages={messages} isLoading={isLoading} />
+                    {/* Main Chat Area */}
+                    <div className="flex-1 flex flex-col min-w-0">
+                      <div className="flex-shrink-0 px-6 pt-6 flex items-center justify-between border-b pb-4">
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => setShowHistory(!showHistory)}
+                          >
+                            {showHistory ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeft className="h-5 w-5" />}
+                          </Button>
+                          <ChatHeader />
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={startNewChat}
+                        >
+                          New Chat
+                        </Button>
+                      </div>
+                      
+                      <div className="flex-1 flex flex-col min-h-0 px-6">
+                        <MessageList messages={messages} isLoading={isLoading} />
+                      </div>
+                      
+                      <ModernChatInput 
+                        input={input}
+                        setInput={setInput}
+                        onSend={handleSend}
+                        isLoading={isLoading}
+                        file={file}
+                        onFileChange={handleFileChange}
+                        onFileRemove={removeFile}
+                      />
                     </div>
-                    
-                    <ModernChatInput 
-                      input={input}
-                      setInput={setInput}
-                      onSend={handleSend}
-                      isLoading={isLoading}
-                      file={file}
-                      onFileChange={handleFileChange}
-                      onFileRemove={removeFile}
-                    />
                   </div>
                 </div>
               </TabsContent>
