@@ -3,7 +3,7 @@
 ## What is Capacitor?
 Capacitor is a cross-platform native runtime that makes it easy to build web apps that run natively on iOS, Android, and Progressive Web Apps with full access to native device features.
 
-## Step-by-Step Setup for Your Legal Doc Scan AI App
+## Step-by-Step Setup for Your LegalDeep AI App
 
 ### 1. Install Capacitor Dependencies
 ```bash
@@ -15,8 +15,8 @@ npm install @capacitor/core @capacitor/cli @capacitor/ios @capacitor/android
 npx cap init
 ```
 When prompted, use these values:
-- **App ID**: `app.lovable.legaldocscanai` 
-- **App Name**: `Legal Doc Scan AI`
+- **App ID**: `app.lovable.83f647f3cfa24f8c8777ba526dd5e49f` 
+- **App Name**: `LegalDeep AI`
 
 ### 3. Configure Capacitor
 The setup will create a `capacitor.config.ts` file. Update it with:
@@ -24,8 +24,8 @@ The setup will create a `capacitor.config.ts` file. Update it with:
 import { CapacitorConfig } from '@capacitor/core';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.legaldocscanai',
-  appName: 'Legal Doc Scan AI',
+  appId: 'app.lovable.83f647f3cfa24f8c8777ba526dd5e49f',
+  appName: 'LegalDeep AI',
   webDir: 'dist',
   server: {
     androidScheme: 'https'
@@ -109,4 +109,4 @@ npx cap open android
 5. Set up app analytics and crash reporting
 6. Implement native features like push notifications
 
-Your Legal Doc Scan AI will become a real mobile app that users can download from app stores!
+Your LegalDeep AI app will become a real mobile experience that users can download from app stores!

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'legaldoc-scanner-v3';
+const CACHE_NAME = 'legaldeep-ai-v1';
 const STATIC_CACHE = [
   '/',
   '/icon-192.png',

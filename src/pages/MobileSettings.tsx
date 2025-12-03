@@ -330,7 +330,7 @@ export default function MobileSettings() {
 
         {/* App Version */}
         <div className="text-center text-sm text-muted-foreground pb-6 space-y-1">
-          <p>LegalDoc Scanner v2.0</p>
+          <p>LegalDeep AI v2.0</p>
           <p>Professional legal document analysis</p>
         </div>
       </div>

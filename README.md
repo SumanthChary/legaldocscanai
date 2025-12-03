@@ -1,10 +1,10 @@
-# LegalDocsCan AI
+# LegalDeep AI
 
 > AI-native legal intelligence workspace for scanning, summarizing, and collaborating on complex documents.
 
 ## Overview
 
-LegalDocsCan AI is a modern SaaS experience that fuses legal expertise with automation. The product was conceived, assembled, and refined with a no-code + AI toolkit (Lovable, design copilots, and prompt-driven workflows), then polished manually inside this repo. The result is a production-ready React/Vite application with enterprise-grade UI patterns, Supabase integrations, and mobile-friendly layouts aimed at legal teams that need accurate document insight fast.
+LegalDeep AI is a modern SaaS experience that fuses legal expertise with automation. The product was conceived, assembled, and refined with a no-code + AI toolkit (Lovable, design copilots, and prompt-driven workflows), then polished manually inside this repo. The result is a production-ready React/Vite application with enterprise-grade UI patterns, Supabase integrations, and mobile-friendly layouts aimed at legal teams that need accurate document insight fast.
 
 ## Key Capabilities
 
