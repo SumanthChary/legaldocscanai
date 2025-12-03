@@ -1,10 +1,18 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Filter, FileText } from "lucide-react";
+import {
+  Search,
+  Filter,
+  FileWarning,
+  Clock,
+  ArrowUpRight,
+  CheckCircle2,
+  AlertTriangle,
+} from "lucide-react";
 import { MobileLayout } from "@/components/mobile/MobileLayout";
+import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 const filters = [
   { key: "all", label: "All" },
@@ -37,6 +45,59 @@ const formatDateLabel = (dateString: string) => {
   return created.toLocaleDateString();
 };
 
+const formatExactDate = (dateString: string) => {
+  const created = new Date(dateString);
+  return created.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+};
+
+const formatTime = (dateString: string) => {
+  const created = new Date(dateString);
+  return created.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+};
+
+const resolveStatusKey = (analysis: { status?: string; analysis_status?: string }) =>
+  (analysis.status || analysis.analysis_status || "pending").toString().toLowerCase();
+
+const statusThemes: Record<
+  string,
+  {
+    label: string;
+    badge: string;
+    text: string;
+    accent: string;
+    Icon: typeof Clock;
+  }
+> = {
+  completed: {
+    label: "Completed",
+    badge: "bg-emerald-50 text-emerald-600",
+    text: "text-emerald-600",
+    accent: "text-emerald-500",
+    Icon: CheckCircle2,
+  },
+  processing: {
+    label: "Processing",
+    badge: "bg-amber-50 text-amber-600",
+    text: "text-amber-600",
+    accent: "text-amber-500",
+    Icon: Clock,
+  },
+  pending: {
+    label: "Pending",
+    badge: "bg-slate-100 text-slate-500",
+    text: "text-slate-500",
+    accent: "text-slate-400",
+    Icon: Clock,
+  },
+  failed: {
+    label: "Action Needed",
+    badge: "bg-red-50 text-red-600",
+    text: "text-red-600",
+    accent: "text-red-500",
+    Icon: AlertTriangle,
+  },
+};
+
 export default function MobileHistory() {
   const navigate = useNavigate();
   const { analyses, isRefreshing } = useAnalyses();
@@ -62,106 +123,187 @@ export default function MobileHistory() {
       });
   }, [analyses, query, activeFilter]);
 
+  const highRiskCount = filtered.reduce((total, analysis, index) => {
+    return deriveRiskMeta(analysis.id, index).level === "high" ? total + 1 : total;
+  }, 0);
+
+  const headerRight = (
+    <div className="flex items-center gap-2">
+      <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-600 shadow-sm">
+        <Search size={18} />
+      </button>
+      <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-600 shadow-sm">
+        <Filter size={18} />
+      </button>
+    </div>
+  );
+
   return (
     <MobileLayout>
-      <div className="mx-auto max-w-[480px] h-screen flex flex-col bg-background">
-        <header className="flex h-20 items-center justify-between px-4">
-          <div className="w-12" />
-          <h1 className="font-display italic text-2xl">Scan history</h1>
-          <div className="flex items-center gap-2">
-            <button className="w-10 h-10 rounded-full flex items-center justify-center text-muted-foreground">
-              <Search />
-            </button>
-            <button className="w-10 h-10 rounded-full flex items-center justify-center text-muted-foreground">
-              <Filter />
-            </button>
-          </div>
-        </header>
+      <div className="mx-auto flex min-h-screen max-w-sm flex-col bg-slate-50">
+        <MobileHeader title="Scan History" rightSlot={headerRight} />
 
-        <div className="flex gap-2 px-4 overflow-x-auto scrollbar-hide pb-2">
-          {filters.map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setActiveFilter(key)}
-              className={`flex items-center justify-center px-4 h-9 rounded-full text-sm whitespace-nowrap transition ${
-                key === activeFilter
-                  ? "bg-primary/20 text-primary font-semibold"
-                  : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <main className="flex-1 overflow-y-auto px-4 pb-28">
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            <Card className="p-4 text-center rounded-xl">
-              <div className="text-2xl font-bold text-primary">{analyses.length}</div>
-              <p className="text-sm text-muted-foreground">Total scans</p>
-            </Card>
-            <Card className="p-4 text-center rounded-xl">
-              <div className="text-2xl font-bold text-emerald-600">
-                {analyses.filter((analysis) => (analysis.status || analysis.analysis_status) === "completed").length}
+        <main className="flex-1 space-y-5 overflow-y-auto px-4 pb-32 pt-4">
+          <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Weekly review</p>
+            <div className="mt-4 flex items-end justify-between">
+              <div>
+                <p className="text-4xl font-semibold text-slate-900">{analyses.length}</p>
+                <p className="text-sm text-slate-500">Total scans logged</p>
               </div>
-              <p className="text-sm text-muted-foreground">Completed</p>
+              <div className="rounded-2xl bg-slate-900/5 px-3 py-2 text-xs font-medium text-slate-600">
+                {analyses.slice(0, 3).map((analysis, index) => deriveRiskMeta(analysis.id, index).label).join(" · ") || "--"}
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between rounded-2xl bg-slate-950/5 px-4 py-3 text-xs text-slate-600">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400">High risk alerts</p>
+                <p className="text-lg font-semibold text-slate-900">{highRiskCount}</p>
+              </div>
+              <button
+                onClick={() => navigate("/scan")}
+                className="flex items-center gap-1 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white"
+              >
+                Start new scan
+                <ArrowUpRight size={14} />
+              </button>
+            </div>
+          </section>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Completed</p>
+              <p className="mt-1 text-2xl font-semibold text-emerald-600">
+                {analyses.filter((analysis) => resolveStatusKey(analysis) === "completed").length}
+              </p>
+              <p className="text-xs text-slate-500">Reports delivered</p>
+            </Card>
+            <Card className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">In review</p>
+              <p className="mt-1 text-2xl font-semibold text-amber-600">
+                {analyses.filter((analysis) => resolveStatusKey(analysis) === "processing").length}
+              </p>
+              <p className="text-xs text-slate-500">Awaiting analysis</p>
             </Card>
           </div>
 
-          <div className="flex items-center bg-card rounded-2xl px-4 py-3 gap-2 mb-4">
-            <Search className="text-muted-foreground w-4 h-4" />
+          <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-2">
+            {filters.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setActiveFilter(key)}
+                className={`flex h-9 items-center rounded-full border px-4 text-sm font-medium transition ${
+                  key === activeFilter
+                    ? "border-slate-900 bg-slate-900 text-white"
+                    : "border-slate-200 bg-white text-slate-500"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <Search className="h-4 w-4 text-slate-400" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search documents..."
-              className="flex-1 bg-transparent text-sm focus:outline-none"
+              placeholder="Search agreements, parties, dates..."
+              className="flex-1 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
             />
+            {query && (
+              <button onClick={() => setQuery("")} className="text-xs font-medium text-slate-500">
+                Clear
+              </button>
+            )}
           </div>
 
-          <div className="space-y-4">
+          <section className="space-y-4">
             {isRefreshing ? (
               [1, 2, 3].map((skeleton) => (
-                <Card key={skeleton} className="h-[140px] p-4 rounded-xl animate-pulse" />
+                <Card key={skeleton} className="h-[150px] animate-pulse rounded-3xl border border-slate-100 bg-white" />
               ))
             ) : filtered.length === 0 ? (
-              <Card className="p-8 text-center rounded-xl">
-                <FileText className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground mb-4">No scans match your filters.</p>
-                <Button onClick={() => navigate("/scan")} size="sm">Start scanning</Button>
+              <Card className="rounded-3xl border border-dashed border-slate-200 bg-white/80 p-8 text-center">
+                <FileWarning className="mx-auto mb-3 h-10 w-10 text-slate-300" />
+                <p className="text-base font-semibold text-slate-700">No scans match these filters</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Try adjusting your filters or start a new scan to populate this view.
+                </p>
+                <button
+                  onClick={() => navigate("/scan")}
+                  className="mt-4 rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white"
+                >
+                  Launch scanner
+                </button>
               </Card>
             ) : (
               filtered.map((analysis, index) => {
                 const risk = deriveRiskMeta(analysis.id, index);
+                const statusKey = resolveStatusKey(analysis);
+                const statusTheme = statusThemes[statusKey] || statusThemes.pending;
+                const { Icon } = statusTheme;
+                const shortId = (analysis.id || "").slice(0, 6) || "—";
+
                 return (
-                  <Card key={analysis.id} className="flex gap-4 p-3 rounded-2xl">
-                    <div className="w-[96px] h-[120px] rounded-xl bg-gradient-to-b from-primary/20 to-primary/5" />
-                    <div className="flex flex-1 flex-col justify-between py-1">
+                  <Card key={analysis.id} className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+                    <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-base font-bold truncate">
+                        <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                          {formatDateLabel(analysis.created_at)}
+                        </p>
+                        <p className="mt-1 text-base font-semibold text-slate-900">
                           {analysis.file_name || "Untitled contract"}
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          Scanned: {formatDateLabel(analysis.created_at)}
-                        </p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <div className={`px-3 h-6 rounded-full text-xs font-bold ${risk.badgeBg} ${risk.text}`}>
-                            {risk.label}
-                          </div>
+                      </div>
+                      <span className="text-sm text-slate-400">{formatExactDate(analysis.created_at)}</span>
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2">
+                      <div className="flex items-center gap-3">
+                        <div className={`rounded-full px-3 py-1 text-xs font-semibold ${risk.badgeBg} ${risk.text}`}>
+                          {risk.label}
+                        </div>
+                        <div className={`flex items-center gap-2 text-xs font-medium ${statusTheme.text}`}>
+                          <Icon size={14} />
+                          {statusTheme.label}
                         </div>
                       </div>
+                      <span className="text-xs text-slate-400">{formatTime(analysis.created_at)}</span>
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between">
                       <button
                         onClick={() => navigate(`/document-summary/${analysis.id}`)}
-                        className="flex items-center gap-1 text-primary text-sm font-semibold"
+                        className="flex items-center gap-1 text-sm font-semibold text-slate-900"
                       >
-                        View report
-                        <span className="text-xs">→</span>
+                        Open report
+                        <ArrowUpRight size={14} />
                       </button>
+                      <div className="text-xs text-slate-400">ID · {shortId}</div>
                     </div>
                   </Card>
                 );
               })
             )}
-          </div>
+          </section>
+
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Insights</p>
+            <div className="mt-4 space-y-3 text-sm text-slate-600">
+              <div className="flex items-start gap-3">
+                <div className="mt-1 h-2 w-2 rounded-full bg-emerald-500" />
+                <p>
+                  {analyses.filter((analysis) => resolveStatusKey(analysis) === "completed").length} reports cleared review in the
+                  last 7 days.
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="mt-1 h-2 w-2 rounded-full bg-amber-500" />
+                <p>Keep an eye on flagged terms from your latest scans to stay ahead of renewal risk.</p>
+              </div>
+            </div>
+          </section>
         </main>
       </div>
     </MobileLayout>
