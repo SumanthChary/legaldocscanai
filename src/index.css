@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Instrument+Serif:ital,wght@0,400;0,600;1,400&display=swap');
 
 @font-face {
   font-family: 'Editorial New';
@@ -73,19 +74,19 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 220 100% 50%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 173 80% 40%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --ring: 173 80% 40%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -99,6 +100,10 @@
     --glow-purple: 0 0 40px rgba(147, 51, 234, 0.4);
     --glow-emerald: 0 0 40px rgba(16, 185, 129, 0.4);
     --glow-orange: 0 0 40px rgba(249, 115, 22, 0.4);
+    --teal: 173 80% 40%;
+    --teal-foreground: 0 0% 100%;
+    --emerald: 160 84% 39%;
+    --emerald-foreground: 0 0% 100%;
     
   /* Mobile-first enhancements */
   --mobile-touch-target: 44px;
@@ -106,11 +111,11 @@
   --mobile-border-radius: 12px;
   
   /* App-specific design tokens */
-  --app-primary: 220 100% 50%;
-  --app-primary-glow: 220 100% 60%;
-  --app-secondary: 240 4.8% 95.9%;
-  --app-success: 142 76% 36%;
-  --app-warning: 38 92% 50%;
+  --app-primary: 173 80% 40%;
+  --app-primary-glow: 160 84% 45%;
+  --app-secondary: 160 84% 39%;
+  --app-success: 160 84% 39%;
+  --app-warning: 27 87% 67%;
   --app-error: 0 84% 60%;
   
   /* Mobile animations */
@@ -125,19 +130,19 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 220 100% 60%;
+    --primary: 173 65% 52%;
     --primary-foreground: 240 5.9% 10%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+    --accent: 160 44% 30%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --ring: 173 80% 40%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -149,11 +154,11 @@
 @layer base {
   * {
     @apply border-border;
-    font-family: "Aeonik", system-ui, -apple-system, sans-serif !important;
+    font-family: "Host Grotesk", "Aeonik", system-ui, -apple-system, sans-serif !important;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Aeonik", system-ui, -apple-system, sans-serif !important;
+    font-family: "Host Grotesk", "Aeonik", system-ui, -apple-system, sans-serif !important;
     /* Mobile optimizations */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -170,12 +175,12 @@
   
   /* Purple text selection styling like Perplexity */
   ::selection {
-    background-color: rgba(59, 130, 246, 0.2);
-    color: rgb(59, 130, 246);
+    background-color: rgba(16, 185, 129, 0.2);
+    color: rgb(16, 185, 129);
   }
   ::-moz-selection {
-    background-color: rgba(59, 130, 246, 0.2);
-    color: rgb(59, 130, 246);
+    background-color: rgba(16, 185, 129, 0.2);
+    color: rgb(16, 185, 129);
   }
 }
 
@@ -269,6 +274,12 @@
   
   button:hover {
     color: hsl(var(--primary)) !important;
+  }
+
+  /* Serif accent typography to mirror LegalDeep hero treatments */
+  .serif-highlight {
+    font-family: "Instrument Serif", "Editorial New", serif !important;
+    font-style: italic;
   }
   
   /* Enhanced mobile navigation */
