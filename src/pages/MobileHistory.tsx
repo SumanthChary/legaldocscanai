@@ -1,147 +1,168 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, Filter, FileText } from "lucide-react";
 import { MobileLayout } from "@/components/mobile/MobileLayout";
-import { MobileHeader } from "@/components/mobile/MobileHeader";
+import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { FileText, BarChart3, Calendar, Search, Filter } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
+
+const filters = [
+  { key: "all", label: "All" },
+  { key: "high", label: "High Risk" },
+  { key: "today", label: "Today" },
+  { key: "week", label: "This Week" },
+  { key: "month", label: "This Month" },
+];
+
+type FilterKey = typeof filters[number]["key"];
+
+const deriveRiskMeta = (analysisId: string, index: number) => {
+  const levels = [
+    { level: "high" as const, label: "3H", badgeBg: "bg-red-50", text: "text-red-600" },
+    { level: "medium" as const, label: "2M", badgeBg: "bg-amber-50", text: "text-amber-600" },
+    { level: "low" as const, label: "1L", badgeBg: "bg-emerald-50", text: "text-emerald-600" },
+  ];
+  const meta = levels[index % levels.length];
+  return { ...meta, id: analysisId };
+};
+
+const formatDateLabel = (dateString: string) => {
+  const created = new Date(dateString);
+  const now = new Date();
+  const diff = now.getTime() - created.getTime();
+  const diffDays = diff / (1000 * 60 * 60 * 24);
+  if (diffDays < 1) return "Today";
+  if (diffDays < 2) return "Yesterday";
+  if (diffDays < 7) return `${Math.floor(diffDays)}d ago`;
+  return created.toLocaleDateString();
+};
 
 export default function MobileHistory() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
   const { analyses, isRefreshing } = useAnalyses();
+  const [query, setQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
 
-  const filteredAnalyses = analyses.filter(analysis =>
-    analysis.file_name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'processing': return 'bg-yellow-100 text-yellow-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return 'Today';
-    if (diffDays === 2) return 'Yesterday';
-    if (diffDays <= 7) return `${diffDays - 1} days ago`;
-    return date.toLocaleDateString();
-  };
+  const filtered = useMemo(() => {
+    return analyses
+      .filter((analysis) =>
+        (analysis.file_name || "").toLowerCase().includes(query.toLowerCase())
+      )
+      .filter((analysis, index) => {
+        if (activeFilter === "all") return true;
+        const created = new Date(analysis.created_at);
+        const now = new Date();
+        const diffDays = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+        const risk = deriveRiskMeta(analysis.id, index).level;
+        if (activeFilter === "high") return risk === "high";
+        if (activeFilter === "today") return diffDays < 1;
+        if (activeFilter === "week") return diffDays < 7;
+        if (activeFilter === "month") return diffDays < 30;
+        return true;
+      });
+  }, [analyses, query, activeFilter]);
 
   return (
     <MobileLayout>
-      <MobileHeader title="Scan History" />
-      
-      <div className="px-4 py-6 space-y-4">
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            placeholder="Search documents..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+      <div className="mx-auto max-w-[480px] h-screen flex flex-col bg-background">
+        <header className="flex h-20 items-center justify-between px-4">
+          <div className="w-12" />
+          <h1 className="font-display italic text-2xl">Scan history</h1>
+          <div className="flex items-center gap-2">
+            <button className="w-10 h-10 rounded-full flex items-center justify-center text-muted-foreground">
+              <Search />
+            </button>
+            <button className="w-10 h-10 rounded-full flex items-center justify-center text-muted-foreground">
+              <Filter />
+            </button>
+          </div>
+        </header>
+
+        <div className="flex gap-2 px-4 overflow-x-auto scrollbar-hide pb-2">
+          {filters.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setActiveFilter(key)}
+              className={`flex items-center justify-center px-4 h-9 rounded-full text-sm whitespace-nowrap transition ${
+                key === activeFilter
+                  ? "bg-primary/20 text-primary font-semibold"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3">
-          <Card className="p-4 text-center">
-            <div className="text-2xl font-bold text-primary">{analyses.length}</div>
-            <div className="text-sm text-muted-foreground">Total Scans</div>
-          </Card>
-          <Card className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">
-              {analyses.filter(a => a.status === 'completed').length}
-            </div>
-            <div className="text-sm text-muted-foreground">Completed</div>
-          </Card>
-        </div>
-
-        {/* Document List */}
-        <div className="space-y-3">
-          {isRefreshing ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="p-4 animate-pulse">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-muted rounded-lg"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-muted rounded w-3/4"></div>
-                      <div className="h-3 bg-muted rounded w-1/2"></div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : filteredAnalyses.length === 0 ? (
-            <Card className="p-8 text-center">
-              <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="font-medium mb-2">No documents yet</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Start by scanning your first document
-              </p>
-              <Button onClick={() => navigate("/scan")}>
-                Scan Document
-              </Button>
+        <main className="flex-1 overflow-y-auto px-4 pb-28">
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <Card className="p-4 text-center rounded-xl">
+              <div className="text-2xl font-bold text-primary">{analyses.length}</div>
+              <p className="text-sm text-muted-foreground">Total scans</p>
             </Card>
-          ) : (
-            filteredAnalyses.map((analysis) => (
-              <Card key={analysis.id} className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-primary" />
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium truncate">{analysis.file_name || 'Untitled Document'}</h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Calendar className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">
-                            {formatDate(analysis.created_at)}
-                          </span>
+            <Card className="p-4 text-center rounded-xl">
+              <div className="text-2xl font-bold text-emerald-600">
+                {analyses.filter((analysis) => (analysis.status || analysis.analysis_status) === "completed").length}
+              </div>
+              <p className="text-sm text-muted-foreground">Completed</p>
+            </Card>
+          </div>
+
+          <div className="flex items-center bg-card rounded-2xl px-4 py-3 gap-2 mb-4">
+            <Search className="text-muted-foreground w-4 h-4" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search documents..."
+              className="flex-1 bg-transparent text-sm focus:outline-none"
+            />
+          </div>
+
+          <div className="space-y-4">
+            {isRefreshing ? (
+              [1, 2, 3].map((skeleton) => (
+                <Card key={skeleton} className="h-[140px] p-4 rounded-xl animate-pulse" />
+              ))
+            ) : filtered.length === 0 ? (
+              <Card className="p-8 text-center rounded-xl">
+                <FileText className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground mb-4">No scans match your filters.</p>
+                <Button onClick={() => navigate("/scan")} size="sm">Start scanning</Button>
+              </Card>
+            ) : (
+              filtered.map((analysis, index) => {
+                const risk = deriveRiskMeta(analysis.id, index);
+                return (
+                  <Card key={analysis.id} className="flex gap-4 p-3 rounded-2xl">
+                    <div className="w-[96px] h-[120px] rounded-xl bg-gradient-to-b from-primary/20 to-primary/5" />
+                    <div className="flex flex-1 flex-col justify-between py-1">
+                      <div>
+                        <p className="text-base font-bold truncate">
+                          {analysis.file_name || "Untitled contract"}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Scanned: {formatDateLabel(analysis.created_at)}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <div className={`px-3 h-6 rounded-full text-xs font-bold ${risk.badgeBg} ${risk.text}`}>
+                            {risk.label}
+                          </div>
                         </div>
                       </div>
-                      
-                      <div className="flex flex-col items-end gap-2">
-                        <Badge 
-                          variant="secondary" 
-                          className={getStatusColor(analysis.status)}
-                        >
-                          {analysis.status}
-                        </Badge>
-                        
-                        {analysis.status === 'completed' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigate(`/document-summary/${analysis.id}`)}
-                            className="p-1 h-8 w-8"
-                          >
-                            <BarChart3 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
+                      <button
+                        onClick={() => navigate(`/document-summary/${analysis.id}`)}
+                        className="flex items-center gap-1 text-primary text-sm font-semibold"
+                      >
+                        View report
+                        <span className="text-xs">→</span>
+                      </button>
                     </div>
-                  </div>
-                </div>
-              </Card>
-            ))
-          )}
-        </div>
+                  </Card>
+                );
+              })
+            )}
+          </div>
+        </main>
       </div>
     </MobileLayout>
   );

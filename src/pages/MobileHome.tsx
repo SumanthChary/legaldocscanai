@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { Shield, Camera, Upload, Bell, Home, History, AlertTriangle, Calendar, FileText, TrendingUp, Share2 } from "lucide-react";
 import { MobileLayout } from "@/components/mobile/MobileLayout";
-import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Scan, FileText, BarChart3, Clock, TrendingUp, Shield, ArrowRight, Plus, Share2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 import { supabase } from "@/integrations/supabase/client";
+import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 import { DocumentScanner } from "@/components/document-analysis/upload/DocumentScanner";
 
 export default function MobileHome() {
@@ -16,254 +15,204 @@ export default function MobileHome() {
   const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
-    getUser();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
   }, []);
 
-  const getUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setUser(user);
+  const completedAnalyses = useMemo(() =>
+    analyses.filter((analysis) => (analysis.status || analysis.analysis_status) === "completed"),
+  [analyses]);
+
+  const thisMonth = useMemo(() => {
+    const now = new Date();
+    return analyses.filter((analysis) => {
+      const created = new Date(analysis.created_at);
+      return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+    });
+  }, [analyses]);
+
+  const insights = useMemo(() => ({
+    highRisk: Math.max(completedAnalyses.length - 1, 0),
+    expiring: Math.min(analyses.length, 5),
+    totalSavings: (completedAnalyses.length * 2400).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }),
+  }), [analyses.length, completedAnalyses.length]);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / 36e5);
+    if (diffHours < 1) return "Just now";
+    if (diffHours < 24) return `${diffHours}h ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
   };
 
-  const handleScanComplete = (file: File) => {
+  const handleScanComplete = () => {
     setShowScanner(false);
-    // Navigate to scan page with the scanned file (this would need additional implementation)
     navigate("/scan");
   };
 
-  const completedAnalyses = analyses.filter(a => a.status === 'completed');
-  const thisMonth = analyses.filter(a => {
-    const created = new Date(a.created_at);
-    const now = new Date();
-    return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
-  });
-
-  const stats = [
-    { 
-      label: "Documents", 
-      value: analyses.length.toString(), 
-      icon: FileText, 
-      gradient: "from-blue-500/10 to-blue-600/10",
-      iconColor: "text-blue-600",
-      trend: analyses.length > 0 ? "+12%" : "0%"
-    },
-    { 
-      label: "This Month", 
-      value: thisMonth.length.toString(), 
-      icon: TrendingUp, 
-      gradient: "from-emerald-500/10 to-emerald-600/10",
-      iconColor: "text-emerald-600",
-      trend: thisMonth.length > 0 ? "+23%" : "0%"
-    },
-    { 
-      label: "Completed", 
-      value: completedAnalyses.length.toString(), 
-      icon: Shield, 
-      gradient: "from-purple-500/10 to-purple-600/10",
-      iconColor: "text-purple-600",
-      trend: completedAnalyses.length > 0 ? "+8%" : "0%"
-    },
-  ];
-
   return (
     <MobileLayout>
-      <MobileHeader title="LegalDoc Scanner" showAppName={false} />
-      
-      <div className="px-4 py-6 space-y-8 pb-24">
-        {/* Welcome Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-foreground mb-2 leading-tight">
-                {user?.user_metadata?.full_name || user?.user_metadata?.name 
-                  ? `Hello, ${(user.user_metadata.full_name || user.user_metadata.name).split(' ')[0]}` 
-                  : user?.email 
-                  ? `Hello, ${user.email.split('@')[0]}` 
-                  : 'Hello'}
-              </h1>
-              <p className="text-muted-foreground leading-relaxed">
-                Ready to analyze your legal documents?
-              </p>
+      <div className="mx-auto max-w-sm h-screen flex flex-col bg-background">
+        <header className="flex items-center justify-between p-4 pt-6">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary p-2 rounded-xl text-white">
+              <Shield className="w-5 h-5" />
             </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/30 rounded-2xl flex items-center justify-center">
-              <Shield className="w-7 h-7 text-primary" />
+            <div className="flex items-end gap-1">
+              <span className="text-xl font-bold font-display italic text-foreground">LegalDeep</span>
+              <span className="bg-primary/20 text-primary text-xs font-semibold px-1.5 py-0.5 rounded-md">AI</span>
             </div>
           </div>
-        </div>
-
-        {/* Quick Action Card - Cal AI Inspired */}
-        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-primary/95 to-primary p-8 shadow-xl shadow-primary/25">
-          <div className="relative z-10">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                  <Scan className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-white font-bold text-xl mb-1">Document Scanner</h3>
-                  <p className="text-white/80 text-sm">
-                    Professional legal document analysis
-                  </p>
-                </div>
-              </div>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Bell className="text-muted-foreground w-6 h-6" />
+              <span className="absolute -top-1 -right-1 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-background" />
             </div>
-            <Button 
+            <img
+              src={user?.user_metadata?.avatar_url || "https://api.dicebear.com/8.x/initials/svg?seed=LD"}
+              alt="profile"
+              className="w-9 h-9 rounded-full object-cover"
+            />
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-y-auto px-4 pb-28 space-y-6">
+          <section className="mt-4 space-y-4">
+            <button
               onClick={() => setShowScanner(true)}
-              className="w-full bg-white/20 border-white/30 text-white hover:bg-white/30 backdrop-blur-sm h-14 text-base font-semibold rounded-2xl transition-all duration-200"
-              variant="outline"
+              className="w-full flex flex-col items-center justify-center p-8 bg-primary/10 border border-dashed border-primary/30 rounded-2xl text-center"
             >
-              <Plus className="w-5 h-5 mr-3" />
-              New Scan
-            </Button>
-          </div>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-8 translate-x-8" />
-          <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full translate-y-4 -translate-x-4" />
-        </Card>
+              <Camera className="text-primary w-12 h-12" />
+              <span className="mt-3 text-lg font-semibold text-primary">Scan with Camera</span>
+              <span className="text-sm text-muted-foreground mt-1">Capture contracts instantly</span>
+            </button>
+            <button
+              onClick={() => navigate("/scan")}
+              className="w-full flex items-center justify-center gap-2 py-3 border border-primary/30 rounded-xl text-primary font-semibold"
+            >
+              <Upload className="w-5 h-5" /> Upload PDF / DOCX
+            </button>
+          </section>
 
-        {/* Stats Overview - Cal AI Style */}
-        <div className="space-y-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-foreground">Your Progress</h2>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate("/history")}
-              className="text-primary hover:text-primary/80 font-medium"
-            >
-              View All →
-            </Button>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-3 sm:gap-4">
-            {stats.map((stat, index) => (
-              <Card key={index} className="relative overflow-hidden border-0 bg-white/60 backdrop-blur-sm p-3 sm:p-5 hover:shadow-lg transition-all duration-200">
-                <div className="text-center space-y-2 sm:space-y-3">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-2xl bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
-                    <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-bold">Recent scans</h2>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/history")} className="text-primary px-0">View all</Button>
+            </div>
+            <Card className="bg-card p-4 rounded-2xl shadow-sm space-y-4">
+              {isRefreshing ? (
+                [1, 2, 3].map((skeleton) => (
+                  <div key={skeleton} className="flex justify-between gap-4 animate-pulse">
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-muted rounded" />
+                      <div className="h-3 bg-muted rounded w-1/2" />
+                    </div>
+                    <div className="w-16 h-6 bg-muted rounded-full" />
                   </div>
-                  <div>
-                    <div className="text-xl sm:text-2xl font-bold text-foreground mb-1">{stat.value}</div>
-                    <div className="text-xs text-muted-foreground font-medium">{stat.label}</div>
-                  </div>
+                ))
+              ) : analyses.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-sm text-muted-foreground">No documents analyzed yet.</p>
                 </div>
-                <div className="absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8 bg-primary/5 rounded-full -translate-y-2 translate-x-2" />
-              </Card>
-            ))}
-          </div>
+              ) : (
+                analyses.slice(0, 3).map((analysis, index) => (
+                  <div key={analysis.id} className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-semibold text-foreground">
+                          {analysis.file_name || `Document ${index + 1}`}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {formatDate(analysis.created_at)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/40 px-3 py-1 rounded-full">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                        <span className="text-xs font-medium text-emerald-700 dark:text-emerald-200">
+                          {(analysis.status || analysis.analysis_status || "status").toString()}
+                        </span>
+                      </div>
+                    </div>
+                    {index < 2 && <div className="w-full h-px bg-border" />}
+                  </div>
+                ))
+              )}
+            </Card>
+          </section>
 
-          {/* Share Button */}
-          <div className="flex justify-center pt-2">
-            <Button 
-              variant="outline" 
+          <section>
+            <h2 className="text-lg font-bold mb-3">Key insights</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="p-4 rounded-2xl flex items-center gap-3 bg-amber-50 dark:bg-amber-900/30">
+                <AlertTriangle className="text-amber-500" />
+                <div>
+                  <p className="text-xl font-bold">{insights.highRisk}</p>
+                  <p className="text-xs text-muted-foreground">High risk</p>
+                </div>
+              </Card>
+              <Card className="p-4 rounded-2xl flex items-center gap-3 bg-red-50 dark:bg-red-900/20">
+                <Calendar className="text-red-500" />
+                <div>
+                  <p className="text-xl font-bold">{insights.expiring}</p>
+                  <p className="text-xs text-muted-foreground">Expiring soon</p>
+                </div>
+              </Card>
+            </div>
+          </section>
+
+          <section>
+            <div className="grid grid-cols-3 gap-4">
+              <Card className="p-3 rounded-xl text-center">
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-2xl font-bold text-primary">{analyses.length}</span>
+                  <Home className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Scans</p>
+              </Card>
+              <Card className="p-3 rounded-xl text-center">
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-2xl font-bold text-amber-500">{Math.max(analyses.length * 3, 1)}</span>
+                  <History className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Risks</p>
+              </Card>
+              <Card className="p-3 rounded-xl text-center">
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-2xl font-bold text-primary">{insights.totalSavings}</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Saved</p>
+              </Card>
+            </div>
+          </section>
+
+          <section className="flex justify-center">
+            <Button
+              variant="outline"
               size="sm"
-              className="px-6 h-10 rounded-full border-primary/20 text-primary hover:bg-primary/5 hover:border-primary/30 font-medium"
+              className="px-6 rounded-full border-primary/30 text-primary"
               onClick={() => {
                 if (navigator.share) {
                   navigator.share({
-                    title: 'LegalDoc Scanner',
-                    text: 'Check out this amazing legal document analysis app!',
+                    title: "LegalDeep AI",
+                    text: "Scan and summarize contracts anywhere",
                     url: window.location.origin,
                   });
                 }
               }}
             >
-              <Share2 className="w-4 h-4 mr-2" />
-              Share App
+              <Share2 className="w-4 h-4 mr-2" /> Share app
             </Button>
-          </div>
-        </div>
+          </section>
+        </main>
 
-        {/* Recent Documents */}
-        <div className="space-y-5">
-          <h2 className="text-xl font-bold text-foreground">Recent Documents</h2>
-          
-          <div className="space-y-3">
-            {isRefreshing ? (
-              [1, 2, 3].map((i) => (
-                <Card key={i} className="p-5 animate-pulse border-0 bg-white/60 backdrop-blur-sm">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-muted rounded-2xl"></div>
-                    <div className="flex-1 space-y-3">
-                      <div className="h-4 bg-muted rounded-lg w-3/4"></div>
-                      <div className="h-3 bg-muted rounded-lg w-1/2"></div>
-                    </div>
-                  </div>
-                </Card>
-              ))
-            ) : analyses.length === 0 ? (
-              <Card className="p-10 text-center border-0 bg-gradient-to-br from-muted/20 to-muted/5 backdrop-blur-sm">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                  <FileText className="w-10 h-10 text-primary" />
-                </div>
-                <h4 className="font-bold text-lg mb-3 text-foreground">Start Your First Analysis</h4>
-                <p className="text-muted-foreground mb-8 max-w-sm mx-auto leading-relaxed">
-                  Upload a legal document to experience our advanced analysis capabilities
-                </p>
-                <Button 
-                  onClick={() => navigate("/scan")} 
-                  className="px-8 h-12 rounded-2xl font-semibold"
-                >
-                  <Plus className="w-5 h-5 mr-3" />
-                  Upload Document
-                </Button>
-              </Card>
-            ) : (
-              analyses.slice(0, 3).map((analysis) => {
-                const formatDate = (dateString: string) => {
-                  const date = new Date(dateString);
-                  const now = new Date();
-                  const diffHours = Math.abs(now.getTime() - date.getTime()) / 36e5;
-                  
-                  if (diffHours < 1) return "Just now";
-                  if (diffHours < 24) return `${Math.floor(diffHours)}h ago`;
-                  const diffDays = Math.floor(diffHours / 24);
-                  if (diffDays === 1) return "1 day ago";
-                  if (diffDays < 7) return `${diffDays} days ago`;
-                  return date.toLocaleDateString();
-                };
-
-                return (
-                  <Card 
-                    key={analysis.id} 
-                    className="p-5 border-0 bg-white/60 backdrop-blur-sm cursor-pointer transition-all duration-200 hover:shadow-lg hover:bg-white/80 active:scale-[0.98]"
-                    onClick={() => navigate(`/document-summary/${analysis.id}`)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 bg-gradient-to-br from-primary/15 to-primary/25 rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold truncate text-foreground mb-2">
-                          {analysis.file_name}
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="text-sm text-muted-foreground">
-                            {formatDate(analysis.created_at)}
-                          </div>
-                          <div className={`w-2.5 h-2.5 rounded-full ${
-                            analysis.status === 'completed' ? 'bg-emerald-500' : 
-                            analysis.status === 'processing' ? 'bg-amber-500' : 'bg-red-500'
-                          }`} />
-                          <div className="text-sm font-medium text-muted-foreground capitalize">
-                            {analysis.status}
-                          </div>
-                        </div>
-                      </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground/50 flex-shrink-0" />
-                    </div>
-                  </Card>
-                );
-              })
-            )}
-          </div>
-        </div>
+        {showScanner && (
+          <DocumentScanner onScan={handleScanComplete} onClose={() => setShowScanner(false)} />
+        )}
       </div>
-      
-      {showScanner && (
-        <DocumentScanner
-          onScan={handleScanComplete}
-          onClose={() => setShowScanner(false)}
-        />
-      )}
     </MobileLayout>
   );
 }

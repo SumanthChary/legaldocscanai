@@ -1,12 +1,12 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { supabase } from "@/integrations/supabase/client";
 import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { CreditCard, Shield, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { Shield, CheckCircle, Loader2, ArrowLeft, Lock, Check } from "lucide-react";
 import "./Payment.css";
 import { Database } from "@/integrations/supabase/types";
 
@@ -17,6 +17,7 @@ interface LocationState {
     name: string;
     price: string;
     period: string;
+    description?: string;
   };
 }
 
@@ -29,6 +30,7 @@ const Payment = () => {
   const [user, setUser] = useState<any>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const { plan } = (location.state as LocationState) || {};
+  const [selectedPlan, setSelectedPlan] = useState<LocationState["plan"] | null>(plan || null);
 
   // Check authentication status
   useEffect(() => {
@@ -79,6 +81,36 @@ const Payment = () => {
     }
   }, [plan, navigate, toast, checkingAuth]);
 
+  useEffect(() => {
+    if (plan) {
+      setSelectedPlan(plan);
+    }
+  }, [plan]);
+
+  const planOptions = useMemo(
+    () => [
+      {
+        name: "Scan Plan",
+        label: "SCAN PLAN",
+        price: "$19",
+        period: "per scan",
+        recommended: true,
+        buttonLabel: "Scan Now",
+        features: ["Unlimited pages", "89% accuracy", "PDF report"],
+      },
+      {
+        name: "Unlimited Pro",
+        label: "UNLIMITED PRO",
+        price: "$47",
+        period: "/mo",
+        recommended: false,
+        buttonLabel: "Subscribe",
+        features: ["∞ scans", "Team sharing", "Priority AI"],
+      },
+    ],
+    []
+  );
+
   if (checkingAuth) {
     return (
       <PageLayout>
@@ -96,7 +128,16 @@ const Payment = () => {
     return null;
   }
 
-  const amount = plan.price.replace("$", "");
+  const activePlan = selectedPlan || plan;
+  const amount = activePlan.price.replace(/[^0-9.]/g, "");
+  const avatarFallback = user?.email?.[0]?.toUpperCase() || "L";
+
+  const summaryFeatures = [
+    "Advanced AI risk detection",
+    "Priority legal specialist chat",
+    "60-day money-back guarantee",
+    "Cancel anytime",
+  ];
 
   const handlePayPalApprove = async (data: any, actions: any) => {
     try {
@@ -108,7 +149,7 @@ const Payment = () => {
         throw new Error("User not authenticated");
       }
 
-      const planType = plan.name.toLowerCase().replace(/\s+/g, '_') as SubscriptionTier;
+      const planType = activePlan.name.toLowerCase().replace(/\s+/g, '_') as SubscriptionTier;
 
       // Call our Supabase Edge Function to process the payment
       const { data: processResult, error: processError } = await supabase.functions.invoke(
@@ -133,12 +174,12 @@ const Payment = () => {
 
       toast({
         title: "Payment Successful!",
-        description: `You are now subscribed to the ${plan.name} plan!`,
+        description: `You are now subscribed to the ${activePlan.name} plan!`,
         duration: 5000,
       });
       
       // Redirect to success page with plan details
-      navigate(`/payment-success?plan=${encodeURIComponent(plan.name)}&amount=${amount}`);
+      navigate(`/payment-success?plan=${encodeURIComponent(activePlan.name)}&amount=${amount}`);
       
     } catch (error: any) {
       console.error("Payment processing error:", error);
@@ -179,175 +220,173 @@ const Payment = () => {
 
   return (
     <PageLayout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-4">
-                Complete Your Subscription
-              </h1>
-              <p className="text-xl text-gray-600">
-                Secure payment processing with enterprise-grade encryption
-              </p>
+      <div className="min-h-screen bg-[#f6f8f7] py-6 md:py-10">
+        <div className="mx-auto max-w-5xl px-4 space-y-6">
+          <header className="flex h-20 items-center justify-between">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <h1 className="font-serif text-2xl italic text-slate-900">Choose Plan</h1>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white text-sm font-semibold">
+              {avatarFallback}
             </div>
-            
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* Order Summary */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border-0">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <Shield className="h-6 w-6 mr-3 text-blue-600" />
-                  Order Summary
-                </h2>
-                
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center py-4 border-b border-gray-200">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{plan.name} Plan</h3>
-                      <p className="text-gray-600">Professional AI document analysis</p>
-                    </div>
-                    <span className="text-xl font-bold text-gray-900">
-                      {plan.price}<span className="text-sm text-gray-500">{plan.period}</span>
-                    </span>
-                  </div>
-                  
-                  <div className="space-y-3 py-4">
-                    <div className="flex items-center text-green-600">
-                      <CheckCircle className="h-5 w-5 mr-2" />
-                      <span>{plan.name === 'Professional' ? '500' : plan.name === 'Enterprise' ? 'Unlimited' : '25'} document analyses/month</span>
-                    </div>
-                    <div className="flex items-center text-green-600">
-                      <CheckCircle className="h-5 w-5 mr-2" />
-                      <span>Advanced AI risk detection</span>
-                    </div>
-                    <div className="flex items-center text-green-600">
-                      <CheckCircle className="h-5 w-5 mr-2" />
-                      <span>Priority email support</span>
-                    </div>
-                    <div className="flex items-center text-green-600">
-                      <CheckCircle className="h-5 w-5 mr-2" />
-                      <span>60-day money-back guarantee</span>
-                    </div>
-                    <div className="flex items-center text-green-600">
-                      <CheckCircle className="h-5 w-5 mr-2" />
-                      <span>Cancel anytime</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-                    <span className="text-xl font-bold text-gray-900">Total</span>
-                    <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      {plan.price}<span className="text-lg">{plan.period}</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
+          </header>
 
-              {/* Payment Methods */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border-0">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <CreditCard className="h-6 w-6 mr-3 text-blue-600" />
-                  Payment Method
-                </h2>
-                
-                <div className="space-y-6">
-                  <div className="border border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-colors">
-                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <CreditCard className="h-5 w-5 mr-2 text-blue-600" />
-                      PayPal - Secure & Instant
-                    </h3>
-                    
-                    <div id="paypal-button-container" className="w-full min-h-[200px]">
-                      <PayPalScriptProvider options={paypalOptions}>
-                        {loading ? (
-                          <div className="flex items-center justify-center p-4">
-                            <Loader2 className="h-6 w-6 animate-spin text-blue-600 mr-2" />
-                            <span className="text-blue-600">Processing payment...</span>
-                          </div>
-                        ) : (
-                          <PayPalButtons
-                            style={{
-                              layout: "vertical",
-                              color: "gold",
-                              shape: "rect",
-                              label: "pay"
-                            }}
-                            createOrder={(data, actions) => {
-                              console.log("Creating order with amount:", amount);
-                              return actions.order.create({
-                                intent: "CAPTURE",
-                                purchase_units: [
-                                  {
-                                    amount: {
-                                      value: amount,
-                                      currency_code: "USD"
-                                    }
-                                  }
-                                ]
-                              });
-                            }}
-                            onApprove={handlePayPalApprove}
-                            onCancel={handlePayPalCancel}
-                            onError={handlePayPalError}
-                          />
-                        )}
-                      </PayPalScriptProvider>
-                    </div>
-                  </div>
+          <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="space-y-6">
+              <section className="rounded-2xl bg-white p-6 shadow-sm">
+                <p className="text-2xl font-bold text-slate-900">Lifetime value</p>
+                <p className="text-lg text-slate-500">$12k saved by founders</p>
+                <p className="text-lg text-slate-500">vs $500 lawyer per contract</p>
+              </section>
 
-                  <div className="border border-gray-200 rounded-xl p-6 opacity-50">
-                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <CreditCard className="h-5 w-5 mr-2 text-gray-400" />
-                      Razorpay - Coming Soon
-                    </h3>
-                    <div className="flex items-center p-3 bg-yellow-50 rounded-lg">
-                      <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
-                      <span className="text-sm text-yellow-800">
-                        Razorpay integration is coming soon! Use PayPal for now.
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="border border-gray-200 rounded-xl p-6 opacity-50">
-                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <CreditCard className="h-5 w-5 mr-2 text-gray-400" />
-                      Credit Card - Coming Soon
-                    </h3>
-                    <Button
-                      className="w-full h-12 bg-gray-100 text-gray-500 cursor-not-allowed"
-                      disabled
+              <div className="grid gap-4 md:grid-cols-2">
+                {planOptions.map((option) => {
+                  const isActive = activePlan.name.toLowerCase() === option.name.toLowerCase();
+                  return (
+                    <div
+                      key={option.name}
+                      className={`relative rounded-2xl border p-6 transition ${
+                        isActive ? "border-primary shadow-sm" : "border-slate-200"
+                      }`}
                     >
-                      Credit Card Payment (Coming Soon)
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="mt-8 space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <div className="flex items-start">
-                      <Shield className="h-5 w-5 text-blue-600 mt-0.5 mr-2" />
-                      <div className="text-sm text-blue-800">
-                        <p className="font-medium">Bank-Level Security</p>
-                        <p>Your payment is protected by 256-bit SSL encryption. We never store your payment details.</p>
+                      {option.recommended && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white">
+                          Recommended
+                        </div>
+                      )}
+                      <div className="space-y-3 pt-1">
+                        <p className="text-xs font-semibold tracking-[0.2em] text-slate-500">
+                          {option.label}
+                        </p>
+                        <div>
+                          <span className="text-5xl font-black text-primary">{option.price}</span>
+                          <span className="ml-1 text-base font-bold text-slate-900">
+                            {option.period}
+                          </span>
+                        </div>
+                        <Button
+                          onClick={() => setSelectedPlan(option)}
+                          className={`h-12 w-full rounded-xl text-base font-semibold ${
+                            isActive
+                              ? "bg-primary text-white"
+                              : "bg-transparent text-primary border border-primary"
+                          }`}
+                        >
+                          {option.buttonLabel}
+                        </Button>
+                        <div className="space-y-2 pt-2">
+                          {option.features.map((feature) => (
+                            <div key={feature} className="flex items-center gap-2 text-sm text-slate-900">
+                              <Check className="h-4 w-4 text-primary" />
+                              {feature}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-4 text-center text-xs">
-                    <div className="flex flex-col items-center">
-                      <Shield className="h-4 w-4 text-green-600 mb-1" />
-                      <span className="text-gray-600">SSL Encrypted</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <CheckCircle className="h-4 w-4 text-green-600 mb-1" />
-                      <span className="text-gray-600">60-Day Guarantee</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <CreditCard className="h-4 w-4 text-green-600 mb-1" />
-                      <span className="text-gray-600">PayPal Protected</span>
-                    </div>
+                  );
+                })}
+              </div>
+
+              <section className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+                <div className="flex items-center gap-3">
+                  <Lock className="h-6 w-6 text-primary" />
+                  <div>
+                    <p className="font-semibold text-slate-900">Bank-grade encryption</p>
+                    <p className="text-sm text-slate-600">Auto-delete scans after 24h · 14-day guarantee</p>
                   </div>
                 </div>
-              </div>
+              </section>
+            </div>
+
+            <div className="space-y-6">
+              <section className="rounded-2xl bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-slate-500">Selected plan</p>
+                    <p className="text-lg font-semibold text-slate-900">{activePlan.name}</p>
+                  </div>
+                  <p className="text-3xl font-black text-slate-900">
+                    {activePlan.price}
+                    <span className="ml-1 text-base font-semibold">{activePlan.period}</span>
+                  </p>
+                </div>
+
+                <div className="mt-6 space-y-3">
+                  {summaryFeatures.map((feature) => (
+                    <div key={feature} className="flex items-center gap-2 text-sm text-slate-700">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-10 w-14 items-center justify-center rounded-lg bg-black text-white">
+                      <span className="text-xs">Apple</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">Apple Pay •••• 4242</p>
+                      <p className="text-xs text-slate-500">Primary checkout method</p>
+                    </div>
+                  </div>
+                  <p className="text-sm font-semibold text-slate-900">$19.00 USD</p>
+                </div>
+              </section>
+
+              <section className="rounded-2xl bg-white p-6 shadow-sm">
+                <div className="mb-4 flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-primary" />
+                  <p className="text-base font-semibold text-slate-900">Checkout</p>
+                </div>
+                <div className="border border-slate-200 rounded-2xl p-4">
+                  <div id="paypal-button-container" className="w-full">
+                    <PayPalScriptProvider options={paypalOptions}>
+                      {loading ? (
+                        <div className="flex items-center justify-center gap-2 py-6 text-primary">
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          Processing payment...
+                        </div>
+                      ) : (
+                        <PayPalButtons
+                          style={{ layout: "vertical", color: "gold", shape: "rect", label: "pay" }}
+                          createOrder={(data, actions) => {
+                            return actions.order.create({
+                              intent: "CAPTURE",
+                              purchase_units: [
+                                {
+                                  amount: {
+                                    value: amount,
+                                    currency_code: "USD",
+                                  },
+                                },
+                              ],
+                            });
+                          }}
+                          onApprove={handlePayPalApprove}
+                          onCancel={handlePayPalCancel}
+                          onError={handlePayPalError}
+                        />
+                      )}
+                    </PayPalScriptProvider>
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-600">
+                  <p className="font-semibold text-slate-900">Need a different method?</p>
+                  <p className="text-slate-500">Razorpay + cards are coming soon. PayPal keeps your documents private and protected.</p>
+                </div>
+
+                <div className="mt-4 rounded-2xl bg-slate-900 p-4 text-white">
+                  <p className="text-sm font-semibold">No subscription trap</p>
+                  <p className="text-xs text-slate-200">Pay per value. Cancel anytime.</p>
+                </div>
+              </section>
             </div>
           </div>
         </div>
