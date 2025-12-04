@@ -4,15 +4,7 @@ import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
-import {
-  ArrowUpRight,
-  Download,
-  Share2,
-  ShieldAlert,
-  Sparkles,
-  FileText,
-  ScrollText,
-} from "lucide-react";
+import { Download, Share2, ShieldAlert, Sparkles, FileText, ScrollText, Copy, MessageCircle } from "lucide-react";
 
 interface RiskItem {
   level: "High" | "Medium" | "Low";
@@ -80,41 +72,42 @@ export default function MobileReports() {
   );
 
   const scanDate = primaryAnalysis ? new Date(primaryAnalysis.created_at) : null;
+  const accuracy = parsedSummary?.confidence || "89%";
+  const clauses = parsedSummary?.clauses_reviewed || 42;
+  const pages = primaryAnalysis?.page_count || 24;
 
   return (
     <MobileLayout>
-      <div className="mx-auto flex min-h-screen max-w-sm flex-col bg-slate-50">
-        <MobileHeader title="Reports" rightSlot={headerRight} />
-        <main className="flex-1 space-y-5 overflow-y-auto px-4 pb-32 pt-4">
-          <section className="relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
-            <div className="absolute inset-y-0 right-0 hidden w-32 bg-gradient-to-b from-emerald-100/60 to-transparent opacity-70 sm:block" />
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Latest dossier</p>
-            <h1 className="instrument-serif-regular-italic mt-2 text-2xl text-slate-900">
-              {primaryAnalysis?.file_name || "Vendor Agreement"}
-            </h1>
-            <p className="mt-1 text-sm text-slate-500">
-              {scanDate ? scanDate.toLocaleDateString(undefined, { month: "long", day: "numeric" }) : "Recent capture"}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
-              <span className={`rounded-full px-3 py-1 ${levelBadge[riskHighlights[0]?.level || "High"]}`}>
-                {riskHighlights[0]?.level || "High"} risk · {riskHighlights.length} findings
-              </span>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">
-                {(primaryAnalysis?.status || primaryAnalysis?.analysis_status || "processing").toString()}
-              </span>
+      <div className="mx-auto flex min-h-screen max-w-sm flex-col bg-[#F6F8F7]">
+        <MobileHeader title="Contract report" rightSlot={headerRight} />
+        <main className="flex-1 space-y-6 overflow-y-auto px-4 pb-32 pt-4">
+          <section className="rounded-[32px] border border-slate-100 bg-white/95 p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Vendor agreement</p>
+                <h1 className="font-display text-3xl text-slate-900">{primaryAnalysis?.file_name || "Vendor Agreement"}</h1>
+              </div>
+              <div className={`rounded-full px-4 py-1 text-xs font-semibold ${levelBadge[riskHighlights[0]?.level || "High"]}`}>
+                {riskHighlights[0]?.level || "High"} risk
+              </div>
             </div>
-            <div className="mt-5 grid grid-cols-3 gap-3 text-center text-xs text-slate-500">
+            <p className="mt-2 text-sm text-slate-500">
+              {scanDate ? `${scanDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })} · ${pages} pages` : "Recent capture"}
+            </p>
+            <div className="mt-5 grid grid-cols-3 gap-3 text-center text-xs">
               <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-[11px] uppercase tracking-[0.2em]">Clauses</p>
-                <p className="mt-1 text-lg font-semibold text-slate-900">{parsedSummary?.clauses_reviewed || 42}</p>
+                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Clauses</p>
+                <p className="mt-1 text-xl font-semibold text-slate-900">{clauses}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-[11px] uppercase tracking-[0.2em]">Confidence</p>
-                <p className="mt-1 text-lg font-semibold text-emerald-600">{parsedSummary?.confidence || "91%"}</p>
+                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Accuracy</p>
+                <p className="mt-1 text-xl font-semibold text-emerald-600">{accuracy}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-[11px] uppercase tracking-[0.2em]">Pages</p>
-                <p className="mt-1 text-lg font-semibold text-slate-900">{primaryAnalysis?.page_count || 47}</p>
+                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Status</p>
+                <p className="mt-1 text-xl font-semibold text-slate-900">
+                  {(primaryAnalysis?.status || primaryAnalysis?.analysis_status || "Processing").toString()}
+                </p>
               </div>
             </div>
           </section>
@@ -125,22 +118,38 @@ export default function MobileReports() {
               <div className="rounded-full bg-slate-200/70 px-3 py-1 text-xs text-slate-600">AI briefing</div>
             </div>
             {riskHighlights.map((risk) => (
-              <Card key={risk.title} className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
-                <div className="flex items-center gap-2 text-xs font-semibold">
-                  <div className={`rounded-full px-2 py-1 ${levelBadge[risk.level]}`}>{risk.level}</div>
-                  <span className="uppercase tracking-[0.3em] text-slate-400">Clause alert</span>
+              <Card key={risk.title} className="space-y-3 rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-2xl text-xs font-semibold ${
+                      risk.level === "High"
+                        ? "bg-red-50 text-red-600"
+                        : risk.level === "Medium"
+                          ? "bg-amber-50 text-amber-600"
+                          : "bg-emerald-50 text-emerald-700"
+                    }`}
+                  >
+                    {risk.level.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Clause alert</p>
+                    <p className="text-base font-semibold text-slate-900">{risk.title}</p>
+                  </div>
                 </div>
-                <p className="mt-3 text-base font-semibold text-slate-900">{risk.title}</p>
-                {risk.description && <p className="mt-2 text-sm text-slate-600">{risk.description}</p>}
+                {risk.description && <p className="text-sm text-slate-600">{risk.description}</p>}
                 {risk.excerpt && (
-                  <blockquote className="mt-3 rounded-2xl bg-slate-50 px-4 py-3 text-xs italic text-slate-500">
+                  <blockquote className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-xs italic text-slate-500">
                     {risk.excerpt}
                   </blockquote>
                 )}
-                <button className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-slate-900">
-                  View clause context
-                  <ArrowUpRight size={14} />
-                </button>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1 rounded-2xl border-slate-200 text-slate-900">
+                    <Copy className="mr-2 h-4 w-4" /> Copy risk
+                  </Button>
+                  <Button className="flex-1 rounded-2xl bg-slate-900 text-white">
+                    <MessageCircle className="mr-2 h-4 w-4" /> Contract Q&A
+                  </Button>
+                </div>
               </Card>
             ))}
           </section>
@@ -194,7 +203,7 @@ export default function MobileReports() {
         <div className="fixed bottom-0 left-0 right-0 mx-auto w-full max-w-sm border-t border-white/60 bg-white/90 px-4 py-3 backdrop-blur">
           <div className="flex items-center gap-3">
             <Button variant="outline" className="flex-1 rounded-2xl border-slate-200 text-slate-900">
-              <Share2 className="mr-2 h-4 w-4" /> Share link
+              <Share2 className="mr-2 h-4 w-4" /> Share report
             </Button>
             <Button className="flex-1 rounded-2xl bg-slate-900 text-white">
               <Download className="mr-2 h-4 w-4" /> Pay & Download ($19)

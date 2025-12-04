@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { toast } from "sonner";
-import { Camera, Crown, Download, Group, HelpCircle, LogOut, Settings, Share2 } from "lucide-react";
+import { Crown, HelpCircle, LogOut, Settings, Share2, AlertTriangle } from "lucide-react";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 
 export default function MobileProfile() {
@@ -225,4 +225,4 @@ export default function MobileProfile() {
       </div>
     </MobileLayout>
   );
-}
+}}
