@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
@@ -96,7 +95,12 @@ const Payment = () => {
         period: "per scan",
         recommended: true,
         buttonLabel: "Scan Now",
-        features: ["Unlimited pages", "89% accuracy", "PDF report"],
+        features: [
+          "3-min AI contract scan",
+          "Clause-by-clause highlights",
+          "Downloadable PDF summary",
+        ],
+        extrasLabel: "and 7+ features sourced from legaldeepai.app/pricing",
       },
       {
         name: "Unlimited Pro",
@@ -105,7 +109,12 @@ const Payment = () => {
         period: "/mo",
         recommended: false,
         buttonLabel: "Subscribe",
-        features: ["∞ scans", "Team sharing", "Priority AI"],
+        features: [
+          "Unlimited scans & uploads",
+          "Shared team workspace",
+          "Priority AI + support queue",
+        ],
+        extrasLabel: "and 15+ platform features from legaldeepai.app/pricing",
       },
     ],
     []
@@ -133,11 +142,11 @@ const Payment = () => {
   const avatarFallback = user?.email?.[0]?.toUpperCase() || "L";
 
   const summaryFeatures = [
-    "Advanced AI risk detection",
-    "Priority legal specialist chat",
-    "60-day money-back guarantee",
-    "Cancel anytime",
+    "Real-time clause insights",
+    "Download-ready reports",
+    "Cancel anytime guarantee",
   ];
+  const summaryExtrasLabel = "Plus additional benefits listed on legaldeepai.app/pricing";
 
   const handlePayPalApprove = async (data: any, actions: any) => {
     try {
@@ -285,6 +294,7 @@ const Payment = () => {
                               {feature}
                             </div>
                           ))}
+                          <p className="text-xs text-slate-500">{option.extrasLabel}</p>
                         </div>
                       </div>
                     </div>
@@ -323,6 +333,7 @@ const Payment = () => {
                       {feature}
                     </div>
                   ))}
+                  <p className="text-xs text-slate-500">{summaryExtrasLabel}</p>
                 </div>
 
                 <div className="mt-6 flex items-center justify-between rounded-2xl bg-slate-50 p-4">

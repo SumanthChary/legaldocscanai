@@ -129,10 +129,10 @@ export default function MobileHistory() {
 
   const headerRight = (
     <div className="flex items-center gap-2">
-      <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-600 shadow-sm">
+      <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-slate-600 shadow-sm">
         <Search size={18} />
       </button>
-      <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-600 shadow-sm">
+      <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-slate-600 shadow-sm">
         <Filter size={18} />
       </button>
     </div>
@@ -140,7 +140,7 @@ export default function MobileHistory() {
 
   return (
     <MobileLayout>
-      <div className="mx-auto flex min-h-screen max-w-sm flex-col bg-slate-50">
+      <div className="mx-auto flex min-h-screen max-w-sm flex-col bg-[#F6F8F7]">
         <MobileHeader title="Scan History" rightSlot={headerRight} />
 
         <main className="flex-1 space-y-5 overflow-y-auto px-4 pb-32 pt-4">
@@ -194,7 +194,7 @@ export default function MobileHistory() {
                 onClick={() => setActiveFilter(key)}
                 className={`flex h-9 items-center rounded-full border px-4 text-sm font-medium transition ${
                   key === activeFilter
-                    ? "border-slate-900 bg-slate-900 text-white"
+                    ? "border-emerald-500 bg-emerald-500 text-white"
                     : "border-slate-200 bg-white text-slate-500"
                 }`}
               >
@@ -246,41 +246,34 @@ export default function MobileHistory() {
                 const shortId = (analysis.id || "").slice(0, 6) || "—";
 
                 return (
-                  <Card key={analysis.id} className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
-                    <div className="flex items-start justify-between">
+                  <Card key={analysis.id} className="flex gap-4 rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+                    <div className="h-[120px] w-[100px] rounded-2xl bg-gradient-to-br from-emerald-50 to-white" />
+                    <div className="flex flex-1 flex-col justify-between py-1">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
-                          {formatDateLabel(analysis.created_at)}
-                        </p>
-                        <p className="mt-1 text-base font-semibold text-slate-900">
+                        <p className="text-sm text-slate-500">{formatDateLabel(analysis.created_at)}</p>
+                        <p className="truncate text-lg font-semibold text-slate-900">
                           {analysis.file_name || "Untitled contract"}
                         </p>
-                      </div>
-                      <span className="text-sm text-slate-400">{formatExactDate(analysis.created_at)}</span>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2">
-                      <div className="flex items-center gap-3">
-                        <div className={`rounded-full px-3 py-1 text-xs font-semibold ${risk.badgeBg} ${risk.text}`}>
-                          {risk.label}
-                        </div>
-                        <div className={`flex items-center gap-2 text-xs font-medium ${statusTheme.text}`}>
-                          <Icon size={14} />
-                          {statusTheme.label}
+                        <div className="mt-2 flex items-center gap-2">
+                          <div className={`rounded-full px-3 py-1 text-xs font-bold ${risk.badgeBg} ${risk.text}`}>
+                            {risk.label}
+                          </div>
+                          <div className={`flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1 text-xs font-medium ${statusTheme.text}`}>
+                            <Icon size={14} />
+                            {statusTheme.label}
+                          </div>
                         </div>
                       </div>
-                      <span className="text-xs text-slate-400">{formatTime(analysis.created_at)}</span>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between">
-                      <button
-                        onClick={() => navigate(`/document-summary/${analysis.id}`)}
-                        className="flex items-center gap-1 text-sm font-semibold text-slate-900"
-                      >
-                        Open report
-                        <ArrowUpRight size={14} />
-                      </button>
-                      <div className="text-xs text-slate-400">ID · {shortId}</div>
+                      <div className="flex items-center justify-between">
+                        <button
+                          onClick={() => navigate(`/document-summary/${analysis.id}`)}
+                          className="flex items-center gap-1 text-sm font-semibold text-emerald-600"
+                        >
+                          View report
+                          <ArrowUpRight size={14} />
+                        </button>
+                        <div className="text-xs text-slate-400">ID · {shortId}</div>
+                      </div>
                     </div>
                   </Card>
                 );
