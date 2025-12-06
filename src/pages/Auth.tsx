@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Github, FileText, Shield, Users, AlertCircle, CheckCircle } from "lucide-react";
+import { Github, FileText, Shield, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -37,10 +37,8 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
 
-  // Check if user is already authenticated
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -61,44 +59,35 @@ const Auth = () => {
 
     checkSession();
 
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log("Auth state change:", event, session?.user?.email);
-        
-        if (event === 'SIGNED_IN' && session) {
-          toast({
-            title: "Success!",
-            description: "You have been signed in successfully.",
-            duration: 3000,
-          });
-          
-          // Small delay to ensure state is updated
-          setTimeout(() => {
-            navigate("/dashboard");
-          }, 500);
-        }
-        
-        if (event === 'USER_UPDATED') {
-          toast({
-            title: "Account Created!",
-            description: "Please check your email to verify your account.",
-            duration: 5000,
-          });
-        }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        toast({
+          title: "Success!",
+          description: "You have been signed in successfully.",
+        });
+
+        setTimeout(() => navigate("/dashboard"), 500);
       }
-    );
+
+      if (event === "USER_UPDATED") {
+        toast({
+          title: "Account created",
+          description: "Please check your inbox to verify your account.",
+          duration: 5000,
+        });
+      }
+    });
 
     return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleEmailAuth = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     if (!email || !password) {
       toast({
-        title: "Error",
-        description: "Please fill in all required fields.",
+        title: "Missing information",
+        description: "Please fill in both email and password.",
         variant: "destructive",
       });
       return;
@@ -106,8 +95,8 @@ const Auth = () => {
 
     if (password.length < 6) {
       toast({
-        title: "Error",
-        description: "Password must be at least 6 characters long.",
+        title: "Weak password",
+        description: "Password must be at least 6 characters.",
         variant: "destructive",
       });
       return;
@@ -117,22 +106,20 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        // Get the current URL for redirect
         const redirectUrl = `${window.location.origin}/dashboard`;
-        
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: redirectUrl,
             data: {
-              username: username || email.split('@')[0],
+              username: username || email.split("@")[0],
             },
           },
         });
-        
+
         if (error) {
-          if (error.message.includes("already registered")) {
+          if (error.message?.toLowerCase().includes("already")) {
             toast({
               title: "Account exists",
               description: "This email is already registered. Try signing in instead.",
@@ -145,42 +132,39 @@ const Auth = () => {
         } else if (data.user) {
           toast({
             title: "Success!",
-            description: "Account created! Please check your email to verify your account.",
+            description: "Account created. Please verify using the email we sent.",
             duration: 5000,
           });
         }
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        
+
         if (error) {
-          if (error.message.includes("Invalid login credentials")) {
+          if (error.message?.toLowerCase().includes("invalid")) {
             toast({
               title: "Sign in failed",
-              description: "Invalid email or password. Please check your credentials and try again.",
+              description: "Invalid email or password. Please try again.",
               variant: "destructive",
             });
-          } else if (error.message.includes("Email not confirmed")) {
+          } else if (error.message?.toLowerCase().includes("email not confirmed")) {
             toast({
               title: "Email not verified",
-              description: "Please check your email and click the verification link before signing in.",
+              description: "Please verify your email before signing in.",
               variant: "destructive",
             });
           } else {
             throw error;
           }
-        } else if (data.user) {
-          // Success will be handled by onAuthStateChange
-          console.log("Sign in successful for:", data.user.email);
         }
       }
     } catch (error: any) {
-      console.error("Auth error:", error);
+      console.error("Auth error", error);
       toast({
         title: "Error",
-        description: error.message || "An unexpected error occurred. Please try again.",
+        description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
     } finally {
@@ -190,228 +174,247 @@ const Auth = () => {
 
   const handleGithubAuth = async () => {
     try {
+      setLoading(true);
       const redirectUrl = `${window.location.origin}/dashboard`;
-      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
         options: {
           redirectTo: redirectUrl,
         },
       });
-      
-      if (error) throw error;
+
+      if (error) {
+        throw error;
+      }
     } catch (error: any) {
-      console.error("GitHub auth error:", error);
+      console.error("GitHub auth error", error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to sign in with GitHub. Please try again.",
+        title: "GitHub error",
+        description: error.message || "Failed to sign in with GitHub.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleAuth = async () => {
     try {
+      setLoading(true);
       const redirectUrl = `${window.location.origin}/dashboard`;
-      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: redirectUrl,
         },
       });
-      
-      if (error) throw error;
+
+      if (error) {
+        throw error;
+      }
     } catch (error: any) {
-      console.error("Google auth error:", error);
+      console.error("Google auth error", error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to sign in with Google. Please try again.",
+        title: "Google error",
+        description: error.message || "Failed to sign in with Google.",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   if (checkingSession) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#f2f5f4]">
+        <div className="space-y-3 text-center">
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
+          <p className="text-sm uppercase tracking-[0.4em] text-slate-500">Checking session</p>
         </div>
       </div>
     );
   }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl w-full flex items-center gap-16">
-        {/* Left side - Branding */}
-        <div className="hidden lg:flex flex-col space-y-8 flex-1">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg">
-                <FileText className="h-8 w-8 text-white" />
+    <div className="min-h-screen bg-[#f6f8f7] px-4 py-10">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10">
+        <header className="flex flex-col gap-3 text-center lg:text-left">
+          <p className="text-xs uppercase tracking-[0.4em] text-slate-500">LegalDeep AI</p>
+          <h1 className="font-serif text-4xl italic text-slate-900 sm:text-5xl">
+            Secure legal intelligence for modern teams
+          </h1>
+          <p className="text-base text-slate-500 sm:text-lg">
+            Single sign-on, bank-grade encryption, and effortless onboarding for your entire workspace.
+          </p>
+        </header>
+
+        <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div className="space-y-6 rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-lg backdrop-blur">
+            <div className="flex items-center gap-3">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <FileText className="h-6 w-6" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                LegalDeep AI
-              </h1>
+              <div>
+                <p className="text-xs uppercase tracking-[0.4em] text-slate-500">Platform overview</p>
+                <p className="text-2xl font-semibold text-slate-900">Why legal teams switch</p>
+              </div>
             </div>
-            <p className="text-xl text-gray-600 leading-relaxed">
-              Transform your legal document workflow with AI-powered analysis, intelligent insights, and professional automation.
+            <p className="text-base leading-relaxed text-slate-600">
+              Centralize contract analysis, redlines, and compliance notes with AI summaries tailored to your playbook. Invite co-counsel, track audit-ready history, and export reports in seconds.
             </p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl bg-slate-900 p-4 text-white">
+                <p className="text-xs uppercase tracking-[0.35em] text-white/70">Process time</p>
+                <p className="text-3xl font-black">6×</p>
+                <p className="text-sm text-white/70">faster reviews</p>
+              </div>
+              <div className="rounded-2xl bg-emerald-50 p-4 text-slate-900">
+                <p className="text-xs uppercase tracking-[0.35em] text-emerald-600">Accuracy</p>
+                <p className="text-3xl font-black">89%</p>
+                <p className="text-sm text-slate-500">clause coverage</p>
+              </div>
+              <div className="rounded-2xl border border-dashed border-slate-200 p-4">
+                <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Security</p>
+                <p className="text-3xl font-black text-slate-900">SOC2</p>
+                <p className="text-sm text-slate-500">bank-grade</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <div className="flex min-w-[220px] flex-1 items-center gap-3 rounded-2xl bg-slate-100 px-4 py-3">
+                <Shield className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">Zero-knowledge storage</p>
+                  <p className="text-xs text-slate-500">Auto delete after 24h</p>
+                </div>
+              </div>
+              <div className="flex min-w-[220px] flex-1 items-center gap-3 rounded-2xl bg-slate-100 px-4 py-3">
+                <Users className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">Team-ready seats</p>
+                  <p className="text-xs text-slate-500">Invite reviewers & clients</p>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div className="space-y-6">
-            <div className="flex items-start space-x-4">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Shield className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Enterprise Security</h3>
-                <p className="text-gray-600">Bank-grade encryption and compliance standards</p>
-              </div>
-            </div>
-            
-            <div className="flex items-start space-x-4">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Users className="h-6 w-6 text-purple-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Trusted by Legal Teams</h3>
-                <p className="text-gray-600">Used by law firms and corporations worldwide</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Right side - Form */}
-        <div className="flex-1 max-w-md">
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-2xl p-8 space-y-8">
-            <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                {isSignUp ? "Create Account" : "Welcome Back"}
-              </h2>
-              <p className="text-gray-600">
-                {isSignUp ? "Start your legal document transformation" : "Continue to your dashboard"}
-              </p>
-            </div>
+          <div className="w-full">
+            <Card className="w-full rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl backdrop-blur">
+              <div className="space-y-2 text-center">
+                <p className="text-xs uppercase tracking-[0.4em] text-slate-500">
+                  {isSignUp ? "Create account" : "Sign in"}
+                </p>
+                <h2 className="font-serif text-3xl italic text-slate-900">
+                  {isSignUp ? "Start scanning securely" : "Welcome back"}
+                </h2>
+                <p className="text-sm text-slate-500">
+                  {isSignUp ? "AI copilots for every contract" : "Resume where you left off"}
+                </p>
+              </div>
 
-            <form className="space-y-6" onSubmit={handleEmailAuth}>
-              {isSignUp && (
+              <form className="mt-8 space-y-5" onSubmit={handleEmailAuth}>
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <label htmlFor="username" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Full name
+                    </label>
+                    <Input
+                      id="username"
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="h-12 rounded-2xl border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary"
+                      placeholder="Samantha Clark"
+                    />
+                  </div>
+                )}
+
                 <div className="space-y-2">
-                  <label htmlFor="username" className="block text-sm font-semibold text-gray-700">
-                    Full Name
+                  <label htmlFor="email" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Work email
                   </label>
                   <Input
-                    id="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                    placeholder="Enter your full name"
+                    id="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-12 rounded-2xl border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary"
+                    placeholder="founder@firm.com"
                   />
                 </div>
-              )}
-              
-              <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
-                  Email Address
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Enter your email"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
-                  Password
-                </label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Enter your password (min 6 characters)"
-                  minLength={6}
-                />
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg transition-all duration-300" 
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Processing...
-                  </div>
-                ) : (
-                  isSignUp ? "Create Account" : "Sign In"
-                )}
-              </Button>
-            </form>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
+                <div className="space-y-2">
+                  <label htmlFor="password" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Password
+                  </label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-12 rounded-2xl border-slate-200 bg-slate-50 focus:border-primary focus:ring-primary"
+                    placeholder="Min 6 characters"
+                    minLength={6}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="mt-2 h-12 w-full rounded-2xl bg-primary text-white shadow-primary/40 shadow-lg transition hover:bg-primary/90"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Processing...
+                    </div>
+                  ) : (
+                    isSignUp ? "Create secure workspace" : "Access workspace"
+                  )}
+                </Button>
+              </form>
+
+              <div className="my-6 flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-slate-400">
+                <div className="h-px flex-1 bg-slate-200" />
+                Continue with
+                <div className="h-px flex-1 bg-slate-200" />
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500">Or continue with</span>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-12 rounded-2xl border-slate-200"
+                  onClick={handleGoogleAuth}
+                  disabled={loading}
+                >
+                  <GoogleIcon className="mr-2 h-5 w-5" />
+                  Google
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-12 rounded-2xl border-slate-200"
+                  onClick={handleGithubAuth}
+                  disabled={loading}
+                >
+                  <Github className="mr-2 h-5 w-5" />
+                  GitHub
+                </Button>
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="h-12 border-gray-200 hover:bg-gray-50 transition-all duration-200"
-                onClick={handleGoogleAuth}
-                disabled={loading}
-              >
-                <GoogleIcon className="mr-2 h-5 w-5" />
-                Google
-              </Button>
-              
-              <Button
-                type="button"
-                variant="outline"
-                className="h-12 border-gray-200 hover:bg-gray-50 transition-all duration-200"
-                onClick={handleGithubAuth}
-                disabled={loading}
-              >
-                <Github className="mr-2 h-5 w-5" />
-                GitHub
-              </Button>
-            </div>
-
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
-                disabled={loading}
-              >
-                {isSignUp
-                  ? "Already have an account? Sign in"
-                  : "Need an account? Sign up"}
-              </button>
-            </div>
-
-            {/* Debug info for development */}
-            <div className="text-xs text-gray-400 text-center">
-              <p>Having trouble? Contact support</p>
-            </div>
-          </Card>
+              <div className="mt-6 text-center text-sm text-slate-500">
+                <button
+                  type="button"
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  className="font-semibold text-primary"
+                  disabled={loading}
+                >
+                  {isSignUp ? "Already onboarded? Sign in" : "Need an invite? Create one"}
+                </button>
+              </div>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

@@ -19,6 +19,8 @@ export default {
       },
       fontFamily: {
         sans: ["Host Grotesk", "Aeonik", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        body: ["Manrope", "Inter", "Host Grotesk", "Aeonik", "system-ui", "-apple-system", "sans-serif"],
+        display: ["Instrument Serif", "Georgia", "serif"],
         editorial: ["Instrument Serif", "Editorial New", "serif"],
         aeonik: ["Aeonik", "system-ui", "-apple-system", "sans-serif"],
         'editorial-new': ['Instrument Serif', 'Editorial New', 'serif'],

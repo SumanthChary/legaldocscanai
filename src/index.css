@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Instrument+Serif:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 @font-face {
   font-family: 'Editorial New';
@@ -154,11 +155,11 @@
 @layer base {
   * {
     @apply border-border;
-    font-family: "Host Grotesk", "Aeonik", system-ui, -apple-system, sans-serif !important;
+    font-family: "Manrope", "Inter", "Host Grotesk", "Aeonik", system-ui, -apple-system, sans-serif;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Host Grotesk", "Aeonik", system-ui, -apple-system, sans-serif !important;
+    font-family: "Manrope", "Inter", "Host Grotesk", "Aeonik", system-ui, -apple-system, sans-serif;
     /* Mobile optimizations */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -182,6 +183,31 @@
     background-color: rgba(16, 185, 129, 0.2);
     color: rgb(16, 185, 129);
   }
+
+  h1,
+  h2,
+  h3,
+  .font-display,
+  .instrument-serif-regular,
+  .instrument-serif-regular-italic,
+  .legaldeep-display {
+    font-family: "Instrument Serif", "Georgia", serif !important;
+    font-weight: 400;
+  }
+}
+
+.instrument-serif-regular,
+.instrument-serif-regular-italic {
+  font-family: "Instrument Serif", "Georgia", serif;
+  font-weight: 400;
+}
+
+.instrument-serif-regular-italic {
+  font-style: italic;
+}
+
+.logo-glow {
+  filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.4));
 }
 
 @layer utilities {
@@ -369,5 +395,17 @@
     opacity: 0;
     transform: translateY(-20px);
     transition: all 0.3s ease-in;
+  }
+
+  .legaldeep-card {
+    @apply rounded-3xl border border-white/60 bg-white/90 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur;
+  }
+
+  .legaldeep-card-dark {
+    @apply rounded-3xl border border-slate-800/70 bg-slate-900/80 text-white shadow-[0_-12px_60px_rgba(0,0,0,0.6)] backdrop-blur;
+  }
+
+  .legaldeep-pill {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold tracking-wide;
   }
 }

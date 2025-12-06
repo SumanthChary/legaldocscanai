@@ -34,18 +34,23 @@ export const useFileUpload = (onSuccess?: () => void) => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleUpload = async () => {
-    if (!file) return;
+  const handleUpload = async (overrideFile?: File) => {
+    const fileToUpload = overrideFile ?? file;
+    if (!fileToUpload) return;
+
+    if (overrideFile) {
+      setFile(overrideFile);
+    }
 
     startUpload();
     
     try {
-      console.log("🚀 Starting LIGHTNING upload for file:", file.name);
+      console.log("🚀 Starting LIGHTNING upload for file:", fileToUpload.name);
       
       const progressInterval = updateProgress();
       const startTime = Date.now();
 
-      const result = await uploadService.uploadDocument(file);
+      const result = await uploadService.uploadDocument(fileToUpload);
       
       clearInterval(progressInterval);
       const processingTime = Date.now() - startTime;
@@ -54,7 +59,7 @@ export const useFileUpload = (onSuccess?: () => void) => {
       
       toast({
         title: "⚡ LIGHTNING Analysis Complete!",
-        description: `${file.name} analyzed in ${Math.round(processingTime/1000)}s using advanced AI!`,
+        description: `${fileToUpload.name} analyzed in ${Math.round(processingTime/1000)}s using advanced AI!`,
       });
       
       console.log(`✅ Analysis completed successfully: ${result.analysis_id}`);
