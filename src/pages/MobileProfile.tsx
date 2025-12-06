@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { toast } from "sonner";
-import { Crown, HelpCircle, LogOut, Settings, Share2, AlertTriangle } from "lucide-react";
+import { Camera, Crown, Download, HelpCircle, LogOut, Settings, Share2, Users } from "lucide-react";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 
 export default function MobileProfile() {
@@ -160,7 +160,7 @@ export default function MobileProfile() {
 
           <Card className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
             <div className="space-y-4 text-sm text-slate-700">
-              {[{ label: "Invite legal team", icon: Group, description: "Seat teammates with restricted viewer access." }, { label: "Download archive", icon: Download, description: "Bulk export every PDF, insight, and summary." }, { label: "Workspace settings", icon: Settings, description: "Branding, retention, notifications." }, { label: "Help & support", icon: HelpCircle, description: "Talk to our counsel desk 24/7." }].map((action) => (
+              {[{ label: "Invite legal team", icon: Users, description: "Seat teammates with restricted viewer access." }, { label: "Download archive", icon: Download, description: "Bulk export every PDF, insight, and summary." }, { label: "Workspace settings", icon: Settings, description: "Branding, retention, notifications." }, { label: "Help & support", icon: HelpCircle, description: "Talk to our counsel desk 24/7." }].map((action) => (
                 <div key={action.label} className="flex items-center gap-4 rounded-2xl border border-slate-100 p-3">
                   <action.icon className="h-5 w-5 text-slate-500" />
                   <div>
@@ -225,4 +225,4 @@ export default function MobileProfile() {
       </div>
     </MobileLayout>
   );
-}}
+}
