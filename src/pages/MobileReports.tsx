@@ -1,215 +1,222 @@
 import { useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { MobileLayout } from "@/components/mobile/MobileLayout";
-import { MobileHeader } from "@/components/mobile/MobileHeader";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
-import { Download, Share2, ShieldAlert, Sparkles, FileText, ScrollText, Copy, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, ArrowUpRight, Download, FileText, Share2, ShieldCheck, Sparkles } from "lucide-react";
 
-interface RiskItem {
-  level: "High" | "Medium" | "Low";
-  title: string;
-  description?: string;
-  excerpt?: string;
-}
-
-const fallbackRiskHighlights: RiskItem[] = [
+const SUMMARY_POINTS = [
   {
-    level: "High",
-    title: "Ambiguous termination clause",
-    description: "Clause does not clearly define conditions to exit the contract, risking disputes.",
-    excerpt: "'This agreement may be terminated by either party with written notice.'",
+    title: "Termination penalty is absolute",
+    detail: "Vendor charges 4 months of fees if we exit early with no cure period or notice flexibility.",
   },
   {
-    level: "Medium",
-    title: "Auto-renewal without notice",
-    description: "Agreement renews automatically unless cancelled but lacks a notice requirement.",
-    excerpt: "'Term renews every 12 months unless a party cancels.'",
+    title: "Liability is uncapped",
+    detail: "Clause 9.2 exposes us to unlimited consequential damages despite mutual indemnity language.",
   },
   {
-    level: "High",
-    title: "Uncapped liability",
-    description: "Vendor's liability is not limited, exposing you to unlimited damages.",
+    title: "Auto-renew triggers in 30 days",
+    detail: "Cancellation window is short; reminder task should fire at least 14 days prior to term end.",
   },
 ];
 
-const levelBadge: Record<RiskItem["level"], string> = {
-  High: "bg-red-100 text-red-600",
-  Medium: "bg-amber-100 text-amber-600",
-  Low: "bg-emerald-100 text-emerald-600",
+const SAMPLE_RISKS = [
+  {
+    level: "High",
+    title: "Termination penalty",
+    clause: "Sec. 12.4",
+    detail: "Requires 120-day fees upon notice regardless of cause.",
+    action: "Negotiate a sliding scale cap and a breach carve-out.",
+  },
+  {
+    level: "High",
+    title: "Broad indemnification",
+    clause: "Sec. 9.2",
+    detail: "Covers indirect damages and third-party IP claims without limitation.",
+    action: "Carve out indirect damages and align with service value.",
+  },
+  {
+    level: "Medium",
+    title: "Auto-renewal",
+    clause: "Sec. 3.1",
+    detail: "Automatic 12-month renewal with 30-day notice requirement.",
+    action: "Add opt-in renewal and 60-day notification.",
+  },
+  {
+    level: "Low",
+    title: "Audit rights",
+    clause: "Sec. 7.3",
+    detail: "Reasonable access but request electronic-first review.",
+    action: "No change required; document process in playbook.",
+  },
+];
+
+const PROMPT_SUGGESTIONS = [
+  "Summarize 3 blockers",
+  "Draft redlines",
+  "Explain renewal obligations",
+  "Prep exec brief",
+];
+
+type LocationState = {
+  analysisId?: string;
 };
 
 export default function MobileReports() {
+  const location = useLocation<LocationState>();
   const { analyses } = useAnalyses();
 
-  const primaryAnalysis = analyses[0];
-
-  const parsedSummary = useMemo(() => {
-    if (!primaryAnalysis?.summary) return {} as any;
-    if (typeof primaryAnalysis.summary === "string") {
-      try {
-        return JSON.parse(primaryAnalysis.summary);
-      } catch {
-        return {} as any;
-      }
+  const current = useMemo(() => {
+    const requestedId = location.state?.analysisId;
+    if (!analyses.length) return undefined;
+    if (requestedId) {
+      return analyses.find((analysis) => analysis.id === requestedId) || analyses[0];
     }
-    return primaryAnalysis.summary as any;
-  }, [primaryAnalysis]);
+    return analyses[0];
+  }, [analyses, location.state]);
 
-  const riskHighlights: RiskItem[] = Array.isArray(parsedSummary?.risks) && parsedSummary.risks.length
-    ? parsedSummary.risks.map((risk: any) => ({
-        level: (risk.level as RiskItem["level"]) || "Medium",
-        title: risk.title || "Risk",
-        description: risk.description,
-        excerpt: risk.excerpt,
-      }))
-    : fallbackRiskHighlights;
-
-  const headerRight = (
-    <button className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600">
-      <Share2 size={18} />
-    </button>
-  );
-
-  const scanDate = primaryAnalysis ? new Date(primaryAnalysis.created_at) : null;
-  const accuracy = parsedSummary?.confidence || "89%";
-  const clauses = parsedSummary?.clauses_reviewed || 42;
-  const pages = primaryAnalysis?.page_count || 24;
+  const stats = [
+    { label: "Pages", value: current?.page_count ? `${current.page_count}` : "27" },
+    { label: "Counterparty", value: current?.counterparty || "Stitch Labs" },
+    { label: "Scanned", value: current ? new Date(current.created_at).toLocaleDateString() : "Today" },
+    { label: "Status", value: (current?.status || current?.analysis_status || "Draft").toString() },
+  ];
 
   return (
     <MobileLayout>
-      <div className="mx-auto flex min-h-screen max-w-sm flex-col bg-[#F6F8F7]">
-        <MobileHeader title="Contract report" rightSlot={headerRight} />
-        <main className="flex-1 space-y-6 overflow-y-auto px-4 pb-32 pt-4">
-          <section className="rounded-[32px] border border-slate-100 bg-white/95 p-6 shadow-sm">
+      <div className="mx-auto flex min-h-screen max-w-sm flex-col bg-[#F4F7F5] px-4 pb-32 pt-6 text-slate-900">
+        <section className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.4em] text-slate-400">Contract report</p>
+              <h1 className="font-display text-3xl leading-tight text-slate-900">{current?.file_name || "Vendor Agreement"}</h1>
+              <p className="mt-2 text-sm text-slate-500">Prepared by LegalDeep AI · {stats[0].value} pages</p>
+            </div>
+            <div className="rounded-2xl border border-red-100 bg-red-50 px-3 py-2 text-right">
+              <p className="text-[10px] uppercase tracking-[0.4em] text-red-500">Risk score</p>
+              <p className="text-sm font-semibold text-red-600">82 · High</p>
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            {stats.map((stat) => (
+              <div key={stat.label} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-3">
+                <p className="text-[10px] uppercase tracking-[0.4em] text-slate-400">{stat.label}</p>
+                <p className="mt-2 text-sm font-semibold text-slate-900">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 rounded-[28px] border border-red-100 bg-gradient-to-br from-red-50 via-rose-50 to-orange-50 p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Vendor agreement</p>
-                <h1 className="font-display text-3xl text-slate-900">{primaryAnalysis?.file_name || "Vendor Agreement"}</h1>
+                <p className="text-[11px] uppercase tracking-[0.4em] text-red-500">Alert</p>
+                <p className="text-sm font-semibold text-red-600">3 blocking clauses need counsel review</p>
               </div>
-              <div className={`rounded-full px-4 py-1 text-xs font-semibold ${levelBadge[riskHighlights[0]?.level || "High"]}`}>
-                {riskHighlights[0]?.level || "High"} risk
-              </div>
+              <AlertTriangle className="h-5 w-5 text-red-500" />
             </div>
-            <p className="mt-2 text-sm text-slate-500">
-              {scanDate ? `${scanDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })} · ${pages} pages` : "Recent capture"}
-            </p>
-            <div className="mt-5 grid grid-cols-3 gap-3 text-center text-xs">
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Clauses</p>
-                <p className="mt-1 text-xl font-semibold text-slate-900">{clauses}</p>
-              </div>
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Accuracy</p>
-                <p className="mt-1 text-xl font-semibold text-emerald-600">{accuracy}</p>
-              </div>
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Status</p>
-                <p className="mt-1 text-xl font-semibold text-slate-900">
-                  {(primaryAnalysis?.status || primaryAnalysis?.analysis_status || "Processing").toString()}
-                </p>
-              </div>
-            </div>
-          </section>
+            <p className="mt-3 text-sm text-red-700">Termination, liability, and renewal language are outside playbook tolerances.</p>
+          </div>
+        </section>
 
-          <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-slate-900">Risk highlights</p>
-              <div className="rounded-full bg-slate-200/70 px-3 py-1 text-xs text-slate-600">AI briefing</div>
+        <section className="mt-6 rounded-[32px] border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.4em] text-slate-400">
+            <Sparkles className="h-4 w-4 text-emerald-500" /> Instant summary
+          </div>
+          <div className="mt-4 space-y-3">
+            {SUMMARY_POINTS.map((point) => (
+              <div key={point.title} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                <p className="text-sm font-semibold text-slate-900">{point.title}</p>
+                <p className="mt-1 text-sm text-slate-500">{point.detail}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-6 rounded-[32px] border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.4em] text-slate-400">Clause risks</p>
+              <p className="font-display text-2xl text-slate-900">Review queue</p>
             </div>
-            {riskHighlights.map((risk) => (
-              <Card key={risk.title} className="space-y-3 rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-2xl text-xs font-semibold ${
+            <button className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500">
+              Export list <ArrowUpRight size={14} />
+            </button>
+          </div>
+          <div className="mt-5 space-y-3">
+            {SAMPLE_RISKS.map((risk) => (
+              <div key={risk.title} className="rounded-3xl border border-slate-100 bg-white/70 p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">{risk.title}</p>
+                    <p className="text-xs uppercase tracking-[0.4em] text-slate-400">{risk.clause}</p>
+                  </div>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
                       risk.level === "High"
                         ? "bg-red-50 text-red-600"
                         : risk.level === "Medium"
                           ? "bg-amber-50 text-amber-600"
-                          : "bg-emerald-50 text-emerald-700"
+                          : "bg-emerald-50 text-emerald-600"
                     }`}
                   >
-                    {risk.level.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Clause alert</p>
-                    <p className="text-base font-semibold text-slate-900">{risk.title}</p>
-                  </div>
+                    {risk.level}
+                  </span>
                 </div>
-                {risk.description && <p className="text-sm text-slate-600">{risk.description}</p>}
-                {risk.excerpt && (
-                  <blockquote className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-xs italic text-slate-500">
-                    {risk.excerpt}
-                  </blockquote>
-                )}
-                <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1 rounded-2xl border-slate-200 text-slate-900">
-                    <Copy className="mr-2 h-4 w-4" /> Copy risk
-                  </Button>
-                  <Button className="flex-1 rounded-2xl bg-slate-900 text-white">
-                    <MessageCircle className="mr-2 h-4 w-4" /> Contract Q&A
-                  </Button>
-                </div>
-              </Card>
+                <p className="mt-2 text-sm text-slate-500">{risk.detail}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">Next step · {risk.action}</p>
+              </div>
             ))}
-          </section>
+          </div>
+        </section>
 
-          <section className="space-y-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-              <ScrollText size={14} /> Clause timeline
+        <section className="mt-6 grid gap-3">
+          <div className="rounded-[32px] border border-slate-100 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.4em] text-slate-400">
+              <ShieldCheck className="h-4 w-4 text-emerald-500" /> Compliance checkpoints
             </div>
-            <div className="space-y-4">
-              {riskHighlights.slice(0, 4).map((risk, index) => (
-                <div key={`${risk.title}-${index}`} className="flex items-start gap-3">
-                  <div className="mt-1 h-2 w-2 rounded-full bg-slate-900" />
-                  <div>
-                    <p className="text-sm font-semibold text-slate-900">{risk.title}</p>
-                    <p className="text-xs text-slate-500">Flagged {index + 1}m ago · {risk.level} risk</p>
+            <div className="mt-4 space-y-3">
+              {["SOC 2 coverage missing", "Data residency optional", "Support SLA undefined"].map((item) => (
+                <div key={item} className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100">
+                    <FileText className="h-4 w-4 text-emerald-600" />
                   </div>
+                  <p className="text-sm font-semibold text-slate-900">{item}</p>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
 
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-              <Sparkles size={14} /> AI assistant
+          <div className="rounded-[32px] border border-slate-900 bg-slate-900 p-6 text-white">
+            <p className="text-[11px] uppercase tracking-[0.4em] text-white/60">Ask LegalDeep</p>
+            <p className="mt-2 text-lg font-semibold">“What is the liability cap if we breach?”</p>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              {PROMPT_SUGGESTIONS.map((prompt) => (
+                <button key={prompt} className="rounded-2xl border border-white/20 bg-white/10 px-3 py-2 text-left text-xs font-semibold text-white">
+                  {prompt}
+                </button>
+              ))}
             </div>
-            <p className="mt-3 text-base font-semibold text-slate-900">Ask about this contract</p>
-            <p className="text-sm text-slate-500">Query any clause, deadline, or obligation using natural language.</p>
-            <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-              "Summarize the indemnification obligations in plain English."
-            </div>
-            <Button className="mt-4 h-12 w-full rounded-2xl bg-slate-900 text-white">Open Contract Q&A</Button>
-          </section>
-
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-slate-400">
-              <ShieldAlert size={14} /> Export safeguards
-            </div>
-            <div className="mt-4 space-y-3 text-sm text-slate-600">
-              <div className="flex items-start gap-3">
-                <FileText size={18} className="text-slate-500" />
-                <p>Secure PDF bundle with highlights and clause transcripts.</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <Sparkles size={18} className="text-slate-500" />
-                <p>Optional AI-written executive summary for stakeholders.</p>
-              </div>
-            </div>
-          </section>
-        </main>
-
-        <div className="fixed bottom-0 left-0 right-0 mx-auto w-full max-w-sm border-t border-white/60 bg-white/90 px-4 py-3 backdrop-blur">
-          <div className="flex items-center gap-3">
-            <Button variant="outline" className="flex-1 rounded-2xl border-slate-200 text-slate-900">
-              <Share2 className="mr-2 h-4 w-4" /> Share report
-            </Button>
-            <Button className="flex-1 rounded-2xl bg-slate-900 text-white">
-              <Download className="mr-2 h-4 w-4" /> Pay & Download ($19)
+            <Button className="mt-5 w-full rounded-2xl bg-white text-slate-900">
+              Open contract Q&A
             </Button>
           </div>
-        </div>
+        </section>
+
+        <section className="mt-6 flex flex-col gap-3 rounded-[32px] border border-slate-100 bg-white p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-slate-900">Deliver report</p>
+            <p className="text-xs text-slate-500">PDF + raw clauses</p>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1 rounded-2xl border-slate-200 text-slate-900">
+              <Share2 className="h-4 w-4" /> Share summary
+            </Button>
+            <Button className="flex-1 rounded-2xl bg-slate-900 text-white">
+              <Download className="h-4 w-4" /> Pay & download ($19)
+            </Button>
+          </div>
+        </section>
       </div>
     </MobileLayout>
   );
