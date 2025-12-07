@@ -5,12 +5,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
+import { useCameraPermission } from "@/hooks/useCameraPermission";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { toast } from "sonner";
-import { Camera, Crown, Download, HelpCircle, LogOut, Settings, Share2, Users } from "lucide-react";
+import { Camera, Crown, Download, HelpCircle, LogOut, Share2, Users } from "lucide-react";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 import { useNavigate } from "react-router-dom";
 
@@ -22,6 +25,13 @@ export default function MobileProfile() {
   const [formData, setFormData] = useState({ username: "", email: "", avatar_url: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [notifications, setNotifications] = useState(true);
+  const {
+    status: cameraPermission,
+    requestPermission: requestCameraPermission,
+    isRequesting: cameraRequesting,
+    resetPermissionState,
+  } = useCameraPermission();
 
   useEffect(() => {
     if (user) {
@@ -73,6 +83,23 @@ export default function MobileProfile() {
     await signOut();
   };
 
+  const cameraStatusLabel =
+    cameraPermission === "granted" ? "Enabled" : cameraPermission === "denied" ? "Blocked" : "Not requested";
+
+  const handleCameraPermission = async () => {
+    const granted = await requestCameraPermission();
+    if (granted) {
+      toast.success("Camera enabled for scanning");
+    } else {
+      toast.error("Camera permission is blocked in your browser settings");
+    }
+  };
+
+  const handleCameraReset = () => {
+    resetPermissionState();
+    toast("Camera prompt reset. You will be asked again next time you scan.");
+  };
+
   if (loading) {
     return (
       <MobileLayout>
@@ -100,16 +127,6 @@ export default function MobileProfile() {
       <div className="mx-auto min-h-screen max-w-sm bg-slate-50">
         <MobileHeader title="Profile" />
         <main className="space-y-6 px-4 pb-32 pt-5">
-          <div className="flex justify-end">
-            <Button
-              size="sm"
-              variant="outline"
-              className="rounded-full border-slate-200 text-xs font-semibold text-slate-900"
-              onClick={() => navigate("/settings")}
-            >
-              <Settings className="mr-2 h-4 w-4" /> Open settings
-            </Button>
-          </div>
           <Card className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
             <div className="flex items-start gap-4">
               <div className="relative">
@@ -176,8 +193,47 @@ export default function MobileProfile() {
           </Card>
 
           <Card className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Push notifications</p>
+                <p className="text-xs text-slate-500">Get alerts when reports are ready</p>
+              </div>
+              <Switch checked={notifications} onCheckedChange={setNotifications} />
+            </div>
+            <div className="mt-5 rounded-2xl border border-slate-100 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">Camera access</p>
+                  <p className="text-xs text-slate-500">Required for in-app scanning</p>
+                </div>
+                <Badge variant="outline" className="rounded-full px-3 text-xs font-semibold text-slate-900">
+                  {cameraStatusLabel}
+                </Badge>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  onClick={handleCameraPermission}
+                  disabled={cameraRequesting}
+                  className="rounded-full"
+                >
+                  {cameraPermission === "granted" ? "Recheck camera" : "Enable camera"}
+                </Button>
+                {cameraPermission !== "prompt" && (
+                  <Button variant="ghost" size="sm" onClick={handleCameraReset} className="rounded-full text-slate-500">
+                    Reset prompt
+                  </Button>
+                )}
+              </div>
+              <p className="mt-2 text-xs text-slate-500">
+                If permissions stay blocked, open your device settings and enable camera access for this browser.
+              </p>
+            </div>
+          </Card>
+
+          <Card className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
             <div className="space-y-4 text-sm text-slate-700">
-              {[{ label: "Invite legal team", icon: Users, description: "Seat teammates with restricted viewer access." }, { label: "Download archive", icon: Download, description: "Bulk export every PDF, insight, and summary." }, { label: "Workspace settings", icon: Settings, description: "Branding, retention, notifications." }, { label: "Help & support", icon: HelpCircle, description: "Talk to our counsel desk 24/7." }].map((action) => (
+              {[{ label: "Invite legal team", icon: Users, description: "Seat teammates with restricted viewer access." }, { label: "Download archive", icon: Download, description: "Bulk export every PDF, insight, and summary." }, { label: "Help & support", icon: HelpCircle, description: "Talk to our counsel desk 24/7." }].map((action) => (
                 <div key={action.label} className="flex items-center gap-4 rounded-2xl border border-slate-100 p-3">
                   <action.icon className="h-5 w-5 text-slate-500" />
                   <div>

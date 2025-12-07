@@ -18,7 +18,6 @@ import MobileScan from "./pages/MobileScan";
 import MobileHistory from "./pages/MobileHistory";
 import MobileAuth from "./pages/MobileAuth";
 import MobileChat from "./pages/MobileChat";
-import MobileSettings from "./pages/MobileSettings";
 import MobileDocumentSummary from "./pages/MobileDocumentSummary";
 import MobileReports from "./pages/MobileReports";
 import MobileProfile from "./pages/MobileProfile";
@@ -119,11 +118,6 @@ function App() {
                 <Route path="/chat" element={
                   <ProtectedRoute>
                     <MobileChat />
-                  </ProtectedRoute>
-                } />
-                <Route path="/settings" element={
-                  <ProtectedRoute>
-                    <MobileSettings />
                   </ProtectedRoute>
                 } />
                 <Route path="/plans" element={

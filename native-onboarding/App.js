@@ -108,17 +108,22 @@ const App = () => {
   const [userName, setUserName] = useState("John");
   const [currentPage, setCurrentPage] = useState(0);
   const [hasFinished, setHasFinished] = useState(false);
+  const [bootstrapped, setBootstrapped] = useState(false);
   const confettiRef = useRef(null);
 
   useEffect(() => {
     const bootstrap = async () => {
-      const storedName = await AsyncStorage.getItem("user.name");
-      if (storedName) {
-        setUserName(storedName);
-      }
-      const onboarded = await AsyncStorage.getItem("onboarded_app");
-      if (onboarded === "true") {
-        setHasFinished(true);
+      try {
+        const storedName = await AsyncStorage.getItem("user.name");
+        if (storedName) {
+          setUserName(storedName);
+        }
+        const onboarded = await AsyncStorage.getItem("onboarded_app");
+        if (onboarded === "true") {
+          setHasFinished(true);
+        }
+      } finally {
+        setBootstrapped(true);
       }
     };
     bootstrap();
@@ -161,6 +166,14 @@ const App = () => {
     ],
     [width, greeting],
   );
+
+  if (!bootstrapped) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="dark-content" backgroundColor="#F6F8F7" />
+      </SafeAreaView>
+    );
+  }
 
   if (hasFinished) {
     return (

@@ -13,7 +13,6 @@ const navItems: NavItem[] = [
   { icon: "history", label: "History", path: "/history" },
   { icon: "analytics", label: "Reports", path: "/reports" },
   { icon: "person_outline", label: "Profile", path: "/profile" },
-  { icon: "settings", label: "Settings", path: "/settings" },
 ];
 
 export const MobileNavigation = () => {
