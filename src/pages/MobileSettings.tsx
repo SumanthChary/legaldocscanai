@@ -325,7 +325,11 @@ export default function MobileSettings() {
                 <h4 className="font-semibold">Upgrade to Pro</h4>
                 <p className="text-sm text-muted-foreground">Unlock unlimited scans and advanced features</p>
               </div>
-              <Button size="sm" className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-sm">
+              <Button
+                size="sm"
+                className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-sm"
+                onClick={() => navigate("/plans")}
+              >
                 Upgrade
               </Button>
             </div>

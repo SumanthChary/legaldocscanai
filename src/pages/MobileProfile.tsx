@@ -12,10 +12,12 @@ import type { Tables } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { Camera, Crown, Download, HelpCircle, LogOut, Settings, Share2, Users } from "lucide-react";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
+import { useNavigate } from "react-router-dom";
 
 export default function MobileProfile() {
   const { user, signOut } = useAuth();
   const { analyses } = useAnalyses();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [formData, setFormData] = useState({ username: "", email: "", avatar_url: "" });
   const [loading, setLoading] = useState(true);
@@ -98,6 +100,16 @@ export default function MobileProfile() {
       <div className="mx-auto min-h-screen max-w-sm bg-slate-50">
         <MobileHeader title="Profile" />
         <main className="space-y-6 px-4 pb-32 pt-5">
+          <div className="flex justify-end">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-full border-slate-200 text-xs font-semibold text-slate-900"
+              onClick={() => navigate("/settings")}
+            >
+              <Settings className="mr-2 h-4 w-4" /> Open settings
+            </Button>
+          </div>
           <Card className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
             <div className="flex items-start gap-4">
               <div className="relative">
@@ -143,7 +155,12 @@ export default function MobileProfile() {
                 <p className="text-sm font-semibold text-slate-900">LegalDeep Unlimited</p>
                 <p className="text-xs text-slate-500">Next billing · Dec 15 · $19</p>
               </div>
-              <Button size="sm" variant="outline" className="rounded-full border-slate-200 text-slate-900">
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full border-slate-200 text-slate-900"
+                onClick={() => navigate("/plans")}
+              >
                 Manage plan
               </Button>
             </div>

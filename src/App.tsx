@@ -22,6 +22,7 @@ import MobileSettings from "./pages/MobileSettings";
 import MobileDocumentSummary from "./pages/MobileDocumentSummary";
 import MobileReports from "./pages/MobileReports";
 import MobileProfile from "./pages/MobileProfile";
+import MobilePlans from "./pages/MobilePlans";
 
 // Desktop fallbacks
 import Auth from "./pages/Auth";
@@ -100,6 +101,11 @@ function App() {
                     <MobileReports />
                   </ProtectedRoute>
                 } />
+                <Route path="/reports/:id" element={
+                  <ProtectedRoute>
+                    <MobileDocumentSummary />
+                  </ProtectedRoute>
+                } />
                 <Route path="/document-summary/:id" element={
                   <ProtectedRoute>
                     <MobileDocumentSummary />
@@ -118,6 +124,11 @@ function App() {
                 <Route path="/settings" element={
                   <ProtectedRoute>
                     <MobileSettings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/plans" element={
+                  <ProtectedRoute>
+                    <MobilePlans />
                   </ProtectedRoute>
                 } />
                 <Route path="/profile" element={
