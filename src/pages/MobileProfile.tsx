@@ -193,12 +193,16 @@ export default function MobileProfile() {
           </Card>
 
           <Card className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-slate-900">Push notifications</p>
                 <p className="text-xs text-slate-500">Get alerts when reports are ready</p>
               </div>
-              <Switch checked={notifications} onCheckedChange={setNotifications} />
+              <Switch
+                checked={notifications}
+                onCheckedChange={setNotifications}
+                className="self-start sm:self-auto"
+              />
             </div>
             <div className="mt-5 rounded-2xl border border-slate-100 p-4">
               <div className="flex items-center justify-between gap-3">

@@ -163,7 +163,7 @@ export const UploadSection = ({ onSuccess }: UploadSectionProps) => {
       {file && !isUploading && (
         <div className="text-center">
           <Button
-            onClick={handleUpload}
+            onClick={() => handleUpload()}
             size="lg"
             className="gap-2 px-12"
           >

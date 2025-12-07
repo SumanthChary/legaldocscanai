@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MobileLayout } from "@/components/mobile/MobileLayout";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, BarChart3, PieChart, Sparkles, Activity, TrendingUp } from "lucide-react";
+import { ArrowUpRight, BarChart3, Sparkles, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const RISK_THEMES = [
@@ -20,10 +20,10 @@ type LocationState = {
 };
 
 export default function MobileReports() {
-  const location = useLocation<LocationState>();
+  const location = useLocation();
   const { analyses } = useAnalyses();
   const navigate = useNavigate();
-  const requestedId = location.state?.analysisId ?? null;
+  const requestedId = (location.state as LocationState | undefined)?.analysisId ?? null;
   const [showAllReports, setShowAllReports] = useState(false);
 
   useEffect(() => {
@@ -44,10 +44,21 @@ export default function MobileReports() {
     Low: "bg-emerald-50 text-emerald-600 border-emerald-200",
   } as const;
 
+  type RiskLevel = keyof typeof riskPalette;
+
   const getRiskLevel = (index: number) => {
     if (index % 3 === 0) return "High" as const;
     if (index % 3 === 1) return "Medium" as const;
     return "Low" as const;
+  };
+
+  const normalizeRiskLevel = (value: unknown): RiskLevel | null => {
+    if (typeof value !== "string") return null;
+    const normalized = value.toLowerCase();
+    if (normalized.includes("high")) return "High";
+    if (normalized.includes("medium")) return "Medium";
+    if (normalized.includes("low")) return "Low";
+    return null;
   };
 
   const getRiskTags = (index: number) => {
@@ -87,7 +98,35 @@ export default function MobileReports() {
 
   const { scans, highRisks, savings, avgScore } = aggregateStats();
 
-  const trendPoints = [18, 26, 19, 32, 24, 36, 30];
+  const dateCounts = analyses.reduce<Record<string, number>>((counts, analysis) => {
+    const date = analysis?.created_at ? new Date(analysis.created_at) : new Date();
+    if (Number.isNaN(date.getTime())) return counts;
+    date.setHours(0, 0, 0, 0);
+    const key = date.toISOString().split("T")[0];
+    counts[key] = (counts[key] || 0) + 1;
+    return counts;
+  }, {});
+
+  const buildBuckets = (days: number, offset = 0) => {
+    return Array.from({ length: days }, (_, position) => {
+      const date = new Date();
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() - (days - 1 - position + offset));
+      const key = date.toISOString().split("T")[0];
+      return {
+        key,
+        count: dateCounts[key] || 0,
+      };
+    });
+  };
+
+  const currentWeekBuckets = buildBuckets(7);
+  const previousWeekBuckets = buildBuckets(7, 7);
+  const trendPoints = currentWeekBuckets.map((bucket) => bucket.count);
+  const currentWeekTotal = trendPoints.reduce((sum, value) => sum + value, 0);
+  const previousWeekTotal = previousWeekBuckets.reduce((sum, bucket) => sum + bucket.count, 0);
+  const changePercent = previousWeekTotal === 0 ? (currentWeekTotal ? 100 : 0) : Math.round(((currentWeekTotal - previousWeekTotal) / previousWeekTotal) * 100);
+  const changeLabel = `${changePercent >= 0 ? "+" : ""}${changePercent}% vs last week`;
   const maxTrend = Math.max(...trendPoints, 1);
   const sparklinePath = trendPoints
     .map((value, index) => {
@@ -97,18 +136,34 @@ export default function MobileReports() {
     })
     .join(" ");
 
-  const severityMix = [
-    { label: "High", value: 28, color: "bg-red-500" },
-    { label: "Medium", value: 52, color: "bg-amber-400" },
-    { label: "Low", value: 20, color: "bg-emerald-500" },
-  ];
+  const riskCounts = analyses.reduce(
+    (counts, analysis, index) => {
+      const resolved = normalizeRiskLevel((analysis as any)?.risk_level) ?? getRiskLevel(index);
+      counts[resolved] += 1;
+      return counts;
+    },
+    { High: 0, Medium: 0, Low: 0 } as Record<RiskLevel, number>,
+  );
 
-  const contractMix = [
-    { label: "NDA", value: 40, color: "#10B981" },
-    { label: "MSA", value: 30, color: "#F97316" },
-    { label: "SOW", value: 20, color: "#6366F1" },
-    { label: "Other", value: 10, color: "#94A3B8" },
-  ];
+  const severityData = (Object.keys(riskCounts) as RiskLevel[]).map((level) => ({
+    label: level,
+    value: scans ? Math.round((riskCounts[level] / scans) * 100) : 0,
+    bar:
+      level === "High" ? "bg-red-500" : level === "Medium" ? "bg-amber-400" : "bg-emerald-500",
+  }));
+
+  const clauseFrequency = analyses.reduce<Record<string, number>>((acc, _analysis, index) => {
+    getRiskTags(index).forEach((tag) => {
+      acc[tag] = (acc[tag] || 0) + 1;
+    });
+    return acc;
+  }, {});
+
+  const derivedClauses = Object.entries(clauseFrequency)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+
+  const topClauses = derivedClauses.length ? derivedClauses : RISK_THEMES.slice(0, 3).map((theme) => [theme, 0] as const);
 
   return (
     <MobileLayout>
@@ -134,6 +189,66 @@ export default function MobileReports() {
                 <p className="mt-2 text-xl font-semibold text-slate-900">{stat.value}</p>
               </div>
             ))}
+          </div>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <div className="rounded-3xl border border-slate-100 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 p-5 text-white">
+              <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-white/60">
+                <span>Analytics pulse</span>
+                <span className="inline-flex items-center gap-1 text-emerald-200">
+                  <TrendingUp className="h-3 w-3" /> {changeLabel}
+                </span>
+              </div>
+              <p className="mt-4 text-3xl font-semibold">{scans} scans</p>
+              <p className="text-sm text-white/70">{currentWeekTotal} this week · {highRisks} blockers flagged</p>
+              <svg viewBox="0 0 100 40" className="mt-5 h-20 w-full" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="spark-mini" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#34d399" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d={`${sparklinePath} L100,40 L0,40 Z`} fill="url(#spark-mini)" opacity={0.6} />
+                <path d={sparklinePath} fill="none" stroke="#6EE7B7" strokeWidth={2.2} strokeLinecap="round" />
+              </svg>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/60">Avg risk score</p>
+                  <p className="text-lg font-semibold">{avgScore}%</p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/60">Time saved</p>
+                  <p className="text-lg font-semibold">{analyses.length ? `${analyses.length * 2} hrs` : "--"}</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                <BarChart3 className="h-4 w-4 text-emerald-500" /> Risk mix
+              </div>
+              <div className="mt-4 space-y-3">
+                {severityData.map((bucket) => (
+                  <div key={bucket.label}>
+                    <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
+                      <span>{bucket.label}</span>
+                      <span>{bucket.value}%</span>
+                    </div>
+                    <div className="mt-2 h-2 w-full rounded-full bg-slate-100">
+                      <div className={cn("h-full rounded-full", bucket.bar)} style={{ width: `${bucket.value}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-500">
+                {topClauses.map(([theme, count]) => (
+                  <span key={theme} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-600">
+                    {theme} · {count}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50/80 p-3 text-xs text-slate-500">
+                Keep renegotiation-ready clauses under 25% by sharing reports weekly.
+              </div>
+            </div>
           </div>
           <div className="mt-6 space-y-3">
             {visibleAnalyses.length ? (
@@ -184,108 +299,12 @@ export default function MobileReports() {
               {showAllReports ? "Show less" : `Show ${hiddenCount} more`}
             </Button>
           )}
-        </section>
-        <section className="mt-6 space-y-4 rounded-[32px] border border-slate-100 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.4em] text-slate-400">
-                <BarChart3 className="h-4 w-4 text-emerald-500" /> Analytics pulse
-              </div>
-              <p className="mt-2 text-sm text-slate-600">Summaries and insights based on your latest scans.</p>
-            </div>
-            <Button className="rounded-2xl bg-slate-900 text-white" onClick={() => navigate("/scan")}>
-              Upload a new report
-            </Button>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-3xl border border-slate-100 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 p-5 text-white md:col-span-2">
-              <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-white/60">
-                <span>6 month trend</span>
-                <span className="inline-flex items-center gap-1 text-emerald-200">
-                  <TrendingUp className="h-3 w-3" /> +12% vs last month
-                </span>
-              </div>
-              <p className="mt-3 text-2xl font-semibold">{scans} contracts scanned</p>
-              <p className="text-sm text-white/70">{highRisks} risks escalated · {savings} saved</p>
-              <svg viewBox="0 0 100 40" className="mt-4 h-24 w-full" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="spark" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#34d399" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path d={`${sparklinePath} L100,40 L0,40 Z`} fill="url(#spark)" opacity={0.4} />
-                <path d={sparklinePath} fill="none" stroke="#6EE7B7" strokeWidth={2} strokeLinecap="round" />
-              </svg>
-            </div>
-            <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <PieChart className="h-4 w-4 text-emerald-500" /> Contracts by type
-              </div>
-              <div className="mt-4 flex items-center gap-4">
-                <div
-                  className="relative h-24 w-24 rounded-full"
-                  style={{
-                    background: `conic-gradient(${contractMix
-                      .map((segment, index, arr) => {
-                        const start = arr.slice(0, index).reduce((sum, item) => sum + item.value, 0);
-                        const end = start + segment.value;
-                        return `${segment.color} ${start}% ${end}%`;
-                      })
-                      .join(", ")})`,
-                  }}
-                >
-                  <div className="absolute inset-3 rounded-full bg-white" />
-                  <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-slate-900">{scans || 0}</div>
-                </div>
-                <div className="space-y-2 text-xs text-slate-600">
-                  {contractMix.map((segment) => (
-                    <div key={segment.label} className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: segment.color }} />
-                      <span className="font-semibold text-slate-900">{segment.label}</span>
-                      <span className="text-slate-500">{segment.value}%</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-3xl border border-slate-100 bg-slate-50/80 p-5">
-              <div className="flex items-center justify-between text-sm text-slate-600">
-                <span>High-risk ratio</span>
-                <span>{scans ? `${highRisks}/${scans}` : "0"}</span>
-              </div>
-              <div className="mt-4 h-3 w-full rounded-full bg-slate-200">
-                <div className="h-full rounded-full bg-emerald-500" style={{ width: `${scans ? Math.min(100, (highRisks / scans) * 100) : 0}%` }} />
-              </div>
-              <p className="mt-3 text-xs text-slate-500">Blockers flagged per upload. Keep the ratio under 25% through negotiation.</p>
-            </div>
-            <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <Activity className="h-4 w-4 text-emerald-500" /> Risk severity mix
-              </div>
-              <div className="mt-4 space-y-3">
-                {severityMix.map((bucket) => (
-                  <div key={bucket.label}>
-                    <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
-                      <span>{bucket.label}</span>
-                      <span>{bucket.value}%</span>
-                    </div>
-                    <div className="mt-2 h-2 w-full rounded-full bg-slate-100">
-                      <div className={cn("h-full rounded-full", bucket.color)} style={{ width: `${bucket.value}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-inner">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+          <div className="mt-4 rounded-3xl border border-slate-100 bg-white/80 p-5 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
               <Sparkles className="h-4 w-4 text-emerald-500" /> Tip
             </div>
-            <p className="mt-2 text-sm text-slate-600">
-              Tap any card above to open the clause-by-clause analysis. Export PDFs or continue a chat session instantly.
+            <p className="mt-2">
+              Tap a report card to open the full clause-by-clause view, export PDFs, or keep chatting with counsel.
             </p>
           </div>
         </section>
