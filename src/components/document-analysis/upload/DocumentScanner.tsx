@@ -330,11 +330,10 @@ export const DocumentScanner = ({
           {allowImageUpload && (
             <>
               <Button
-                variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="h-12 w-full rounded-2xl border-white/40 text-white"
+                className="h-12 w-full rounded-2xl bg-emerald-500 text-sm font-semibold text-white hover:bg-emerald-600"
               >
-                <Upload className="mr-2 h-4 w-4" /> Upload from photos
+                <Upload className="mr-2 h-4 w-4" /> Upload from files
               </Button>
               <input
                 ref={fileInputRef}
