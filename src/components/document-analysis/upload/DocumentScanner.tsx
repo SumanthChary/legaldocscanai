@@ -1,7 +1,8 @@
-import React, { useState, useRef, useCallback } from "react";
-import { Camera, Check, RotateCcw, Flashlight, Plus } from "lucide-react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import { Camera, Check, RotateCcw, Upload, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useCameraPermission } from "@/hooks/useCameraPermission";
 import { cn } from "@/lib/utils";
 
 interface DocumentScannerProps {
@@ -9,6 +10,7 @@ interface DocumentScannerProps {
   onClose: () => void;
   variant?: "overlay" | "inline";
   autoCloseOnConfirm?: boolean;
+  allowImageUpload?: boolean;
 }
 
 export const DocumentScanner = ({
@@ -16,115 +18,116 @@ export const DocumentScanner = ({
   onClose,
   variant = "overlay",
   autoCloseOnConfirm = true,
+  allowImageUpload = true,
 }: DocumentScannerProps) => {
-  const [isScanning, setIsScanning] = useState(false);
   const [scannedImage, setScannedImage] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraReady, setCameraReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const { toast } = useToast();
+  const { status, requestPermission, isRequesting } = useCameraPermission();
   const isOverlay = variant === "overlay";
-  const thumbnailPlaceholders = [
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuDXKvs3jJsag9zmHgabBiVe8_hJeogSraxHwRPNgOpST2yQtVKi8ookm4Nbpqd7tylVJ00DLhYDObwa0ODdTIedla89Gk93q2P6XsCuVjEfIZyfLNSP23mP91vpoRNNDKLWLahz2RI6ffeYAvjgcI5kpWUCa6x-ZSrWDzelVd1WTvyezPfvegwMk7hZK8Ow8KqcNQHHuQmv8vkVrPgvt4U4mxIpWum_tmlO3oXi5I5HPJ3STDT5MeN9RPK1SSG5PuO6TGQYGPQljAQC',
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuD2mhJviDIX6HhyWruNeykODP9vWSmjWFE37LG5I9EDu7y2g_uxW1bIvOBBrnJQW6zHURwf_Ntfi1SKi_MCdLECXR0A42PMhNd17-phyL0XnsgHZMHL9_0DO-P8I8N8rs2HlO02Il26dS3uMjqEPeKLZNTTyUQlQokj-3SDiLla4hCB5CeI04CTx78hPA9i5ANIBJCdA53OS9fTK4NZU2FX9HMNCgngtIlKhOBwvNXLU5GgCy5oT4AJ9i2KLgSjs6EY8fhnTYNdxE5T',
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuDx4Wc6QMXp_-YirZPmfMGBgGjNV8fjb_rLRFHCWERFwArFuKAHbnHlo2qshZCsBP0G07o6kl8QC6Sr5QilbnCbxHh1vP6WZX44G4hRZrtsy6wWfnwq15AoD9M23ZXE649pO7xRlAw4YTiNSk-HQ2CMaPBYNYyJwnDdsqxm63UIXVC960R8pcFbkcnXOzoTjoXIyfVGjjxMe7E48iHUXbXE5KlEoVRM-JDoDT0gfrUvScYRrQpwOPvfMsasNhfN0iVhG7ROBLUcEOBi',
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuAAmVUQa1MD-5tYuC_w3PVKNCWa9wKI3yUIeAiJkaQY2i8mmFt60msgMu_mAEqLDEGQ8wvpWIgELAVyJCrWc0WQUXJnucUq1z2Pg5BkHbvQF3x-C4Z9LMVSqOmJviPPeJkldfGSkQWpYOQauMMAspfu3Bnyxu-DYknWLUu4b30FfIEXTVfajTfsfKsr8la1oRpZfC1Tu7KCLdL0lH0WlPG6x9inUTJjIwgrZMC2wZB_2xM_LGIoPQRJkQOEXSLv4IL8-EjeEH4NNrbj',
-  ];
 
   const startCamera = useCallback(async () => {
+    if (typeof navigator === "undefined" || streamRef.current || status !== "granted") return;
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraError("Camera is not supported in this browser.");
+      return;
+    }
+
     try {
-      setIsScanning(true);
+      setCameraError(null);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          facingMode: 'environment',
-          width: { ideal: 1920, max: 4096 },
-          height: { ideal: 1080, max: 4096 },
-          frameRate: { ideal: 30 }
-        }
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
       });
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        streamRef.current = stream;
       }
+      streamRef.current = stream;
+      setCameraReady(true);
     } catch (error) {
-      console.error('Error accessing camera:', error);
+      console.error("Error accessing camera", error);
+      setCameraError("Unable to access camera. Check browser permissions.");
       toast({
-        title: "Camera Error",
-        description: "Could not access camera. Please check permissions.",
+        title: "Camera blocked",
+        description: "Allow camera access to continue scanning.",
         variant: "destructive",
       });
     }
-  }, [toast]);
+  }, [status, toast]);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
-    setIsScanning(false);
+    setCameraReady(false);
   }, []);
 
+  const handleEnableCamera = useCallback(async () => {
+    const granted = await requestPermission();
+    if (granted) {
+      await startCamera();
+    } else {
+      setCameraError("Camera permission denied. Update browser settings to continue.");
+    }
+  }, [requestPermission, startCamera]);
+
   const captureAndProcess = useCallback(async () => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current || !streamRef.current) {
+      toast({
+        title: "Camera not ready",
+        description: "Enable the camera before capturing.",
+      });
+      return;
+    }
 
     setProcessing(true);
+    setPendingFile(null);
     try {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
-      
-      if (!context) return;
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Canvas unsupported");
 
-      // Set canvas size to match video for high quality
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      
-      // Draw current video frame to canvas
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      // Advanced image processing for document scanning
+
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const data = imageData.data;
-      
-      // Enhanced document processing with better contrast and sharpening
       for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        
-        // Convert to grayscale for better text recognition
-        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-        
-        // Apply adaptive contrast enhancement
-        const contrast = 1.4;
-        const brightness = 20;
-        const enhanced = Math.min(255, Math.max(0, (gray - 128) * contrast + 128 + brightness));
-        
-        // Apply sharpening effect for text clarity
-        const sharpened = Math.min(255, Math.max(0, enhanced * 1.1));
-        
-        data[i] = sharpened;     // Red
-        data[i + 1] = sharpened; // Green
-        data[i + 2] = sharpened; // Blue
+        const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+        const contrast = 1.35;
+        const enhanced = Math.min(255, Math.max(0, (gray - 128) * contrast + 128 + 15));
+        data[i] = enhanced;
+        data[i + 1] = enhanced;
+        data[i + 2] = enhanced;
       }
-      
       context.putImageData(imageData, 0, 0);
-      
-      // Use higher quality JPEG compression for better text recognition
-      setScannedImage(canvas.toDataURL('image/jpeg', 0.95));
+
+      setScannedImage(canvas.toDataURL("image/jpeg", 0.95));
       stopCamera();
-      
+
       toast({
-        title: "Document Scanned",
-        description: "High-quality scan captured for analysis!",
+        title: "Scan captured",
+        description: "Review the page before sending to analysis.",
       });
     } catch (error) {
-      console.error('Error processing image:', error);
+      console.error("Error processing scan", error);
       toast({
-        title: "Scan Error",
-        description: "Error processing scan. Please try again.",
+        title: "Scan failed",
+        description: "Something went wrong while processing the scan.",
         variant: "destructive",
       });
     } finally {
@@ -139,6 +142,7 @@ export const DocumentScanner = ({
         onClose();
       } else {
         setScannedImage(null);
+        setPendingFile(null);
         startCamera();
       }
     },
@@ -146,73 +150,121 @@ export const DocumentScanner = ({
   );
 
   const confirmScan = useCallback(() => {
-    if (!scannedImage) return;
+    if (pendingFile) {
+      finalizeScan(pendingFile);
+      setPendingFile(null);
+      setScannedImage(null);
+      return;
+    }
 
-    // Convert data URL to blob then to file
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    if (!scannedImage) return;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
     const img = new Image();
 
     img.onload = () => {
       canvas.width = img.width;
       canvas.height = img.height;
       ctx?.drawImage(img, 0, 0);
-
       canvas.toBlob(
         (blob) => {
-          if (blob) {
-            const file = new File([blob], `scanned-document-${Date.now()}.jpg`, {
-              type: 'image/jpeg',
-              lastModified: Date.now(),
-            });
-            finalizeScan(file);
-          }
+          if (!blob) return;
+          const file = new File([blob], `scanned-document-${Date.now()}.jpg`, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+          finalizeScan(file);
+          setScannedImage(null);
         },
-        'image/jpeg',
+        "image/jpeg",
         0.95,
       );
     };
 
     img.src = scannedImage;
-  }, [scannedImage, finalizeScan]);
+  }, [finalizeScan, pendingFile, scannedImage]);
 
   const resetScan = useCallback(() => {
+    if (scannedImage && scannedImage.startsWith("blob:")) {
+      URL.revokeObjectURL(scannedImage);
+    }
     setScannedImage(null);
-    startCamera();
-  }, [startCamera]);
+    setPendingFile(null);
+    if (status === "granted") {
+      startCamera();
+    }
+  }, [scannedImage, startCamera, status]);
 
-  React.useEffect(() => {
-    startCamera();
-    return () => stopCamera();
-  }, [startCamera, stopCamera]);
+  const handleImageUpload = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
 
-  if (scannedImage) {
+      if (scannedImage && scannedImage.startsWith("blob:")) {
+        URL.revokeObjectURL(scannedImage);
+      }
+
+      setPendingFile(file);
+      setScannedImage(URL.createObjectURL(file));
+      stopCamera();
+      event.target.value = "";
+      toast({
+        title: "Photo added",
+        description: "Review the image, then send it for analysis.",
+      });
+    },
+    [scannedImage, stopCamera, toast],
+  );
+
+  useEffect(() => {
+    if (status === "granted" && !streamRef.current && !scannedImage) {
+      startCamera();
+    }
+    if (status !== "granted") {
+      stopCamera();
+    }
+  }, [scannedImage, startCamera, status, stopCamera]);
+
+  useEffect(() => () => stopCamera(), [stopCamera]);
+
+  useEffect(
+    () => () => {
+      if (scannedImage && scannedImage.startsWith("blob:")) {
+        URL.revokeObjectURL(scannedImage);
+      }
+    },
+    [scannedImage],
+  );
+
+  const permissionNeeded = status !== "granted";
+  const showPreview = Boolean(scannedImage);
+  const containerClass = cn(
+    "text-white",
+    isOverlay ? "fixed inset-0 z-50 bg-black/95" : "relative rounded-[32px] bg-slate-950 shadow-[0_30px_90px_rgba(0,0,0,0.55)]",
+  );
+
+  if (showPreview) {
     return (
-      <div
-        className={cn(
-          "bg-black/85",
-          isOverlay ? "fixed inset-0 z-50" : "relative rounded-[32px] shadow-[0_25px_80px_rgba(1,11,8,0.75)]",
-        )}
-      >
-        <div className={cn("flex h-full flex-col", !isOverlay && "rounded-[32px] overflow-hidden")}>
-          <header className="flex items-center justify-between border-b border-white/15 px-4 py-4 text-white">
-            <button onClick={onClose} className="text-sm text-white/80">Close</button>
-            <p className="instrument-serif-regular-italic text-xl">Review scan</p>
-            <button onClick={resetScan} className="text-sm text-emerald-300">Rescan</button>
+      <div className={containerClass}>
+        <div className={cn("flex h-full flex-col", !isOverlay && "overflow-hidden")}> 
+          <header className="flex items-center justify-between border-b border-white/10 px-4 py-4">
+            <button onClick={onClose} className="text-sm text-white/70">Close</button>
+            <p className="instrument-serif-regular-italic text-lg">Review capture</p>
+            <button onClick={resetScan} className="text-sm text-emerald-300">Retake</button>
           </header>
-          <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-slate-900/80 to-black p-6">
+          <div className="flex flex-1 items-center justify-center bg-slate-900/60 p-4">
             <img
-              src={scannedImage}
+              src={scannedImage as string}
               alt="Scanned document"
-              className="max-h-full w-full rounded-3xl border border-white/15 bg-white/5 object-contain p-4 shadow-2xl"
+              className="max-h-full w-full rounded-2xl border border-white/10 bg-slate-900 object-contain"
             />
           </div>
-          <div className="flex gap-3 border-t border-white/10 bg-black/70 px-4 py-4">
-            <Button variant="outline" onClick={resetScan} className="flex-1 border-white/30 text-white">
-              <RotateCcw className="mr-2 h-4 w-4" /> Rescan
+          <div className="grid gap-3 border-t border-white/10 p-4 md:grid-cols-2">
+            <Button variant="outline" onClick={resetScan} className="border-white/30 text-white">
+              <RotateCcw className="mr-2 h-4 w-4" /> Retake
             </Button>
-            <Button onClick={confirmScan} className="flex-1 bg-primary text-white">
-              <Check className="mr-2 h-4 w-4" /> Use scan
+            <Button onClick={confirmScan} className="bg-white text-slate-900">
+              <Check className="mr-2 h-4 w-4" /> {pendingFile ? "Use photo" : "Use scan"}
             </Button>
           </div>
         </div>
@@ -221,112 +273,81 @@ export const DocumentScanner = ({
   }
 
   return (
-    <div
-      className={cn(
-        isOverlay ? "fixed inset-0 z-50 bg-black" : "relative w-full rounded-[40px] bg-black shadow-[0_45px_120px_rgba(2,12,9,0.65)]",
-      )}
-    >
-      <div
-        className={cn(
-          "relative mx-auto flex h-full flex-col overflow-hidden bg-[#10221c] text-white",
-          isOverlay ? "max-w-md" : "max-w-none rounded-[40px]",
-        )}
-      >
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCkzVKoBwYt0hKSFCeTHv-FHpD9tJ3Web8zFLdhOfmD2AebMF5rWw0WWuTONFMwFwy7DS2qgvVBtUy_LdQ_RzGNxCgEdFXAYn3El1pbP7-DHfSrGqfynIXiuQiEePZnv8LhGBfGoKnObe4ZFImWkmNMAseakjE8QIVHAxX4uxq7DZxRJb1BaXJHSd9hIMlA4frOyU9McPwb1LK5TGxTw6L5UDzsaz_ZPBy5kVaDlJxYIwdWiHgByPU0oCqVV60VGNWzG8ivA2Dz6HIZ')",
-          }}
-        />
-        <div className="absolute inset-0 bg-black/30" />
+    <div className={containerClass}>
+      <div className="flex h-full flex-col gap-4 p-4">
+        <header className="flex items-center justify-between text-sm">
+          <button onClick={onClose} className="text-white/70">Cancel</button>
+          <p className="instrument-serif-regular-italic text-base">Camera scanner</p>
+          <span className="text-emerald-300">{status === "granted" ? "Ready" : "Pending"}</span>
+        </header>
 
-        <div className="relative z-10 flex h-full flex-col">
-          <header className="flex items-center justify-between px-4 py-4 text-white">
-            <button onClick={onClose} className="text-sm text-white/80">Cancel</button>
-            <h1 className="instrument-serif-regular-italic text-xl">Scanning contract</h1>
-            <button className="flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white">
-              <Flashlight className="h-5 w-5" />
-            </button>
-          </header>
-
-          <main className="flex flex-1 flex-col items-center px-4 pb-4">
-            <div className="w-full max-w-sm self-end pb-3 text-right">
-              <div className="inline-flex items-center gap-2 rounded-xl bg-emerald-500/20 px-3 py-1 text-sm text-white">
-                <Check className="h-4 w-4" /> High quality
-              </div>
-            </div>
-
-            <div className="relative flex h-[380px] w-full max-w-xs items-center justify-center">
-              <div className="absolute inset-0 rounded-2xl border-4 border-primary/70 animate-pulse" />
-              <div className="absolute -top-1 -left-1 h-9 w-9 border-l-4 border-t-4 border-primary/80" />
-              <div className="absolute -top-1 -right-1 h-9 w-9 border-r-4 border-t-4 border-primary/80" />
-              <div className="absolute -bottom-1 -left-1 h-9 w-9 border-b-4 border-l-4 border-primary/80" />
-              <div className="absolute -bottom-1 -right-1 h-9 w-9 border-b-4 border-r-4 border-primary/80" />
-              <div className="absolute w-24 h-24 rounded-full border-4 border-t-primary border-r-primary border-b-primary/30 border-l-primary/30 animate-spin" />
-              <canvas ref={canvasRef} className="hidden" />
-              {!isScanning && <span className="text-white/70">Starting camera…</span>}
-              {isScanning && <video ref={videoRef} autoPlay playsInline className="h-full w-full rounded-xl object-cover" />}
-            </div>
-
-            <p className="pt-6 text-center text-lg font-semibold">Align contract corners</p>
-            <div className="mt-3 w-full max-w-sm rounded-xl bg-black/40 p-3 text-sm">
-              <div className="flex items-center justify-between text-white/80">
-                <span>OCR confidence</span>
-                <span>95% readable</span>
-              </div>
-              <div className="mt-2 h-2 rounded-full bg-white/20">
-                <div className="h-full rounded-full bg-primary" style={{ width: "95%" }} />
-              </div>
-            </div>
-
-            <div className="mt-auto flex flex-col items-center gap-3 pb-4">
+        <div className="flex-1 rounded-3xl border border-white/10 bg-slate-900/70 p-4">
+          {permissionNeeded ? (
+            <div className="flex h-full flex-col items-center justify-center text-center text-sm text-white/80">
+              <AlertCircle className="mb-3 h-8 w-8 text-amber-400" />
+              <p className="font-semibold">Camera permission needed</p>
+              <p className="mt-1 text-xs text-white/60">
+                Allow LegalDeep to use the camera to scan contracts directly from your device.
+              </p>
               <Button
-                onClick={captureAndProcess}
-                disabled={processing}
-                size="icon"
-                className="h-20 w-20 rounded-full bg-white text-slate-900 shadow-2xl"
+                onClick={handleEnableCamera}
+                disabled={isRequesting}
+                className="mt-4 rounded-2xl bg-white text-slate-900"
               >
-                {processing ? <RotateCcw className="h-6 w-6 animate-spin" /> : <Camera className="h-7 w-7" />}
+                {isRequesting ? "Requesting..." : "Enable camera"}
               </Button>
-              <p className="text-xs text-white/80">{processing ? "Processing…" : "Tap to capture"}</p>
             </div>
-          </main>
+          ) : (
+            <div className="relative flex h-full items-center justify-center">
+              <canvas ref={canvasRef} className="hidden" />
+              {streamRef.current ? (
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="h-full w-full rounded-2xl object-cover"
+                />
+              ) : (
+                <p className="text-sm text-white/70">Preparing camera...</p>
+              )
+              }
+              <div className="pointer-events-none absolute inset-6 rounded-3xl border border-white/15" />
+            </div>
+          )}
+        </div>
 
-          <footer className="rounded-t-2xl bg-black/60 px-4 pb-8 pt-4">
-            <div className="flex gap-3 overflow-x-auto pb-4">
-              {thumbnailPlaceholders.map((src, index) => (
-                <div key={src} className="relative shrink-0">
-                  <img
-                    src={src}
-                    alt="scan preview"
-                    className={`h-28 w-20 rounded-xl border-2 ${index === 0 ? "border-white" : "border-white/30"}`}
-                  />
-                  <button
-                    type="button"
-                    className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                className="flex h-28 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-white/30 text-white/70"
+        <div className="space-y-3">
+          <Button
+            onClick={captureAndProcess}
+            disabled={permissionNeeded || processing || !cameraReady}
+            className="h-14 w-full rounded-2xl bg-white text-slate-900"
+          >
+            {processing ? <RotateCcw className="mr-2 h-5 w-5 animate-spin" /> : <Camera className="mr-2 h-5 w-5" />}
+            {processing ? "Processing scan" : "Capture document"}
+          </Button>
+
+          {allowImageUpload && (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="h-12 w-full rounded-2xl border-white/40 text-white"
               >
-                <Plus />
-                Add page
-              </button>
-            </div>
-            <Button
-              onClick={captureAndProcess}
-              disabled={processing}
-              className="h-14 w-full rounded-2xl bg-primary text-base font-semibold text-white"
-            >
-              {processing ? "Processing…" : "Process scan ($19)"}
-            </Button>
-            <p className="mt-2 text-center text-xs text-white/60">4 pages captured</p>
-          </footer>
+                <Upload className="mr-2 h-4 w-4" /> Upload from photos
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+            </>
+          )}
+
+          {cameraError && <p className="text-xs text-red-300">{cameraError}</p>}
         </div>
       </div>
     </div>

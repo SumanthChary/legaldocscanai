@@ -125,6 +125,11 @@ function App() {
                     <MobileProfile />
                   </ProtectedRoute>
                 } />
+                  <Route path="*" element={
+                    <ProtectedRoute>
+                      <MobileHome />
+                    </ProtectedRoute>
+                  } />
               </Routes>
             </BrowserRouter>
           </TooltipProvider>

@@ -9,26 +9,27 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { useCameraPermission } from "@/hooks/useCameraPermission";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { 
-  User, 
-  Mail, 
-  Bell, 
-  Shield, 
-  CreditCard, 
-  LogOut, 
+import {
+  User,
+  Mail,
+  Bell,
+  Shield,
+  CreditCard,
+  LogOut,
   Camera,
   Crown,
   BarChart3,
   Trash2,
-  
   Globe,
   Lock,
   HelpCircle,
   FileText,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Video,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Tables } from "@/integrations/supabase/types";
@@ -45,6 +46,12 @@ export default function MobileSettings() {
     avatar_url: ""
   });
   const [notifications, setNotifications] = useState(true);
+  const {
+    status: cameraPermission,
+    requestPermission: requestCameraPermission,
+    isRequesting: cameraRequesting,
+    resetPermissionState,
+  } = useCameraPermission();
   
 
   useEffect(() => {
@@ -119,6 +126,23 @@ export default function MobileSettings() {
       console.error("Error signing out:", error);
       toast.error("Failed to sign out");
     }
+  };
+
+  const cameraStatusLabel =
+    cameraPermission === "granted" ? "Enabled" : cameraPermission === "denied" ? "Blocked" : "Not requested";
+
+  const handleCameraPermission = async () => {
+    const granted = await requestCameraPermission();
+    if (granted) {
+      toast.success("Camera enabled for scanning");
+    } else {
+      toast.error("Camera permission is blocked in your browser settings");
+    }
+  };
+
+  const handleCameraReset = () => {
+    resetPermissionState();
+    toast("Camera prompt reset. You will be asked again next time you scan.");
   };
 
   if (loading) {
@@ -244,7 +268,43 @@ export default function MobileSettings() {
                   onCheckedChange={setNotifications}
                 />
               </div>
-              
+              <div className="rounded-2xl border border-muted/40 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <Video className="w-5 h-5 text-muted-foreground" />
+                    <div>
+                      <div className="font-medium">Camera access</div>
+                      <div className="text-xs text-muted-foreground">Required for in-app scanning</div>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="rounded-full px-3 text-xs font-semibold">
+                    {cameraStatusLabel}
+                  </Badge>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    onClick={handleCameraPermission}
+                    disabled={cameraRequesting}
+                    className="rounded-full"
+                  >
+                    {cameraPermission === "granted" ? "Recheck camera" : "Enable camera"}
+                  </Button>
+                  {cameraPermission !== "prompt" && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleCameraReset}
+                      className="rounded-full text-muted-foreground"
+                    >
+                      Reset prompt
+                    </Button>
+                  )}
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  If permissions stay blocked, open your device settings and enable camera access for this browser.
+                </p>
+              </div>
             </div>
           </Card>
         </div>

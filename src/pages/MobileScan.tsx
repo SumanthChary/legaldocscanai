@@ -32,19 +32,17 @@ export default function MobileScan() {
           <div className="text-xs font-semibold text-emerald-600">95% OCR</div>
         </header>
 
-        <div className="rounded-[42px] border border-slate-200 bg-gradient-to-b from-slate-900 via-slate-950 to-black p-4 text-white shadow-[0_30px_90px_rgba(15,23,42,0.35)]">
-          <DocumentScanner
-            variant="inline"
-            autoCloseOnConfirm={false}
-            onScan={handleScanComplete}
-            onClose={() => navigate(-1)}
-          />
-        </div>
+        <DocumentScanner
+          variant="inline"
+          autoCloseOnConfirm={false}
+          onScan={handleScanComplete}
+          onClose={() => navigate(-1)}
+        />
 
         <div className="rounded-[32px] border border-slate-100 bg-white p-5 text-slate-900">
           <p className="text-[11px] uppercase tracking-[0.4em] text-slate-400">Secure capture</p>
           <p className="mt-2 text-sm text-slate-500">
-            LegalDeep encrypts every frame, strips metadata, and auto-deletes scans after 24h.
+            LegalDeep encrypts every frame, strips metadata, and auto-deletes scans after 24h. Use "Upload from photos" to bring in an existing contract image.
           </p>
           <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
             <span className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-3 py-2"><Shield className="h-4 w-4 text-emerald-500" /> SOC2-ready</span>
