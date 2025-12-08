@@ -1,7 +1,8 @@
-
-import { useState } from "react";
 import { PricingButton } from "./PricingButton";
-import { Check, Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
+import { Database } from "@/integrations/supabase/types";
+
+type SubscriptionTier = Database["public"]["Enums"]["subscription_tier"];
 
 interface PlanProps {
   name: string;
@@ -12,6 +13,7 @@ interface PlanProps {
   highlight?: boolean;
   popular?: boolean;
   originalPrice?: string;
+  tier: SubscriptionTier;
 }
 
 interface PricingPlansProps {

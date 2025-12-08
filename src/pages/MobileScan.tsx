@@ -59,7 +59,18 @@ export default function MobileScan() {
               <p className="text-lg font-semibold text-slate-900">$19 per scan</p>
             </div>
             <button
-              onClick={() => navigate("/payment", { state: { plan: { name: "Scan Plan", price: "$19", period: "per scan" } } })}
+              onClick={() =>
+                navigate("/payment", {
+                  state: {
+                    plan: {
+                      name: "Scan Plan",
+                      price: "$19",
+                      period: "per scan",
+                      tier: "pay_per_document",
+                    },
+                  },
+                })
+              }
               className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white"
             >
               Process scan

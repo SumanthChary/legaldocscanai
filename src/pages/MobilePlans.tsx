@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Shield, Zap, Crown, ArrowRight, Sparkles } from "lucide-react";
 import { getPricingPlans } from "@/components/pricing/pricingData";
 import { useAnalyses } from "@/components/document-analysis/hooks/useAnalyses";
+import { Database } from "@/integrations/supabase/types";
+
+type SubscriptionTier = Database["public"]["Enums"]["subscription_tier"];
 
 const PAY_PER_USE_PLAN = {
   name: "Scan Plan",
@@ -20,6 +23,7 @@ const PAY_PER_USE_PLAN = {
     "Clause heatmap + PDF export",
   ],
   buttonLabel: "Scan now",
+  tier: "pay_per_document" as SubscriptionTier,
 };
 
 const UNLIMITED_PRO_PLAN = {
@@ -33,6 +37,7 @@ const UNLIMITED_PRO_PLAN = {
     "Priority AI queue & support",
   ],
   buttonLabel: "Subscribe",
+  tier: "professional" as SubscriptionTier,
 };
 
 export default function MobilePlans() {
@@ -48,7 +53,7 @@ export default function MobilePlans() {
     { label: "Accuracy", value: "89% Avg" },
   ];
 
-  const handleCheckout = (plan: { name: string; price: string; period: string; description: string }) => {
+  const handleCheckout = (plan: { name: string; price: string; period: string; description: string; tier: SubscriptionTier }) => {
     navigate("/payment", {
       state: {
         plan,
@@ -112,7 +117,7 @@ export default function MobilePlans() {
                 onClick={() =>
                   plan.name === "Scan Plan"
                     ? navigate("/scan")
-                    : handleCheckout({ name: plan.name, price: plan.price, period: plan.period, description: plan.description })
+                    : handleCheckout({ name: plan.name, price: plan.price, period: plan.period, description: plan.description, tier: plan.tier })
                 }
               >
                 {plan.buttonLabel}
@@ -154,11 +159,12 @@ export default function MobilePlans() {
                       onClick={() =>
                         isEnterprise
                           ? typeof window !== "undefined" && (window.location.href = "mailto:sales@legaldeepai.app")
-                          : handleCheckout({
+                              : handleCheckout({
                               name: plan.name,
                               price: normalizedPrice,
                               period: plan.period || "",
                               description: plan.description,
+                              tier: plan.tier,
                             })
                       }
                   >

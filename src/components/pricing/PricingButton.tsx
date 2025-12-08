@@ -5,11 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { Database } from "@/integrations/supabase/types";
+
+type SubscriptionTier = Database["public"]["Enums"]["subscription_tier"];
 
 interface PlanType {
   name: string;
   price: string;
   period: string;
+  tier: SubscriptionTier;
 }
 
 interface PricingButtonProps {
@@ -114,7 +118,8 @@ export const PricingButton = ({ plan, className }: PricingButtonProps) => {
             plan: {
               name: plan.name,
               price: plan.name === "Free" ? "0" : `$${plan.price}`,
-              period: plan.period
+              period: plan.period,
+              tier: plan.tier,
             }
           }
         });

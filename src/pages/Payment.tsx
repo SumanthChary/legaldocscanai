@@ -17,6 +17,7 @@ interface LocationState {
     price: string;
     period: string;
     description?: string;
+    tier: SubscriptionTier;
   };
 }
 
@@ -101,6 +102,7 @@ const Payment = () => {
           "Downloadable PDF summary",
         ],
         extrasLabel: "and 7+ features sourced from legaldeepai.app/pricing",
+        tier: "pay_per_document" as SubscriptionTier,
       },
       {
         name: "Unlimited Pro",
@@ -115,6 +117,7 @@ const Payment = () => {
           "Priority AI + support queue",
         ],
         extrasLabel: "and 15+ platform features from legaldeepai.app/pricing",
+        tier: "professional" as SubscriptionTier,
       },
     ],
     []
@@ -158,7 +161,7 @@ const Payment = () => {
         throw new Error("User not authenticated");
       }
 
-      const planType = activePlan.name.toLowerCase().replace(/\s+/g, '_') as SubscriptionTier;
+      const planType = activePlan.tier ?? "basic";
 
       // Call our Supabase Edge Function to process the payment
       const { data: processResult, error: processError } = await supabase.functions.invoke(

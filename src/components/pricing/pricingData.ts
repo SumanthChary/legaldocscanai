@@ -1,5 +1,20 @@
+import { Database } from "@/integrations/supabase/types";
 
-export const getPricingPlans = (isAnnual: boolean) => [
+type SubscriptionTier = Database["public"]["Enums"]["subscription_tier"];
+
+type PricingPlan = {
+  name: string;
+  price: string;
+  period: string;
+  originalPrice: string;
+  description: string;
+  features: string[];
+  highlight?: boolean;
+  popular?: boolean;
+  tier: SubscriptionTier;
+};
+
+export const getPricingPlans = (isAnnual: boolean): PricingPlan[] => [
   {
     name: "Free Plan",
     price: "0",
@@ -15,7 +30,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "PDF and Word document support",
       "High Level Security & Safety"
     ],
-    highlight: false
+    highlight: false,
+    tier: "basic"
   },
   {
     name: "Starter",
@@ -37,7 +53,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Security Settings",
       "High Level Security & Safety"
     ],
-    highlight: false
+    highlight: false,
+    tier: "basic"
   },
   {
     name: "Pro Plan",
@@ -62,7 +79,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "High Level Security & Safety"
     ],
     highlight: true,
-    popular: true
+    popular: true,
+    tier: "professional"
   },
   {
     name: "Enterprise",
@@ -85,7 +103,8 @@ export const getPricingPlans = (isAnnual: boolean) => [
       "Security Settings",
       "High Level Security & Safety"
     ],
-    highlight: false
+    highlight: false,
+    tier: "enterprise"
   }
 ];
 
