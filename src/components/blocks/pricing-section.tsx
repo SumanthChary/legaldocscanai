@@ -7,91 +7,100 @@ import { InView } from "@/components/ui/in-view";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { RedeemCodeModal } from "@/components/pricing/RedeemCodeModal";
+import { PricingButton } from "@/components/pricing/PricingButton";
+import { Database } from "@/integrations/supabase/types";
+
+type SubscriptionTier = Database["public"]["Enums"]["subscription_tier"];
+
+type LandingPlan = {
+  name: string;
+  price: string;
+  period: string;
+  originalPrice?: string;
+  description: string;
+  features: string[];
+  highlight?: boolean;
+  popular?: boolean;
+  badge?: string;
+  tier: SubscriptionTier;
+};
+
+const LANDING_PLANS: LandingPlan[] = [
+  {
+    name: "Free Plan",
+    price: "0",
+    period: "",
+    description: "Perfect for trying out LegalDeep AI",
+    features: [
+      "3 free document analyses",
+      "Basic AI document summarization",
+      "Standard processing (24-48 hours)",
+      "Email support",
+      "Basic risk detection",
+      "PDF export of summaries",
+      "High Level Security & Safety",
+    ],
+    highlight: false,
+    badge: "Free",
+    tier: "basic",
+  },
+  {
+    name: "Starter",
+    price: "49",
+    period: "/month",
+    originalPrice: "",
+    description: "For solo practitioners and small firms",
+    features: [
+      "25 document analyses/month",
+      "Advanced AI clause analysis",
+      "Priority processing (1-4 hours)",
+      "Risk assessment & recommendations",
+      "Custom document templates",
+      "Chat support",
+      "Document version comparison",
+      "API access",
+      "Team Collaboration and Organization Settings",
+      "Security Settings",
+      "High Level Security & Safety",
+    ],
+    highlight: false,
+    popular: false,
+    badge: "",
+    tier: "basic",
+  },
+  {
+    name: "Pro Plan",
+    price: "149",
+    period: "/month",
+    originalPrice: "",
+    description: "For growing law firms and professionals",
+    features: [
+      "150 document analyses/month",
+      "Advanced AI with legal precedents",
+      "Instant processing (real-time)",
+      "Custom AI model training",
+      "Multi-user team collaboration",
+      "Priority support",
+      "Advanced analytics dashboard",
+      "Bulk document processing",
+      "Custom integrations",
+      "Dedicated account manager",
+      "Team Collaboration and Organization Settings",
+      "Security Settings",
+      "High Level Security & Safety",
+    ],
+    highlight: true,
+    popular: true,
+    badge: "Most Popular",
+    tier: "professional",
+  },
+];
 
 export const PricingSection = () => {
   const navigate = useNavigate();
   const [isAnnual, setIsAnnual] = useState(false);
   const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
-
-  const plans = [
-    {
-      name: "Free Plan",
-      price: "0",
-      period: "",
-      description: "Perfect for trying out LegalDeep AI",
-      features: [
-        "3 free document analyses",
-        "Basic AI document summarization",
-        "Standard processing (24-48 hours)",
-        "Email support",
-        "Basic risk detection",
-        "PDF export of summaries",
-        "High Level Security & Safety"
-      ],
-      highlight: false,
-      badge: "Free"
-    },
-    {
-      name: "Starter",
-      price: "49",
-      period: "/month",
-      originalPrice: "",
-      description: "For solo practitioners and small firms",
-      features: [
-        "25 document analyses/month",
-        "Advanced AI clause analysis",
-        "Priority processing (1-4 hours)",
-        "Risk assessment & recommendations",
-        "Custom document templates",
-        "Chat support",
-        "Document version comparison",
-        "API access",
-        "Team Collaboration and Organization Settings",
-        "Security Settings",
-        "High Level Security & Safety"
-      ],
-      highlight: false,
-      popular: false,
-      badge: ""
-    },
-    {
-      name: "Pro Plan",
-      price: "149",
-      period: "/month",
-      originalPrice: "",
-      description: "For growing law firms and professionals",
-      features: [
-        "150 document analyses/month",
-        "Advanced AI with legal precedents",
-        "Instant processing (real-time)",
-        "Custom AI model training",
-        "Multi-user team collaboration",
-        "Priority support",
-        "Advanced analytics dashboard",
-        "Bulk document processing",
-        "Custom integrations",
-        "Dedicated account manager",
-        "Team Collaboration and Organization Settings",
-        "Security Settings",
-        "High Level Security & Safety"
-      ],
-      highlight: true,
-      popular: true,
-      badge: "Most Popular"
-    }
-  ];
-
-  const handleGetStarted = (plan: any) => {
-    navigate("/payment", { 
-      state: { 
-        plan: {
-          name: plan.name,
-          price: plan.name === "Free" ? "0" : `$${plan.price}`,
-          period: plan.period
-        }
-      }
-    });
-  };
+  const plans = LANDING_PLANS;
 
   return (
     <div className="py-8 md:py-12 lg:py-16 xl:py-24 bg-gradient-to-b from-background to-secondary/20">
@@ -190,19 +199,16 @@ export const PricingSection = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    className={`w-full mt-auto ${
-                      plan.highlight 
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white' 
-                        : ''
+                  <PricingButton
+                    plan={{ name: plan.name, price: plan.price, period: plan.period, tier: plan.tier }}
+                    className={`${
+                      plan.highlight
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0"
+                        : plan.name === "Starter"
+                          ? "bg-transparent text-gray-900 border border-gray-300 hover:bg-gray-50"
+                          : ""
                     }`}
-                    size="lg"
-                    variant={plan.name === "Starter" ? "outline" : "default"}
-                    onClick={() => handleGetStarted(plan)}
-                  >
-                    {plan.name === "Starter" ? "Start Free Trial" : 
-                     plan.name === "Enterprise" ? "Contact Sales" : "Get Started"}
-                  </Button>
+                  />
                 </CardContent>
               </Card>
             </InView>
