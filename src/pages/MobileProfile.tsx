@@ -147,16 +147,15 @@ export default function MobileProfile() {
                 <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">Workspace owner</p>
                 <h2 className="instrument-serif-regular-italic text-2xl text-slate-900">
                   {formData.username || "LegalDeep member"}
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">Push notifications</p>
-                  <p className="text-xs text-slate-500">Get alerts when reports are ready</p>
+                </h2>
+                <p className="text-sm text-slate-500">{formData.email}</p>
+                <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-900">
+                  <Crown className="h-3 w-3" /> Unlimited plan
                 </div>
-                <Switch
-                  checked={notifications}
-                  onCheckedChange={setNotifications}
-                  className="self-start rounded-full border-0 bg-slate-200 transition-colors data-[state=checked]:bg-emerald-500 sm:self-auto"
-                  thumbClassName="h-6 w-6 translate-x-1 rounded-full bg-white shadow-sm transition data-[state=checked]:translate-x-7"
-                />
+              </div>
+            </div>
+          </Card>
+
           <div className="grid grid-cols-2 gap-3">
             {[{ label: "Scans", value: stats.scans, tone: "text-slate-900" }, { label: "Risks", value: stats.risks, tone: "text-amber-600" }, { label: "Savings", value: stats.saved, tone: "text-emerald-600" }, { label: "Accuracy", value: stats.accuracy, tone: "text-slate-900" }].map((stat) => (
               <Card key={stat.label} className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
@@ -202,8 +201,9 @@ export default function MobileProfile() {
               <Switch
                 checked={notifications}
                 onCheckedChange={setNotifications}
-                className="self-start sm:self-auto h-8 w-16 border border-slate-200 bg-slate-200 data-[state=checked]:bg-slate-900"
-                thumbClassName="h-6 w-6 data-[state=checked]:translate-x-8"
+                aria-label="Toggle push notifications"
+                className="self-start h-8 w-16 rounded-full border border-slate-200 bg-slate-200 transition-colors data-[state=checked]:bg-emerald-500 sm:self-auto"
+                thumbClassName="h-6 w-6 translate-x-1 rounded-full bg-white shadow-sm transition data-[state=checked]:translate-x-8"
               />
             </div>
             <div className="mt-5 rounded-2xl border border-slate-100 p-4">
@@ -236,12 +236,12 @@ export default function MobileProfile() {
               </p>
             </div>
           </Card>
-                  <Switch
-                    checked={notifications}
-                    onCheckedChange={setNotifications}
-                    className="self-start h-8 w-16 rounded-full border-0 bg-slate-200 transition-colors data-[state=checked]:bg-emerald-500 sm:self-auto"
-                    thumbClassName="h-6 w-6 translate-x-1 rounded-full bg-white shadow-sm transition data-[state=checked]:translate-x-8"
-                  />
+
+          <Card className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+            <div className="space-y-4 text-sm text-slate-700">
+              {[{ label: "Invite legal team", icon: Users, description: "Seat teammates with restricted viewer access." }, { label: "Download archive", icon: Download, description: "Bulk export every PDF, insight, and summary." }, { label: "Help & support", icon: HelpCircle, description: "Talk to our counsel desk 24/7." }].map((action) => (
+                <div key={action.label} className="flex items-center gap-4 rounded-2xl border border-slate-100 p-3">
+                  <action.icon className="h-5 w-5 text-slate-500" />
                   <div>
                     <p className="text-sm font-semibold text-slate-900">{action.label}</p>
                     <p className="text-xs text-slate-500">{action.description}</p>
